@@ -1,4 +1,4 @@
-# Your project name here
+Computer Science Bsc Project
 
 ## Information about this repository
 
