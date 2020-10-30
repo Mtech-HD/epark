@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>ePark</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+	integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+	integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+	crossorigin="anonymous"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+	integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+	crossorigin="anonymous"></script>
+
+
+</head>
+<body>
+
+	<!--  Navigation Bar -->
+
+	<nav
+		class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
+		<a class="navbar-brand" href="">ePark</a>
+
+
+		</div>
+		<div class="collapse navbar-collapse" id="navbarNavDropdown">
+			<ul class="navbar-nav">
+				<li class="nav-item active"><a class="nav-link" href="/home">Home
+						<span class="sr-only">(current)</span>
+				</a></li>
+				<div sec:authorize="isAnonymous()">
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#"
+						id="navbarDropdownMenuLink" data-toggle="dropdown"
+						aria-haspopup="true" aria-expanded="false"> My Account </a>
+						<div class="dropdown-menu"
+							aria-labelledby="navbarDropdownMenuLink">
+							<a class="dropdown-item" href="/login">Log in</a> <a
+								class="dropdown-item" href="/registration">Register</a>
+						</div></li>
+				</div>
+
+
+				<li class="nav-item dropdown" sec:authorize="isAuthenticated()"><a
+					class="nav-link dropdown-toggle" href="#"
+					id="navbarDropdownMenuLink" data-toggle="dropdown"
+					aria-haspopup="true" aria-expanded="false"> My Account </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<a class="dropdown-item" href="#">View reservations</a> <a
+							class="dropdown-item" href="#">View account details</a> <a
+							class="dropdown-item" href="/logout">Log out</a>
+					</div></li>
+
+				<li class="nav-item dropdown" sec:authorize="isAuthenticated()"><a
+					class="nav-link dropdown-toggle" href="#"
+					id="navbarDropdownMenuLink" data-toggle="dropdown"
+					aria-haspopup="true" aria-expanded="false"> Manage car parks </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<a class="dropdown-item" href="#">View car parks</a> <a
+							class="dropdown-item" href="/addcarpark">Add car parks</a>
+					</div></li>
+				<li class="nav-item dropdown"
+					sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')"><a
+					class="nav-link dropdown-toggle" href="#"
+					id="navbarDropdownMenuLink" data-toggle="dropdown"
+					aria-haspopup="true" aria-expanded="false"> Admin Menu </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<a class="dropdown-item" href="/viewcarkpark">View car park
+							submissions</a> <a class="dropdown-item" href="/addcarpark">View
+							reservations</a>
+					</div></li>
+
+			</ul>
+
+		</div>
+	</nav>
+
+	<!--  HTML registration form -->
+
+	<div class="align-items-center container ">
+
+
+
+
+		<br> <br> <br> <br>
+
+		<h1>View car park details</h1>
+
+		<br>
+
+
+		<table class="table table-striped table-hover"
+			th:object="${carparkspots}">
+			<thead>
+				<tr>
+					<th style="text-align: center; vertical-align: top" scope="col">Owners</th>
+					<th style="text-align: center; vertical-align: top" scope="col">Available
+						spaces</th>
+					<th style="text-align: center; vertical-align: top" scope="col">Disabled
+						spaces</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr style="text-align: center; vertical-align: top">
+
+					<td th:text="${owners.toString()}"></td>
+
+
+					<td th:text="${carparkspots.size()}"></td>
+					<td th:text="${isDisabled}"></td>
+
+				</tr>
+			</tbody>
+		</table>
+
+		<button type="button" class="btn btn-sm" onclick="history.back();">Back</button>
+
+	</div>
+
+
+</body>
+</html>
