@@ -20,7 +20,11 @@
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
 	integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
 	crossorigin="anonymous"></script>
-
+<style>
+body {
+	padding-top: 56px;
+}
+</style>
 
 </head>
 <body>
@@ -28,13 +32,18 @@
 	<!--  Navigation Bar -->
 
 	<nav
-		class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
+		class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
 		<a class="navbar-brand" href="">ePark</a>
 
 
 		</div>
 		<div class="collapse navbar-collapse" id="navbarNavDropdown">
 			<ul class="navbar-nav">
+					<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
 				<li class="nav-item active"><a class="nav-link" href="/home">Home
 						<span class="sr-only">(current)</span>
 				</a></li>
@@ -56,12 +65,14 @@
 					id="navbarDropdownMenuLink" data-toggle="dropdown"
 					aria-haspopup="true" aria-expanded="false"> My Account </a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a class="dropdown-item" href="#">View reservations</a> <a
-							class="dropdown-item" href="#">View account details</a> <a
-							class="dropdown-item" href="/logout">Log out</a>
+						<a sec:authorize="hasAnyAuthority('USER')" class="dropdown-item"
+							href="#">View reservations</a> <a class="dropdown-item" href="#">View
+							account details</a> <a class="dropdown-item" href="/logout">Log
+							out</a>
 					</div></li>
 
-				<li class="nav-item dropdown" sec:authorize="isAuthenticated()"><a
+				<li class="nav-item dropdown"
+					sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN','CARPARKOWNER')"><a
 					class="nav-link dropdown-toggle" href="#"
 					id="navbarDropdownMenuLink" data-toggle="dropdown"
 					aria-haspopup="true" aria-expanded="false"> Manage car parks </a>
@@ -75,31 +86,33 @@
 					id="navbarDropdownMenuLink" data-toggle="dropdown"
 					aria-haspopup="true" aria-expanded="false"> Admin Menu </a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a class="dropdown-item" href="/viewcarkpark">View car park
-							submissions</a> <a class="dropdown-item" href="/addcarpark">View
+						<a class="dropdown-item" href="/viewcarpark">View car park
+							submissions</a> <a class="dropdown-item" href="">View
 							reservations</a>
 					</div></li>
 
 			</ul>
 
 		</div>
+		
+		<input type="button" class="btn btn-primary"
+			onclick="history.go(-1);" value="Back" />
 	</nav>
 
-	<!--  HTML registration form -->
-
-	<div class="align-items-center container ">
 
 
 
 
-		<br> <br> <br> <br>
 
-		<h1>View car park details</h1>
+
+		<br> <br> <br>
+
+		<h1 style="margin: auto; width: 80%;">View car park details</h1> 
 
 		<br>
 
 
-		<table class="table table-striped table-hover"
+		<table class="table table-striped table-hover table-responsive" style="margin: auto; width: 80%;"
 			th:object="${carparkspots}">
 			<thead>
 				<tr>
@@ -108,6 +121,7 @@
 						spaces</th>
 					<th style="text-align: center; vertical-align: top" scope="col">Disabled
 						spaces</th>
+					<th style="text-align: center; vertical-align: top" scope="col">Comments</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -118,15 +132,44 @@
 
 					<td th:text="${carparkspots.size()}"></td>
 					<td th:text="${isDisabled}"></td>
+					<td th:text="${carparkcomment}"></td>
 
+				</tr>
+			</tbody>
+
+
+		</table>
+<br>
+
+		<table class="table table-striped table-hover table-responsive" style="margin: auto; width: 80%;">
+
+			<thead>
+				<tr  >
+					<th style="text-align: center; vertical-align: top" scope="col">Day</th>
+					<th style="text-align: center; vertical-align: top" scope="col">Opening time</th>
+					<th style="text-align: center; vertical-align: top" scope="col">Closing time</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr style="text-align: center; vertical-align: top" th:each="carparktime : ${carparktimes}">
+					
+					<td th:text="${carparktime.dayOfWeek}"></td>
+					<td th:text="${carparktime.openTime} == null ? 'Closed' : ${carparktime.openTime}"></td>
+					<td th:text="${carparktime.closeTime} == null ? 'Closed' : ${carparktime.closeTime}"></td>
 				</tr>
 			</tbody>
 		</table>
 
-		<button type="button" class="btn btn-sm" onclick="history.back();">Back</button>
 
-	</div>
+		<!-- 		<a sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')"
+			class="btn btn-primary" href="/viewcarpark" role="button">Back</a> <a
+			sec:authorize="isAuthenticated()&&hasAnyAuthority('CARPARKOWNER')"
+			class="btn btn-primary" href="/viewcarparkforuser" role="button">Back</a>
+ -->
 
+
+
+<br> <br> <br>
 
 </body>
 </html>

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta charset="UTF-8" name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>ePark Login</title>
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -22,11 +23,18 @@
 
 
 </head>
+
+<style>
+body {
+	padding-top: 56px;
+}
+</style>
 <body>
 
 	<!--  Navigation Bar -->
 
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
+	<nav
+		class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
 		<a class="navbar-brand" href="">ePark</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse"
 			data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
@@ -38,7 +46,7 @@
 				<li class="nav-item active"><a class="nav-link" href="/home">Home
 						<span class="sr-only">(current)</span>
 				</a></li>
-								<div sec:authorize="isAnonymous()">
+				<div sec:authorize="isAnonymous()">
 					<li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#"
 						id="navbarDropdownMenuLink" data-toggle="dropdown"
@@ -60,7 +68,7 @@
 	<div class="align-items-center container ">
 
 
-		<br> <br> <br> <br>
+		<br> <br> <br>
 		<h1>Login Page</h1>
 		<br>
 
@@ -68,17 +76,39 @@
 
 			<!-- Error Message -->
 			<div th:if="${param.error}">
-				<div class="alert alert-danger">Invalid username or password</div>
+				<div class="alert alert-danger alert-dismissible fade show"
+					role="alert">
+					Invalid username or password
+					<button type="button" class="close" data-dismiss="alert"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
 			</div>
 
 			<!-- Logout Message -->
 			<div th:if="${param.logout}">
-				<div class="alert alert-info">You have been logged out</div>
+				<div class="alert alert-info alert-dismissible fade show"
+					role="alert">
+					You have been logged out
+					<button type="button" class="close" data-dismiss="alert"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
 			</div>
 
 			<!-- Registration success message -->
 			<div th:if="${param.registrationSuccess}">
-				<div class="alert alert-info">You have registered successfully</div>
+
+				<div class="alert alert-info alert-dismissible fade show"
+					role="alert">
+					You have registered successfully
+					<button type="button" class="close" data-dismiss="alert"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
 			</div>
 
 			<div class="form-group">
