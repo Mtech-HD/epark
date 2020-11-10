@@ -9,14 +9,62 @@
 	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
 	crossorigin="anonymous">
 <style>
-#map {
-	position: absolute;
-	top: 55px;
-	left: 0;
+.map-container {
+	position: fixed;
+	left: 25%;
 	bottom: 0;
 	right: 0;
+	top: 0;
+}
+
+#map {
+	width: 100%;
+	height: 100%;
+	float: right;
+	-moz-box-shadow: 0 0 2px #000;
+	-webkit-box-shadow: 0 0 2px #000;
+	box-shadow: 0 0 2px #000;
+}
+
+.sideInfo {
+	position: fixed; 
+	top : 56px;
+	bottom: 0;
+	width: 25%;
+	height: 100%;
+	padding: 20px;
+	overflow-y: scroll;
+}
+
+.namebanner {
+	width: 100%;
+	background-color: #336C9D;
+}
+
+.namebanner h2 {
+	text-align: center;
+	color: #FFFFFF;
+}
+
+.my-custom-class-for-label {
+	width: 60px;
+	height: 27px;
+	border: 1px solid #336C9D;
+	border-radius: 5px;
+	background: #FFFFFF;
+	text-align: center;
+	line-height: 26px;
+	font-weight: bold;
+	font-size: 15px;
+	color: #336C9D;
+}
+
+body {
+	padding-top: 56px;
 }
 </style>
+
+
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
 	integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
@@ -30,14 +78,18 @@
 	integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
 	crossorigin="anonymous"></script>
 
+
+
+
 </head>
 <body>
-	<nav
-		class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
 		<a class="navbar-brand" href="">ePark</a>
-
-
-		</div>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
 		<div class="collapse navbar-collapse" id="navbarNavDropdown">
 			<ul class="navbar-nav">
 				<li class="nav-item active"><a class="nav-link" href="/home">Home
@@ -45,7 +97,7 @@
 				</a></li>
 				<div sec:authorize="isAnonymous()">
 					<li class="nav-item dropdown"><a
-						class="nav-link dropdown-toggle" href=""
+						class="nav-link dropdown-toggle" href="#"
 						id="navbarDropdownMenuLink" data-toggle="dropdown"
 						aria-haspopup="true" aria-expanded="false"> My Account </a>
 						<div class="dropdown-menu"
@@ -56,15 +108,15 @@
 				</div>
 
 
-				<li class="nav-item dropdown"
-					sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN','USER')"><a
-					class="nav-link dropdown-toggle" href=""
+				<li class="nav-item dropdown" sec:authorize="isAuthenticated()"><a
+					class="nav-link dropdown-toggle" href="#"
 					id="navbarDropdownMenuLink" data-toggle="dropdown"
 					aria-haspopup="true" aria-expanded="false"> My Account </a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a class="dropdown-item" href="#">View reservations</a> <a
-							class="dropdown-item" href="#">View account details</a> <a
-							class="dropdown-item" href="/logout">Log out</a>
+						<a sec:authorize="hasAnyAuthority('USER')" class="dropdown-item"
+							href="#">View reservations</a> <a class="dropdown-item" href="#">View
+							account details</a> <a class="dropdown-item" href="/logout">Log
+							out</a>
 					</div></li>
 
 				<li class="nav-item dropdown"
@@ -73,8 +125,9 @@
 					id="navbarDropdownMenuLink" data-toggle="dropdown"
 					aria-haspopup="true" aria-expanded="false"> Manage car parks </a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a class="dropdown-item" href="#">View car parks</a> <a
-							class="dropdown-item" href="/addcarpark">Add car parks</a>
+						<a class="dropdown-item" href="/viewcarparkforuser">View car
+							parks</a> <a class="dropdown-item" href="/addcarpark">Add car
+							parks</a>
 					</div></li>
 				<li class="nav-item dropdown"
 					sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')"><a
@@ -82,14 +135,15 @@
 					id="navbarDropdownMenuLink" data-toggle="dropdown"
 					aria-haspopup="true" aria-expanded="false"> Admin Menu </a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a class="dropdown-item" href="/viewcarkpark">View car park
-							submissions</a> <a class="dropdown-item" href="/addcarpark">View
+						<a class="dropdown-item" href="/viewcarpark">View car park
+							submissions</a> <a class="dropdown-item" href="">View
 							reservations</a>
 					</div></li>
 
 			</ul>
 
 		</div>
+
 		<form class="form-inline my-2 my-lg-0">
 			<input class="form-control mr-sm-2" type="search"
 				placeholder="Search" aria-label="Search">
@@ -98,76 +152,419 @@
 	</nav>
 
 
+	<div class="sideInfo">
+		<div class="namebanner">
+			<h2 id="carparkname"></h2>
+		</div>
+		<div class="form-group">
+			<a type="button" id="reservebutton" class="btn btn-outline-primary mb-2 disabled" href="">Reserve</a>
+		</div>
 
-	<div id="map"></div>
+		<dl class="row">
+
+			<dt class="col-sm-5">Address:</dt>
+			<dd class="col-sm-7" id="address"></dd>
+
+			<dt class="col-sm-5">Parking rate:</dt>
+			<dd class="col-sm-7" id="parkingrate"></dd>
+
+			<dt class="col-sm-5">Price:</dt>
+			<dd class="col-sm-7" id="price"></dd>
+
+			<dt class="col-sm-5">Available spaces:</dt>
+			<dd class="col-sm-7" id="spaces"></dd>
+
+			<dt class="col-sm-5">Disabled:</dt>
+			<dd class="col-sm-7" id="disabled"></dd>
+
+
+			<dd class="col-sm-11">
+				<dl class="row">
+					<dt class="col-sm-5">Day</dt>
+					<dt class="col-sm-3">From</dt>
+					<dt class="col-sm-3">To</dt>
+				</dl>
+				<dl class="row">
+					<dt class="col-sm-5">Monday</dt>
+					<dd class="col-sm-3" id="mondayfrom">--</dd>
+					<dd class="col-sm-3" id="mondayto">--</dd>
+				</dl>
+				<dl class="row">
+					<dt class="col-sm-5">Tuesday</dt>
+					<dd class="col-sm-3" id="tuesdayfrom">--</dd>
+					<dd class="col-sm-3" id="tuesdayto">--</dd>
+				</dl>
+				<dl class="row">
+					<dt class="col-sm-5">Wednesday</dt>
+					<dd class="col-sm-3" id="wednesdayfrom">--</dd>
+					<dd class="col-sm-3" id="wednesdayto">--</dd>
+				</dl>
+				<dl class="row">
+					<dt class="col-sm-5">Thursday</dt>
+					<dd class="col-sm-3" id="thursdayfrom">--</dd>
+					<dd class="col-sm-3" id="thursdayto">--</dd>
+				</dl>
+				<dl class="row">
+					<dt class="col-sm-5">Friday</dt>
+					<dd class="col-sm-3" id="fridayfrom">--</dd>
+					<dd class="col-sm-3" id="fridayto">--</dd>
+				</dl>
+				<dl class="row">
+					<dt class="col-sm-5">Saturday</dt>
+					<dd class="col-sm-3" id="saturdayfrom">--</dd>
+					<dd class="col-sm-3" id="saturdayto">--</dd>
+				</dl>
+				<dl class="row">
+					<dt class="col-sm-5">Sunday</dt>
+					<dd class="col-sm-3" id="sundayfrom">--</dd>
+					<dd class="col-sm-3" id="sundayto">--</dd>
+				</dl>
+			</dd>
+		</dl>
+
+
+
+
+
+	</div>
+
+
+	<div class="map-container">
+		<div id="map"></div>
+	</div>
+
+
 
 	<script th:inline="javascript">
-		var addresses = [[${carParkAddresses}]];
-	</script>
 
-	<script>
+	  var addresses  = [[${carParkAddresses}]];
+	  
+	  var carParks  = [[${carParks}]];
+
+
+
 		var geocoder;
 		var map;
-	
-
+		
 
 		function initMap() {
 			geocoder = new google.maps.Geocoder();
 
+		    
 			var uluru = {
 				lat : 51.602680,
 				lng : -0.275280
 			};
 			map = new google.maps.Map(document.getElementById('map'), {
 				zoom : 14,
-				center : uluru
+				center : uluru,
+				mapTypeControlOptions : {
+					mapTypeIds : []
+				},
+				styles : [ {
+					"elementType" : "geometry",
+					"stylers" : [ {
+						"color" : "#ebe3cd"
+					} ]
+				}, {
+					"elementType" : "labels.text.fill",
+					"stylers" : [ {
+						"color" : "#523735"
+					} ]
+				}, {
+					"elementType" : "labels.text.stroke",
+					"stylers" : [ {
+						"color" : "#f5f1e6"
+					} ]
+				}, {
+					"featureType" : "administrative",
+					"elementType" : "geometry.stroke",
+					"stylers" : [ {
+						"color" : "#c9b2a6"
+					} ]
+				}, {
+					"featureType" : "administrative.land_parcel",
+					"elementType" : "geometry.stroke",
+					"stylers" : [ {
+						"color" : "#dcd2be"
+					} ]
+				}, {
+					"featureType" : "administrative.land_parcel",
+					"elementType" : "labels.text.fill",
+					"stylers" : [ {
+						"color" : "#ae9e90"
+					} ]
+				}, {
+					"featureType" : "landscape.natural",
+					"elementType" : "geometry",
+					"stylers" : [ {
+						"color" : "#dfd2ae"
+					} ]
+				}, {
+					"featureType" : "poi",
+					"elementType" : "geometry",
+					"stylers" : [ {
+						"color" : "#dfd2ae"
+					} ]
+				}, {
+					"featureType" : "poi",
+					"elementType" : "labels.text.fill",
+					"stylers" : [ {
+						"color" : "#93817c"
+					} ]
+				}, {
+					"featureType" : "poi.park",
+					"elementType" : "geometry.fill",
+					"stylers" : [ {
+						"color" : "#a5b076"
+					} ]
+				}, {
+					"featureType" : "poi.park",
+					"elementType" : "labels.text.fill",
+					"stylers" : [ {
+						"color" : "#447530"
+					} ]
+				}, {
+					"featureType" : "road",
+					"elementType" : "geometry",
+					"stylers" : [ {
+						"color" : "#f5f1e6"
+					} ]
+				}, {
+					"featureType" : "road.arterial",
+					"elementType" : "geometry",
+					"stylers" : [ {
+						"color" : "#fdfcf8"
+					} ]
+				}, {
+					"featureType" : "road.highway",
+					"elementType" : "geometry",
+					"stylers" : [ {
+						"color" : "#f8c967"
+					} ]
+				}, {
+					"featureType" : "road.highway",
+					"elementType" : "geometry.stroke",
+					"stylers" : [ {
+						"color" : "#e9bc62"
+					} ]
+				}, {
+					"featureType" : "road.highway.controlled_access",
+					"elementType" : "geometry",
+					"stylers" : [ {
+						"color" : "#e98d58"
+					} ]
+				}, {
+					"featureType" : "road.highway.controlled_access",
+					"elementType" : "geometry.stroke",
+					"stylers" : [ {
+						"color" : "#db8555"
+					} ]
+				}, {
+					"featureType" : "road.local",
+					"elementType" : "labels.text.fill",
+					"stylers" : [ {
+						"color" : "#806b63"
+					} ]
+				}, {
+					"featureType" : "transit.line",
+					"elementType" : "geometry",
+					"stylers" : [ {
+						"color" : "#dfd2ae"
+					} ]
+				}, {
+					"featureType" : "transit.line",
+					"elementType" : "labels.text.fill",
+					"stylers" : [ {
+						"color" : "#8f7d77"
+					} ]
+				}, {
+					"featureType" : "transit.line",
+					"elementType" : "labels.text.stroke",
+					"stylers" : [ {
+						"color" : "#ebe3cd"
+					} ]
+				}, {
+					"featureType" : "transit.station",
+					"elementType" : "geometry",
+					"stylers" : [ {
+						"color" : "#dfd2ae"
+					} ]
+				}, {
+					"featureType" : "water",
+					"elementType" : "geometry.fill",
+					"stylers" : [ {
+						"color" : "#b9d3c2"
+					} ]
+				}, {
+					"featureType" : "water",
+					"elementType" : "labels.text.fill",
+					"stylers" : [ {
+						"color" : "#92998d"
+					} ]
+				} ]
 			});
-			
-			
-			for (var i = 0; i < addresses.length; i++) {
-				try {
-				codeAddress(addresses[i]);
-				} catch(err) {
-					console.log(err);
-				}
-			}
-			
 
+		for (var i = 0; i < carParks.length; i++) {
+			var address = carParks[i].carParkAddress1 + "," + carParks[i].carParkAddress2 + "," + carParks[i].carParkCity + "," + carParks[i].carParkPostcode;
+
+				geocoder.geocode({'address': address}, geocodeEncapsulation(carParks[i]));
+
+		
 		}
+		
+		}
+		function geocodeEncapsulation(i) {
 
-		function codeAddress(address) {
+					return( function(results, status){
 
-			geocoder
-					.geocode(
-							{
-								'address' : address
-							},
-							function(results, status) {
-								console.log(results);
-								var latLng = {
-									lat : results[0].geometry.location.lat(),
-									lng : results[0].geometry.location.lng()
-								};
-								console.log(latLng);
-								if (status == 'OK') {
-									var marker = new google.maps.Marker({
-										position : latLng,
-										map : map
-									});
-									console.log(map);
-								} else {
-									alert('Geocode was not successful for the following reason: '
-											+ status);
-									console.log(status);
+					if (status == 'OK') {
+						var markerIcon = {
+								url : 'pin.png',
+								scaledSize : new google.maps.Size(30,
+										30),
+								origin : new google.maps.Point(0, 0),
+							};
+						var marker = new MarkerWithLabel(
+								{
+									map : map,
+									position : results[0].geometry.location,
+									icon : markerIcon,
+									labelContent : '£'  + i.price,
+									labelAnchor : new google.maps.Point(
+											30, 35),
+									labelClass : "my-custom-class-for-label", 
+									labelInBackground : false,
+									title : i.carParkId
 									
+									
+								});
+ 						//marker.set("carparkid", i.carParkId);
+						google.maps.event.addListener(marker,
+								'click', function() {
+								$('#carparkname').html(i.name);
+								$('#address').html(i.carParkAddress1 + ",<br>" + i.carParkAddress2 + ",<br>" + i.carParkCity + ",<br>" + i.carParkPostcode);
+								$('#parkingrate').html(i.parkingRate);
+								$('#price').html('£'+i.price);
+								$('#spaces').html(i.carParkSpots.length);
+								$('#disabled').html(i.carParkSpots.length.isDisabled);
+								$('#reservebutton').prop('class', 'btn btn-outline-primary mb-2');
+								$('#reservebutton').prop('href','/reserve/'+i.carParkId);
+								
+								for (var x = 0; x < i.carParkTimes.length; x++) {
+									var timesList = i.carParkTimes[x];
+									if (timesList.dayOfWeek == "MONDAY") {
+										if (timesList.openTime == null && timesList.closeTime == null) {
+											$('#mondayfrom').html('CLOSED');
+											$('#mondayto').html('CLOSED');
+										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
+											$('#mondayfrom').html('ALL DAY');
+											$('#mondayto').html('ALL DAY');
+										} else {
+											$('#mondayfrom').html(timesList.openTime);
+											$('#mondayto').html(timesList.closeTime);
+										}
+									}
+									if (timesList.dayOfWeek == "TUESDAY") {
+										if (timesList.openTime == null && timesList.closeTime == null) {
+											$('#tuesdayfrom').html('CLOSED');
+											$('#tuesdayto').html('CLOSED');
+										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
+											$('#tuesdayfrom').html('ALL DAY');
+											$('#tuesdayto').html('ALL DAY');
+										} else {
+											$('#tuesdayfrom').html(timesList.openTime);
+											$('#tuesdayto').html(timesList.closeTime);
+										}
+									}
+									if (timesList.dayOfWeek == "WEDNESDAY") {
+										if (timesList.openTime == null && timesList.closeTime == null) {
+											$('#wednesdayfrom').html('CLOSED');
+											$('#wednesdayto').html('CLOSED');
+										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
+											$('#wednesdayfrom').html('ALL DAY');
+											$('#wednesdayto').html('ALL DAY');
+										} else {
+											$('#wednesdayfrom').html(timesList.openTime);
+											$('#wednesdayto').html(timesList.closeTime);
+										}
+									}
+									if (timesList.dayOfWeek == "THURSDAY") {
+										if (timesList.openTime == null && timesList.closeTime == null) {
+											$('#thursdayfrom').html('CLOSED');
+											$('#thursdayto').html('CLOSED');
+										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
+											$('#thursdayfrom').html('ALL DAY');
+											$('#thursdayto').html('ALL DAY');
+										} else {
+											$('#thursdayfrom').html(timesList.openTime);
+											$('#thursdayto').html(timesList.closeTime);
+										}
+									}
+									if (timesList.dayOfWeek == "FRIDAY") {
+										if (timesList.openTime == null && timesList.closeTime == null) {
+											$('#fridayfrom').html('CLOSED');
+											$('#fridayto').html('CLOSED');
+										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
+											$('#fridayfrom').html('ALL DAY');
+											$('#fridayto').html('ALL DAY');
+										} else {
+											$('#fridayfrom').html(timesList.openTime);
+											$('#fridayto').html(timesList.closeTime);
+										}
+									}
+									if (timesList.dayOfWeek == "SATURDAY") {
+										if (timesList.openTime == null && timesList.closeTime == null) {
+											$('#saturdayfrom').html('CLOSED');
+											$('#saturdayto').html('CLOSED');
+										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
+											$('#saturdayfrom').html('ALL DAY');
+											$('#saturdayto').html('ALL DAY');
+										} else {
+											$('#saturdayfrom').html(timesList.openTime);
+											$('#saturdayto').html(timesList.closeTime);
+										}
+									}
+									if (timesList.dayOfWeek == "SUNDAY") {
+										if (timesList.openTime == null && timesList.closeTime == null) {
+											$('#sundayfrom').html('CLOSED');
+											$('#sundayto').html('CLOSED');
+										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
+											$('#sundayfrom').html('ALL DAY');
+											$('#sundayto').html('ALL DAY');
+										} else {
+											$('#sundayfrom').html(timesList.openTime);
+											$('#sundayto').html(timesList.closeTime);
+										}
+									}
+				
+									//console.log(timesList);
 								}
-							});
+									
+									map.panTo(marker
+											.getPosition());
+									
+								});
+					} else {
+						console.log(status);
+					}
+				
+				});
 		}
+		
+
+	
+
+
+
+	
 	</script>
+
 	<script
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAqmLfX-y8ALh9UU0d48ddAKL3WNpK7ti4&callback=initMap"
-		async defer></script>
+		defer></script>
 
+	<script defer src="markerwithlabel.js"></script>
 
 </body>
 </html>

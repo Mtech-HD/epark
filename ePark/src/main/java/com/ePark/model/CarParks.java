@@ -17,8 +17,16 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicUpdate;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.sun.istack.NotNull;
+
 @Entity
 @Table(name = "carParks")
+@DynamicUpdate
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "carParkId")
 public class CarParks {
 
 	@Id
@@ -43,6 +51,9 @@ public class CarParks {
 
 	private ParkingRate parkingRate;
 
+	@NotNull
+	private String carParkComment;
+
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "carParkOwners", joinColumns = @JoinColumn(name = "carParkId", referencedColumnName = "carParkId"), inverseJoinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"))
 	private Set<Users> users;
@@ -50,13 +61,16 @@ public class CarParks {
 	@OneToMany(mappedBy = "carParks", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<CarParkSpots> carParkSpots = new HashSet<CarParkSpots>();
 
+	@OneToMany(mappedBy = "carParks", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<CarParkTimes> carParkTimes;
+
 	public CarParks() {
 
 	}
 
 	public CarParks(String name, String carParkAddress1, String carParkAddress2, String carParkCity,
-			String carParkPostcode, BigDecimal price, CarParkStatus carParkStatus, Date dateModified, ParkingRate parkingRate,
-			Set<Users> users) {
+			String carParkPostcode, BigDecimal price, CarParkStatus carParkStatus, Date dateModified,
+			ParkingRate parkingRate, Set<Users> users, String carParkComment) {
 		super();
 		this.name = name;
 		this.carParkAddress1 = carParkAddress1;
@@ -68,6 +82,7 @@ public class CarParks {
 		this.dateModified = dateModified;
 		this.parkingRate = parkingRate;
 		this.users = users;
+		this.carParkComment = carParkComment;
 	}
 
 	public long getCarParkId() {
@@ -165,7 +180,21 @@ public class CarParks {
 	public void setCarParkSpots(Set<CarParkSpots> carParkSpots) {
 		this.carParkSpots = carParkSpots;
 	}
-	
-	
+
+	public String getCarParkComment() {
+		return carParkComment;
+	}
+
+	public void setCarParkComment(String carParkComment) {
+		this.carParkComment = carParkComment;
+	}
+
+	public Set<CarParkTimes> getCarParkTimes() {
+		return carParkTimes;
+	}
+
+	public void setCarParkTimes(Set<CarParkTimes> carParkTimes) {
+		this.carParkTimes = carParkTimes;
+	}
 
 }

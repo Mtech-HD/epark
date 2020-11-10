@@ -1,6 +1,7 @@
 package com.ePark.model;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,6 +19,7 @@ public class CarParkSpots {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long carParkSpotId;
 
+	@Column(name = "isDisabled")
 	private boolean isDisabled;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
