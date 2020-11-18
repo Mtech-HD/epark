@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>ePark</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+	integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+	integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+	crossorigin="anonymous"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+	integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+	crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet"
+	href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+<script
+	src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+
+<style>
+body {
+	padding-top: 56px;
+}
+</style>
+
+</head>
+<body>
+
+	<!--  Navigation Bar -->
+
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+		<a class="navbar-brand" href="">ePark</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		</div>
+		<div class="collapse navbar-collapse" id="navbarNavDropdown">
+			<ul class="navbar-nav">
+				<li class="nav-item active"><a class="nav-link" href="/home">Home
+						<span class="sr-only">(current)</span>
+				</a></li>
+				<div sec:authorize="isAnonymous()">
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#"
+						id="navbarDropdownMenuLink" data-toggle="dropdown"
+						aria-haspopup="true" aria-expanded="false"> My Account </a>
+						<div class="dropdown-menu"
+							aria-labelledby="navbarDropdownMenuLink">
+							<a class="dropdown-item" href="/login">Log in</a> <a
+								class="dropdown-item" href="/registration">Register</a>
+						</div></li>
+				</div>
+
+
+				<li class="nav-item dropdown" sec:authorize="isAuthenticated()"><a
+					class="nav-link dropdown-toggle" href="#"
+					id="navbarDropdownMenuLink" data-toggle="dropdown"
+					aria-haspopup="true" aria-expanded="false"> My Account </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<a sec:authorize="hasAnyAuthority('USER')" class="dropdown-item"
+							href="#">View reservations</a> 
+							<a sec:authorize="hasAnyAuthority('USER')" class="dropdown-item"
+							href="#">View vehicles</a>
+							<a sec:authorize="hasAnyAuthority('USER')" class="dropdown-item"
+							href="#">Add vehicles</a>
+							<a class="dropdown-item" href="#">View
+							account details</a> <a class="dropdown-item" href="/logout">Log
+							out</a>
+					</div></li>
+
+				<li class="nav-item dropdown" sec:authorize="isAuthenticated()"><a
+					class="nav-link dropdown-toggle" href="#"
+					id="navbarDropdownMenuLink" data-toggle="dropdown"
+					aria-haspopup="true" aria-expanded="false"> Manage car parks </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<a class="dropdown-item" href="/viewcarparkforuser">View car
+							parks</a> <a class="dropdown-item" href="/addcarpark">Add car
+							parks</a>
+					</div></li>
+				<li class="nav-item dropdown"
+					sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')"><a
+					class="nav-link dropdown-toggle" href="#"
+					id="navbarDropdownMenuLink" data-toggle="dropdown"
+					aria-haspopup="true" aria-expanded="false"> Admin Menu </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<a class="dropdown-item" href="/viewcarpark">View car park
+							submissions</a> <a class="dropdown-item" href="">View
+							reservations</a>
+					</div></li>
+			</ul>
+
+		</div>
+	</nav>
+
+	<!--  HTML registration form -->
+
+	<div class="align-items-center container ">
+
+
+		<br> <br> <br>
+		<div class="form_group">
+			<h1>Add a car park</h1>
+		</div>
+		<br>
+
+		<form>
+
+			<!-- Registration success message -->
+			<div th:if="${param.success}">
+				<div class="alert alert-info alert-dismissible fade show">
+					Vehicle added successfully
+					<button type="button" class="close" data-dismiss="alert"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			</div>
+
+
+			<div class="form-group">
+				<label class="control-label" for="name"> Registration: </label> <input
+					type="text" id="name" class="form-control" 
+					placeholder="Vehicle registration number" required autofocus="autofocus" />
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+
+					<label class="control-label" for="address1"> Make: </label> <input
+						type="text" id="address2" class="form-control"
+						 required
+						placeholder="Make" autofocus="autofocus" />
+				</div>
+
+
+				<div class="form-group col-md-6">
+					<label class="control-label" for="firstname"> Colour: </label> <input
+						type="text" id="address2" class="form-control"
+						 placeholder="Colour"
+						required autofocus="autofocus" />
+				</div>
+			</div>
+
+
+
+
+	
+
+
+			<br>
+
+
+			<div class="form-group">
+				<button type="button" class="btn btn-primary mb-2"
+					data-toggle="modal" data-target="#submitcarpark">Submit
+					for approval</button>
+			</div>
+
+
+			<div class="modal" role="dialog" id="submitcarpark">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Submit Car Park</h5>
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<p>You are about to submit this car park for approval</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">Close</button>
+							<button type="submit" class="btn btn-primary">Submit</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+
+	</div>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+
+
+	<script type="text/javascript">
+
+	</script>
+
+
+</body>
+</html>

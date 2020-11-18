@@ -20,6 +20,8 @@
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
 	integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
 	crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://kit.fontawesome.com/44f3988e32.js" crossorigin="anonymous"></script>
 <style>
 body {
 	padding-top: 56px;
@@ -31,8 +33,7 @@ body {
 
 	<!--  Navigation Bar -->
 
-	<nav
-		class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
 		<a class="navbar-brand" href="">ePark</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse"
 			data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
@@ -78,27 +79,32 @@ body {
 						type="text" id="username" class="form-control"
 						th:field="*{username}" placeholder="Enter a username" required
 						autofocus="autofocus" />
+					<div id="username-valid" class="valid-feedback"></div>
+					<div id="username-invalid" class="invalid-feedback"></div>
 				</div>
+
 				<div class="form-group col-md-6">
 					<label class="control-label" for="password"> Password: </label> <input
 						type="password" id="password" class="form-control"
 						th:field="*{password}" required placeholder="Enter a password"
 						autofocus="autofocus" />
+						<div id="password-valid" class="valid-feedback"></div>
+					<div id="password-invalid" class="invalid-feedback"></div>
 				</div>
 			</div>
 			<div class="form-row">
-			<div class="form-group col-md-6">
-				<label class="control-label" for="firstname"> First Name: </label> <input
-					type="text" id="firstname" class="form-control"
-					th:field="*{firstName}" placeholder="Enter your first name"
-					required autofocus="autofocus" />
-			</div>
-			<div class="form-group col-md-6">
-				<label class="control-label" for="lastname"> Last Name: </label> <input
-					type="text" id="lastname" class="form-control"
-					th:field="*{lastName}" placeholder="Enter your surname" required
-					autofocus="autofocus" />
-			</div>
+				<div class="form-group col-md-6">
+					<label class="control-label" for="firstname"> First Name: </label>
+					<input type="text" id="firstname" class="form-control"
+						th:field="*{firstName}" placeholder="Enter your first name"
+						required autofocus="autofocus" />
+				</div>
+				<div class="form-group col-md-6">
+					<label class="control-label" for="lastname"> Last Name: </label> <input
+						type="text" id="lastname" class="form-control"
+						th:field="*{lastName}" placeholder="Enter your surname" required
+						autofocus="autofocus" />
+				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label" for="email"> Email: </label> <input
@@ -118,7 +124,7 @@ body {
 			</div>
 			<br>
 			<div class="form-group">
-				<button type="submit" class="btn btn-success">Register</button>
+				<button id="register" type="submit" class="btn btn-success"><i class="fas fa-user-plus"></i>&nbsp; Register</button>
 				<span>Already Registered? <a href="/" th:href="@{login}">Login
 						here</a></span>
 			</div>
@@ -126,7 +132,61 @@ body {
 
 	</div>
 
+	<script th:inline="javascript">
+		$(document).ready( function() {
+				
+				$("#username").keyup(function() {
 
+			$.ajax({
+				type : "GET",
+				url : "registration/" + $(this).val(),
+				success : function(result) {
+					if (result == "1") {
+						$("#username").removeClass("is-invalid");
+						$("#username").addClass("is-valid");
+						$("#username-valid").html("Username is valid");
+						$("#register").prop("disabled", false);
+					} else if (result == "2") {
+						$("#username").removeClass("is-valid");
+						$("#username").addClass("is-invalid");
+						$("#username-invalid").html("Username is taken");
+						$("#register").prop("disabled", true);
+					} else {
+						$("#username").removeClass("is-valid");
+						$("#username").addClass("is-invalid");
+						$("#username-invalid").html("Username is required");
+						$("#register").prop("disabled", true);
+					}
+				}
+
+			});
+
+		});
+				
+		$("#password").keyup(function() {
+			if ($("#password").val().length >= 8) {
+				$("#password").removeClass("is-invalid");
+				$("#password").addClass("is-valid");
+				$("#password-valid").html("Password is valid");
+				$("#register").prop("disabled", false);
+			} else if ($("#password").val().length < 8 && $("#password").val().length > 0) {
+				$("#password").removeClass("is-valid");
+				$("#password").addClass("is-invalid");
+				$("#password-invalid").html("Password is invalid");
+				$("#register").prop("disabled", true);
+			} else if ($("#password").val().length == 0) {
+				$("#password").removeClass("is-valid");
+				$("#password").addClass("is-invalid");
+				$("#password-invalid").html("Password is required");
+				$("#register").prop("disabled", true);
+			}
+			
+		});
+		
+		});
+		
+
+	</script>
 
 </body>
 </html>

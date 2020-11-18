@@ -1,5 +1,6 @@
 package com.ePark.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,10 +13,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(name = "users")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 public class Users {
 
 	@Id
@@ -37,6 +43,9 @@ public class Users {
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "roleId"))
 	private Set<Roles> roles;
+
+	@OneToMany(mappedBy = "users", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<CarParkComments> carParkComments = new HashSet<CarParkComments>();
 
 	public Users() {
 
@@ -107,10 +116,18 @@ public class Users {
 	public void setRoles(Set<Roles> roles) {
 		this.roles = roles;
 	}
-	
+
+	public Set<CarParkComments> getCarParkComments() {
+		return carParkComments;
+	}
+
+	public void setCarParkComments(Set<CarParkComments> carParkComments) {
+		this.carParkComments = carParkComments;
+	}
+
 	@Override
 	public String toString() {
-		
+
 		return username;
 	}
 

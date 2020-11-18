@@ -23,10 +23,8 @@
 	crossorigin="anonymous"></script>
 
 
-<link rel="stylesheet"
-	href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
-<script
-	src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
 
 <style>
 body {
@@ -39,7 +37,8 @@ body {
 
 	<!--  Navigation Bar -->
 
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+	<nav
+		class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
 		<a class="navbar-brand" href="">ePark</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse"
 			data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
@@ -101,20 +100,18 @@ body {
 		</div>
 	</nav>
 
-	<!--  HTML registration form -->
-
 	<div class="align-items-center container ">
 
 
 		<br> <br> <br>
 		<div class="form_group">
-			<h1>Add a car park</h1>
+			<h1>Reserve</h1>
 		</div>
 		<br>
 
-		<form th:action="@{/addcarpark}" method="post" th:object="${carpark}">
+		<form >
 
-			<!-- Registration success message -->
+
 			<div th:if="${param.success}">
 				<div class="alert alert-info alert-dismissible fade show">
 					Car park submitted successfully
@@ -126,18 +123,10 @@ body {
 			</div>
 
 
-
-			<div class="form-row">
-				<div class="form-group col-md-6">
-					<label class="control-label" for="name"> Name: </label> <input
-						type="text" id="name" class="form-control" th:field="*{name}"
-						placeholder="Enter a name" required autofocus="autofocus" />
-				</div>
-				<div class="form-group col-md-6">
-					<label class="control-label" for="email"> Email: </label> <input
-						type="text" id="email" class="form-control" th:field="*{email}"
-						placeholder="email@example.com" required autofocus="autofocus" />
-				</div>
+			<div class="form-group">
+				<label class="control-label" for="name"> Name: </label> <input
+					type="text" id="name" class="form-control" th:field="*{name}"
+					placeholder="Enter a name" required autofocus="autofocus" />
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-6">
@@ -221,17 +210,10 @@ body {
 			</div>
 
 			<div class="form-row">
-				<div class="form-group col-md-1">
+				<div class="form-group col">
 					<div class="form-check">
 						<input class="form-check-input" type="checkbox" value="" id="247">
 						<label class="control-label" for="Rate"> 24/7 </label>
-					</div>
-				</div>
-
-				<div class="form-group col-md-2">
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="" id="7to6">
-						<label class="control-label"> Business Hours </label>
 					</div>
 				</div>
 			</div>
@@ -245,12 +227,12 @@ body {
 					</div>
 
 					<label class="control-label" for="Rate"> From: </label> <input
-						disabled type="text" class="form-control time open"
+						disabled='disabled' type="text" class="form-control time"
 						id="MondayFrom" th:field="*{MondayFrom}" placeholder="--:--"
 						required autofocus="autofocus" /> <label class="control-label"
 						for="Rate"> To: </label> <input type="text" th:field="*{MondayTo}"
-						class="form-control time closed" id="MondayTo" placeholder="--:--"
-						disabled required autofocus="autofocus" />
+						class="form-control time" id="MondayTo" placeholder="--:--"
+						disabled='disabled' required autofocus="autofocus" />
 
 				</div>
 				<div class="form-group col">
@@ -260,12 +242,12 @@ body {
 							for="Rate"> Tuesday: </label>
 					</div>
 					<label class="control-label" for="Rate"> From: </label> <input
-						disabled th:field="*{TuesdayFrom}" type="text"
-						class="form-control time open" id="TuesdayFrom"
-						placeholder="--:--" required autofocus="autofocus"> <label
+						disabled='disabled' th:field="*{TuesdayFrom}" type="text"
+						class="form-control time" id="TuesdayFrom" placeholder="--:--"
+						required autofocus="autofocus"> <label
 						class="control-label" for="Rate"> To: </label> <input type="text"
-						th:field="*{TuesdayTo}" class="form-control time closed"
-						id="TuesdayTo" placeholder="--:--" required disabled
+						th:field="*{TuesdayTo}" class="form-control time" id="TuesdayTo"
+						placeholder="--:--" required disabled='disabled'
 						autofocus="autofocus" step="60">
 				</div>
 				<div class="form-group col">
@@ -275,12 +257,12 @@ body {
 							for="Rate"> Wednesday: </label>
 					</div>
 					<label class="control-label" for="Rate"> From: </label> <input
-						disabled th:field="*{WednesdayFrom}" type="text"
-						class="form-control time open" id="WednesdayFrom"
-						placeholder="--:--" required autofocus="autofocus" /> <label
-						class="control-label" for="Rate"> To: </label> <input type="text"
-						th:field="*{WednesdayTo}" class="form-control time closed"
-						id="WednesdayTo" placeholder="--:--" required disabled
+						disabled='disabled' th:field="*{WednesdayFrom}" type="text"
+						class="form-control time" id="WednesdayFrom" placeholder="--:--"
+						required autofocus="autofocus" /> <label class="control-label"
+						for="Rate"> To: </label> <input type="text"
+						th:field="*{WednesdayTo}" class="form-control time"
+						id="WednesdayTo" placeholder="--:--" required disabled='disabled'
 						autofocus="autofocus" />
 				</div>
 				<div class="form-group col">
@@ -290,12 +272,12 @@ body {
 							for="Rate"> Thursday: </label>
 					</div>
 					<label class="control-label" for="Rate"> From: </label> <input
-						disabled th:field="*{ThursdayFrom}" type="text"
-						class="form-control time open" id="ThursdayFrom"
-						placeholder="--:--" required autofocus="autofocus" /> <label
-						class="control-label" for="Rate"> To: </label> <input type="text"
-						th:field="*{ThursdayTo}" class="form-control time closed"
-						id="ThursdayTo" placeholder="--:--" required disabled
+						disabled='disabled' th:field="*{ThursdayFrom}" type="text"
+						class="form-control time" id="ThursdayFrom" placeholder="--:--"
+						required autofocus="autofocus" /> <label class="control-label"
+						for="Rate"> To: </label> <input type="text"
+						th:field="*{ThursdayTo}" class="form-control time" id="ThursdayTo"
+						placeholder="--:--" required disabled='disabled'
 						autofocus="autofocus" />
 				</div>
 				<div class="form-group col">
@@ -305,12 +287,12 @@ body {
 							Friday: </label>
 					</div>
 					<label class="control-label" for="Rate"> From: </label> <input
-						disabled th:field="*{FridayFrom}" type="text"
-						class="form-control time open" id="FridayFrom" placeholder="--:--"
+						disabled='disabled' th:field="*{FridayFrom}" type="text"
+						class="form-control time" id="FridayFrom" placeholder="--:--"
 						required autofocus="autofocus" /> <label class="control-label"
 						for="Rate"> To: </label> <input type="text" th:field="*{FridayTo}"
-						class="form-control time closed" id="FridayTo" placeholder="--:--"
-						required disabled autofocus="autofocus" />
+						class="form-control time" id="FridayTo" placeholder="--:--"
+						required disabled='disabled' autofocus="autofocus" />
 				</div>
 				<div class="form-group col">
 					<div class="form-check">
@@ -319,12 +301,12 @@ body {
 							for="Rate"> Saturday: </label>
 					</div>
 					<label class="control-label" for="Rate"> From: </label> <input
-						disabled th:field="*{SaturdayFrom}" type="text"
-						class="form-control time open" id="SaturdayFrom"
-						placeholder="--:--" required autofocus="autofocus" /> <label
-						class="control-label" for="Rate"> To: </label> <input type="text"
-						th:field="*{SaturdayTo}" class="form-control time closed"
-						id="SaturdayTo" placeholder="--:--" required disabled
+						disabled='disabled' th:field="*{SaturdayFrom}" type="text"
+						class="form-control time" id="SaturdayFrom" placeholder="--:--"
+						required autofocus="autofocus" /> <label class="control-label"
+						for="Rate"> To: </label> <input type="text"
+						th:field="*{SaturdayTo}" class="form-control time" id="SaturdayTo"
+						placeholder="--:--" required disabled='disabled'
 						autofocus="autofocus" />
 				</div>
 				<div class="form-group col">
@@ -333,11 +315,11 @@ body {
 						<label class="control-label" for="Rate"> Sunday: </label>
 					</div>
 					<label class="control-label" for="Rate"> From: </label> <input
-						disabled th:field="*{SundayFrom}" type="text"
-						class="form-control time open" id="SundayFrom" placeholder="--:--"
+						disabled='disabled' th:field="*{SundayFrom}" type="text"
+						class="form-control time" id="SundayFrom" placeholder="--:--"
 						required autofocus="autofocus" /> <label class="control-label"
 						for="Rate"> To: </label> <input type="text" th:field="*{SundayTo}"
-						disabled class="form-control time closed" id="SundayTo"
+						disabled='disabled' class="form-control time" id="SundayTo"
 						placeholder="--:--" required autofocus="autofocus" />
 				</div>
 
@@ -391,177 +373,7 @@ body {
 
 
 	<script type="text/javascript">
-		$(document)
-				.ready(
-						function() {
-							$('.time').timepicker({
-								scrollbar : true,
-								disableTextInput : true,
-								listWidth : 1,
-								timeFormat : 'HH:mm',
-								change : function() {
-									$('#247').prop('checked', false);
-									$('#7to6').prop('checked', false);
-								}
-							})
-
-							$('.timerow .form-check-input').change(function() {
-								$('#247').prop('checked', false);
-								$('#7to6').prop('checked', false);
-
-							});
-
-							$('#247').change(
-									function() {
-										if ($('#247').is(':checked')) {
-											$('.timerow .form-check-input')
-													.prop('checked', true);
-											$('.time').val('00:00');
-											$('.timerow .time').prop(
-													'disabled', false);
-											$('#7to6').prop('checked', false);
-										} else {
-											$('.time').val(null);
-											$('.timerow .form-check-input')
-													.prop('checked', false);
-											$('.timerow .time').prop(
-													'disabled', true);
-
-										}
-									});
-
-							$('#7to6').change(
-									function() {
-										if ($('#7to6').is(':checked')) {
-											$('.timerow .form-check-input')
-													.prop('checked', true);
-											$('.time.open').val('07:00');
-											$('.time.closed').val('18:00');
-											$('.timerow .time').prop(
-													'disabled', false);
-											$('#247').prop('checked', false);
-										} else {
-											$('.time').val(null);
-											$('.timerow .form-check-input')
-													.prop('checked', false);
-											$('.timerow .time').prop(
-													'disabled', true);
-
-										}
-									});
-
-							$('#checkMonday').change(
-									function() {
-										if ($('#checkMonday').is(
-												':not(:checked)')) {
-											$('#MondayFrom').prop('disabled',
-													true).val(null);
-											$('#MondayTo').prop('disabled',
-													true).val(null)
-													.removeClass('.time');
-
-										} else {
-											$('#MondayFrom').prop('disabled',
-													false);
-											$('#MondayTo').prop('disabled',
-													false);
-										}
-									});
-							$('#checkTuesday').change(
-									function() {
-										if ($('#checkTuesday').is(
-												':not(:checked)')) {
-											$('#TuesdayFrom').prop('disabled',
-													true).val(null);
-											$('#TuesdayTo').prop('disabled',
-													true).val(null);
-										} else {
-											$('#TuesdayFrom').prop('disabled',
-													false);
-											$('#TuesdayTo').prop('disabled',
-													false);
-										}
-									});
-							$('#checkWednesday')
-									.change(
-											function() {
-												if ($('#checkWednesday').is(
-														':not(:checked)')) {
-													$('#WednesdayFrom').prop(
-															'disabled', true)
-															.val(null);
-													$('#WednesdayTo').prop(
-															'disabled', true)
-															.val(null);
-												} else {
-													$('#WednesdayFrom').prop(
-															'disabled', false);
-													$('#WednesdayTo').prop(
-															'disabled', false);
-												}
-											});
-							$('#checkThursday').change(
-									function() {
-										if ($('#checkThursday').is(
-												':not(:checked)')) {
-											$('#ThursdayFrom').prop('disabled',
-													true).val(null);
-											$('#ThursdayTo').prop('disabled',
-													true).val(null);
-										} else {
-											$('#ThursdayFrom').prop('disabled',
-													false);
-											$('#ThursdayTo').prop('disabled',
-													false);
-										}
-									});
-							$('#checkFriday').change(
-									function() {
-										if ($('#checkFriday').is(
-												':not(:checked)')) {
-											$('#FridayFrom').prop('disabled',
-													true).val(null);
-											$('#FridayTo').prop('disabled',
-													true).val(null);
-										} else {
-											$('#FridayFrom').prop('disabled',
-													false);
-											$('#FridayTo').prop('disabled',
-													false);
-										}
-									});
-							$('#checkSaturday').change(
-									function() {
-										if ($('#checkSaturday').is(
-												':not(:checked)')) {
-											$('#SaturdayFrom').prop('disabled',
-													true).val(null);
-											$('#SaturdayTo').prop('disabled',
-													true).val(null);
-										} else {
-											$('#SaturdayFrom').prop('disabled',
-													false);
-											$('#SaturdayTo').prop('disabled',
-													false);
-										}
-									});
-
-							$('#checkSunday').change(
-									function() {
-										if ($('#checkSunday').is(
-												':not(:checked)')) {
-											$('#SundayFrom').prop('disabled',
-													true).val(null);
-											$('#SundayTo').prop('disabled',
-													true).val(null);
-										} else {
-											$('#SundayFrom').prop('disabled',
-													false);
-											$('#SundayTo').prop('disabled',
-													false);
-										}
-									});
-						});
+		
 	</script>
 
 

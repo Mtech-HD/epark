@@ -26,65 +26,92 @@
 	box-shadow: 0 0 2px #000;
 }
 
+
+#backbar {
+	position: fixed;
+	background: #F0F0F0;
+	height: 35px;
+	width: 25%;
+	padding-top: 5px;
+	padding-left: 14px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+	text-align: left;
+	border-bottom: 1px solid #B8B8B8;
+	visibility: hidden;
+}
+
+#nearest {
+	padding-top: 20px;
+	visibility: visible;
+	z-index: -1;
+}
+
+.jumbotron {
+	border: 1px solid #C8C8C8;
+	padding: 15px;
+}
+
+.jumbotron:hover {
+	background: #c9c9c9;
+	cursor: pointer;
+}
+
+.pointer {
+	cursor: pointer;
+} 
+
 .sideInfo {
-	position: fixed; 
-	top : 56px;
-	bottom: 0;
+	position: fixed;
 	width: 25%;
 	height: 100%;
-	padding: 20px;
+	padding: 25px;
 	overflow-y: scroll;
+	overflow-x: hidden;
+	word-wrap: break-word;
 }
 
-.namebanner {
-	width: 100%;
-	background-color: #336C9D;
+#details {
+	padding-top: 60px;
+	visibility: hidden;
+	z-index: -1;
 }
 
-.namebanner h2 {
-	text-align: center;
-	color: #FFFFFF;
-}
-
-.my-custom-class-for-label {
+.markerdesign {
 	width: 60px;
 	height: 27px;
-	border: 1px solid #336C9D;
-	border-radius: 5px;
+	border: 2px solid #336C9D;
+	border-radius: 10px;
 	background: #FFFFFF;
 	text-align: center;
-	line-height: 26px;
+	line-height: 25px;
 	font-weight: bold;
 	font-size: 15px;
 	color: #336C9D;
+}
+
+.markerdesignhover {
+	width: 60px;
+	height: 27px;
+	border: 2px solid #FFFFFF;
+	border-radius: 10px;
+	background: #336C9D;
+	text-align: center;
+	line-height: 25px;
+	font-weight: bold;
+	font-size: 15px;
+	color: #FFFFFF;
 }
 
 body {
 	padding-top: 56px;
 }
 </style>
-
-
-
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-	integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-	crossorigin="anonymous"></script>
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-	integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-	crossorigin="anonymous"></script>
-<script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-	integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-	crossorigin="anonymous"></script>
-
-
-
-
+<script src="https://kit.fontawesome.com/44f3988e32.js" crossorigin="anonymous"></script>
 </head>
 <body>
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-		<a class="navbar-brand" href="">ePark</a>
+		<a class="navbar-brand" href="">e<i class="fas fa-parking"></i>ark</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse"
 			data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
 			aria-expanded="false" aria-label="Toggle navigation">
@@ -113,10 +140,17 @@ body {
 					id="navbarDropdownMenuLink" data-toggle="dropdown"
 					aria-haspopup="true" aria-expanded="false"> My Account </a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a sec:authorize="hasAnyAuthority('USER')" class="dropdown-item"
-							href="#">View reservations</a> <a class="dropdown-item" href="#">View
-							account details</a> <a class="dropdown-item" href="/logout">Log
-							out</a>
+						<a sec:authorize="hasAnyAuthority('USER', 'ADMIN')"
+							class="dropdown-item" href="#"><i class="fas fa-list fa-md"></i>&nbsp; View reservations</a>
+						<div class="dropdown-divider"></div>
+						<a sec:authorize="hasAnyAuthority('USER', 'ADMIN')"
+							class="dropdown-item" href="viewvehicles"><i class="fas fa-car-side fa-md"></i>&nbsp; View vehicles</a> <a
+							sec:authorize="hasAnyAuthority('USER', 'ADMIN')"
+							class="dropdown-item" href="/addvehicles">Add vehicles</a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" href="#"><i class="fas fa-user-circle fa-md"></i>&nbsp; View account details</a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" href="/logout">Log out</a>
 					</div></li>
 
 				<li class="nav-item dropdown"
@@ -125,8 +159,8 @@ body {
 					id="navbarDropdownMenuLink" data-toggle="dropdown"
 					aria-haspopup="true" aria-expanded="false"> Manage car parks </a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a class="dropdown-item" href="/viewcarparkforuser">View car
-							parks</a> <a class="dropdown-item" href="/addcarpark">Add car
+						<a class="dropdown-item" href="/viewcarparkforuser"><i class="fas fa-list fa-md"></i>&nbsp; View car
+							parks</a> <a class="dropdown-item" href="/addcarpark"><i class="far fa-plus-square fa-md"></i>&nbsp; Add car
 							parks</a>
 					</div></li>
 				<li class="nav-item dropdown"
@@ -135,8 +169,8 @@ body {
 					id="navbarDropdownMenuLink" data-toggle="dropdown"
 					aria-haspopup="true" aria-expanded="false"> Admin Menu </a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a class="dropdown-item" href="/viewcarpark">View car park
-							submissions</a> <a class="dropdown-item" href="">View
+						<a class="dropdown-item" href="/viewcarpark"><i class="fas fa-list fa-md"></i>&nbsp; View car park
+							submissions</a> <a class="dropdown-item" href=""><i class="fas fa-list fa-md"></i>&nbsp; View
 							reservations</a>
 					</div></li>
 
@@ -151,38 +185,61 @@ body {
 		</form>
 	</nav>
 
+	<div id="nearest" class="sideInfo">
+		<h5>Closest Car Parks</h5>
+		<hr class="solid">
+	</div>
 
-	<div class="sideInfo">
-		<div class="namebanner">
+	<div id="backbar">
+		<a id="backbutton" class="pointer" style="color: #404040;">
+			<i class="fas fa-arrow-left fa-md"></i>&nbsp; Back</a>
+	</div>
+
+	<div id="details" class="sideInfo">
+
+		<div class="jumbotron">
 			<h2 id="carparkname"></h2>
 		</div>
+
 		<div class="form-group">
-			<a type="button" id="reservebutton" class="btn btn-outline-primary mb-2 disabled" href="">Reserve</a>
+			<a role="button" id="reservebutton"
+				class="btn btn-primary mb-2 btn-block" href=""><i class="far fa-calendar-check fa-lg "></i>&nbsp; Reserve</a>
 		</div>
 
 		<dl class="row">
 
-			<dt class="col-sm-5">Address:</dt>
+			<dt class="col-sm-1"><i class="far fa-address-book fa-lg"></i></dt>
+			<dt class="col-sm-4">Address:</dt>
 			<dd class="col-sm-7" id="address"></dd>
 
-			<dt class="col-sm-5">Parking rate:</dt>
+			<dt class="col-sm-1"><i class="far fa-clock fa-lg"></i></dt>
+			<dt class="col-sm-4">Rate:</dt>
 			<dd class="col-sm-7" id="parkingrate"></dd>
 
-			<dt class="col-sm-5">Price:</dt>
+			<dt class="col-sm-1"><i class="fas fa-pound-sign fa-lg"></i></dt>
+			<dt class="col-sm-4">Price:</dt>
 			<dd class="col-sm-7" id="price"></dd>
 
-			<dt class="col-sm-5">Available spaces:</dt>
+			<dt class="col-sm-1"><i class="fas fa-car-side fa-lg"></i></dt>
+			<dt class="col-sm-4">Spaces:</dt>
 			<dd class="col-sm-7" id="spaces"></dd>
 
-			<dt class="col-sm-5">Disabled:</dt>
+			<dt class="col-sm-1"><i class="fas fa-wheelchair fa-lg"></i></dt>
+			<dt class="col-sm-4">Disabled:</dt>
 			<dd class="col-sm-7" id="disabled"></dd>
 
+			<dt class="col-sm-1"><i class="far fa-envelope fa-lg"></i></dt>
+			<dt class="col-sm-4">Email:</dt>
+			<dd class="col-sm-7" id="email"></dd>
+		</dl>
 
-			<dd class="col-sm-11">
+		<hr class="solid">
+		<dl class="row">
+			<dd class="col-sm-12">
 				<dl class="row">
-					<dt class="col-sm-5">Day</dt>
-					<dt class="col-sm-3">From</dt>
-					<dt class="col-sm-3">To</dt>
+					<dt class="col-sm-5"><i class="far fa-calendar-alt fa-lg"></i></dt>
+					<dt class="col-sm-3"><i class="fas fa-door-open fa-lg"></i>&nbsp;From</dt>
+					<dt class="col-sm-3"><i class="fas fa-door-closed fa-lg"></i>&nbsp;To</dt>
 				</dl>
 				<dl class="row">
 					<dt class="col-sm-5">Monday</dt>
@@ -221,6 +278,7 @@ body {
 				</dl>
 			</dd>
 		</dl>
+		<br>
 
 
 
@@ -237,27 +295,28 @@ body {
 
 	<script th:inline="javascript">
 
-	  var addresses  = [[${carParkAddresses}]];
-	  
-	  var carParks  = [[${carParks}]];
-
-
-
-		var geocoder;
-		var map;
+	  var weekValues = [[${weekValues}]];
+	  var carParks = [[${carParks}]];
+	  var markers = [];
+	  var isclosed = "Closed";
+	  var allday = "All day";
+	  var geocoder;
+	  var map;
 		
-
+	
+				
 		function initMap() {
 			geocoder = new google.maps.Geocoder();
-
-		    
+			
+		
 			var uluru = {
 				lat : 51.602680,
 				lng : -0.275280
 			};
 			map = new google.maps.Map(document.getElementById('map'), {
-				zoom : 14,
+				zoom : 15,
 				center : uluru,
+				minZoom: 14,
 				mapTypeControlOptions : {
 					mapTypeIds : []
 				},
@@ -403,17 +462,18 @@ body {
 						"color" : "#92998d"
 					} ]
 				} ]
+
 			});
-
-		for (var i = 0; i < carParks.length; i++) {
-			var address = carParks[i].carParkAddress1 + "," + carParks[i].carParkAddress2 + "," + carParks[i].carParkCity + "," + carParks[i].carParkPostcode;
-
+			google.maps.event.addListener(map, 'tilesloaded', find_closest_markers);
+			google.maps.event.addListener(map, 'center_changed', find_closest_markers);
+			
+			for (var i = 0; i < carParks.length; i++) {
+				var address = carParks[i].carParkAddress1 + "," + carParks[i].carParkAddress2 + "," + carParks[i].carParkCity + "," + carParks[i].carParkPostcode;
 				geocoder.geocode({'address': address}, geocodeEncapsulation(carParks[i]));
-
-		
+			}
 		}
 		
-		}
+		
 		function geocodeEncapsulation(i) {
 
 					return( function(results, status){
@@ -430,121 +490,27 @@ body {
 									map : map,
 									position : results[0].geometry.location,
 									icon : markerIcon,
-									labelContent : '£'  + i.price,
+									labelContent : '£'  + i.price.toFixed(2),
 									labelAnchor : new google.maps.Point(
 											30, 35),
-									labelClass : "my-custom-class-for-label", 
+									labelClass : "markerdesign", 
 									labelInBackground : false,
-									title : i.carParkId
-									
-									
+									title : i.name
 								});
- 						//marker.set("carparkid", i.carParkId);
-						google.maps.event.addListener(marker,
-								'click', function() {
-								$('#carparkname').html(i.name);
-								$('#address').html(i.carParkAddress1 + ",<br>" + i.carParkAddress2 + ",<br>" + i.carParkCity + ",<br>" + i.carParkPostcode);
-								$('#parkingrate').html(i.parkingRate);
-								$('#price').html('£'+i.price);
-								$('#spaces').html(i.carParkSpots.length);
-								$('#disabled').html(i.carParkSpots.length.isDisabled);
-								$('#reservebutton').prop('class', 'btn btn-outline-primary mb-2');
-								$('#reservebutton').prop('href','/reserve/'+i.carParkId);
-								
-								for (var x = 0; x < i.carParkTimes.length; x++) {
-									var timesList = i.carParkTimes[x];
-									if (timesList.dayOfWeek == "MONDAY") {
-										if (timesList.openTime == null && timesList.closeTime == null) {
-											$('#mondayfrom').html('CLOSED');
-											$('#mondayto').html('CLOSED');
-										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
-											$('#mondayfrom').html('ALL DAY');
-											$('#mondayto').html('ALL DAY');
-										} else {
-											$('#mondayfrom').html(timesList.openTime);
-											$('#mondayto').html(timesList.closeTime);
-										}
-									}
-									if (timesList.dayOfWeek == "TUESDAY") {
-										if (timesList.openTime == null && timesList.closeTime == null) {
-											$('#tuesdayfrom').html('CLOSED');
-											$('#tuesdayto').html('CLOSED');
-										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
-											$('#tuesdayfrom').html('ALL DAY');
-											$('#tuesdayto').html('ALL DAY');
-										} else {
-											$('#tuesdayfrom').html(timesList.openTime);
-											$('#tuesdayto').html(timesList.closeTime);
-										}
-									}
-									if (timesList.dayOfWeek == "WEDNESDAY") {
-										if (timesList.openTime == null && timesList.closeTime == null) {
-											$('#wednesdayfrom').html('CLOSED');
-											$('#wednesdayto').html('CLOSED');
-										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
-											$('#wednesdayfrom').html('ALL DAY');
-											$('#wednesdayto').html('ALL DAY');
-										} else {
-											$('#wednesdayfrom').html(timesList.openTime);
-											$('#wednesdayto').html(timesList.closeTime);
-										}
-									}
-									if (timesList.dayOfWeek == "THURSDAY") {
-										if (timesList.openTime == null && timesList.closeTime == null) {
-											$('#thursdayfrom').html('CLOSED');
-											$('#thursdayto').html('CLOSED');
-										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
-											$('#thursdayfrom').html('ALL DAY');
-											$('#thursdayto').html('ALL DAY');
-										} else {
-											$('#thursdayfrom').html(timesList.openTime);
-											$('#thursdayto').html(timesList.closeTime);
-										}
-									}
-									if (timesList.dayOfWeek == "FRIDAY") {
-										if (timesList.openTime == null && timesList.closeTime == null) {
-											$('#fridayfrom').html('CLOSED');
-											$('#fridayto').html('CLOSED');
-										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
-											$('#fridayfrom').html('ALL DAY');
-											$('#fridayto').html('ALL DAY');
-										} else {
-											$('#fridayfrom').html(timesList.openTime);
-											$('#fridayto').html(timesList.closeTime);
-										}
-									}
-									if (timesList.dayOfWeek == "SATURDAY") {
-										if (timesList.openTime == null && timesList.closeTime == null) {
-											$('#saturdayfrom').html('CLOSED');
-											$('#saturdayto').html('CLOSED');
-										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
-											$('#saturdayfrom').html('ALL DAY');
-											$('#saturdayto').html('ALL DAY');
-										} else {
-											$('#saturdayfrom').html(timesList.openTime);
-											$('#saturdayto').html(timesList.closeTime);
-										}
-									}
-									if (timesList.dayOfWeek == "SUNDAY") {
-										if (timesList.openTime == null && timesList.closeTime == null) {
-											$('#sundayfrom').html('CLOSED');
-											$('#sundayto').html('CLOSED');
-										} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
-											$('#sundayfrom').html('ALL DAY');
-											$('#sundayto').html('ALL DAY');
-										} else {
-											$('#sundayfrom').html(timesList.openTime);
-											$('#sundayto').html(timesList.closeTime);
-										}
-									}
-				
-									//console.log(timesList);
-								}
-									
-									map.panTo(marker
-											.getPosition());
-									
-								});
+						marker.set("carpark", i);
+						markers.push(marker);
+ 						
+						google.maps.event.addListener(marker,'click', function () {
+							car_park_details(marker);
+							map.panTo(marker.getPosition());
+						});
+						google.maps.event.addListener(marker,'mouseover', function () {
+							marker.set("labelClass","markerdesignhover");
+						});
+						google.maps.event.addListener(marker,'mouseout', function () {
+							marker.set("labelClass","markerdesign");
+						});
+						
 					} else {
 						console.log(status);
 					}
@@ -552,16 +518,160 @@ body {
 				});
 		}
 		
+		
+		   function car_park_details(marker) { 
+			   
+			   var carpark = marker.get("carpark");
+			    $('#nearest').css("visibility", "hidden"); 
+				$('#backbar').css("visibility", "visible"); 
+				$('#details').css("visibility", "visible"); 
+				
+				$('#carparkname').html(carpark.name);
+				$('#address').html(carpark.carParkAddress1 + "<br>" + carpark.carParkAddress2 + "<br>" + carpark.carParkCity + "<br>" + carpark.carParkPostcode);
+				$('#parkingrate').html(carpark.parkingRate);
+				$('#price').html('£'+carpark.price.toFixed(2));
+				$('#spaces').html(carpark.carParkSpots.length);
+				$('#email').html(carpark.email);
 
+				
+/* 				var disabledcount = 0;
+				for (var d = 0; d < carpark.carParkSpots.length; d++) {
+					if (carpark.carParkSpots[d].disabled == true){
+						disabledcount++;
+					}
+				} */
+				$('#disabled').html(carpark.disabledSpots.length); 
+
+				$('#reservebutton').prop('href','/reserve/'+carpark.carParkId);
+				
+				//for (var x = 0; x < weekValues.length; x++) {
+					for (var y = 0; y < carpark.carParkTimes.length; y++) {
+						var timesList = carpark.carParkTimes[y];
+						
+						//if (timesList.dayOfWeek === weekValues[x]) {
+							if (timesList.openTime == null && timesList.closeTime == null) {
+								$('#'+timesList.dayOfWeek.toLowerCase()+'from').html(isclosed);
+								$('#'+timesList.dayOfWeek.toLowerCase()+'to').html(isclosed);
+							} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
+								$('#'+timesList.dayOfWeek.toLowerCase()+'from').html(allday);
+								$('#'+timesList.dayOfWeek.toLowerCase()+'to').html(allday);
+							} else {
+								$('#'+timesList.dayOfWeek.toLowerCase()+'from').html(timesList.openTime);
+								$('#'+timesList.dayOfWeek.toLowerCase()+'to').html(timesList.closeTime);
+							}
+						//}
+						
+					}
+					
+				//}
+	
+		   }
+		
+		function compare(a, b) {
+			var distancea = a.get("distance");
+			var distanceb = b.get("distance");
+			
+			  if (distancea > distanceb) return 1;
+			  if (distanceb > distancea) return -1;
+
+			  return 0;
+			}
+
+		function find_closest_markers() {
+			if ($('#nearest').is(":visible")) {
+		    for (i = 0; i < markers.length; i++) {
+		        var d = google.maps.geometry.spherical.computeDistanceBetween(markers[i].position, map.center);
+		        
+		        markers[i].set("distance", d);
+
+		        markers.sort(compare);
+		        display_closest_markers();
+		    }
+			}
+		}
+		   
+		
+		function display_closest_markers() {
+			if ($('#nearest').is(":visible")) {
+		   		var priceid = "priceid";
+		   		var spaceid = "spaceid";
+		   		var nameid = "nameid";
+		   		var nearestid = "nearestcarpark";
+		   		var range = 0;
+		   
+		   		if (markers.length < 5) {
+			   		range = markers.length;
+		   		} else {
+		       		range = 5;
+		   		}
+		   
+		   		for (var i = 0; i < range; i++) {
+		    		if ($('#'+nearestid+i).length == 0 ){
+		    	
+						var div = $('<div>').addClass("jumbotron").attr('id', nearestid+i);
+		/*	   			var table = $('<table>').addClass("table-bordered table-sm pointer");
+			   
+ 			    		table.append('<thead style="background: #0275d8;color: #FFFFFF;"><tr style="text-align: center; vertical-align: top"><th id="'+nameid+i+'" colspan="2"></th></tr></thead>');
+			    		table.append('<tbody><tr style="text-align: center;"><td id="'+priceid+i+'" scope="col"></td><td id="'+spaceid+i+'" scope="col"></td></tr></tbody>'); */
+						//div.append(table);
+						//$('#nearest').append("<br>");
+						div.append('<div class="container" style="height: 72px;"><h5 style="padding-bottom: 15px; border-bottom: 1px solid #B8B8B8;" id="'+nameid+i+'"></h5><h8  id="'+priceid+i+'"></h8><h8 style="float:right;" id="'+spaceid+i+'"></h8></div>');
+			    		$('#nearest').append(div);
+
+		    		}  
+		    		$('#'+nameid+i).html('<i class="fas fa-parking fa-lg" style="color:#007FFF;"></i>&nbsp;&nbsp;'+markers[i].get("carpark").name);
+		    		$('#'+priceid+i).html("£"+markers[i].get("carpark").price.toFixed(2));
+		    		$('#'+spaceid+i).html('<i class="fas fa-car-side fa-lg"></i>&nbsp;'+markers[i].get("carpark").carParkSpots.length + " spaces");
+		   		}
+		    
+		}
+		   
+  		   $("#nearestcarpark0").click( function() {
+			   car_park_details(markers[0]);
+		   });
+ 		   $("#nearestcarpark1").click( function() {
+			   car_park_details(markers[1]);
+		   });
+		   $("#nearestcarpark2").click( function() {
+			   car_park_details(markers[2]);
+		   });
+ 		   $("#nearestcarpark3").click( function() {
+			   car_park_details(markers[3]);
+		   });
+		   $("#nearestcarpark4").click( function() { 
+			   //var m = markers.find(x => x.title == $("#nameid4").text());
+			   car_park_details(markers[4]);
+		   });     
+		   
+		   $("#backbutton").click( function() {
+				$('#backbar').css("visibility", "hidden"); 
+				$('#details').css("visibility", "hidden"); 
+				$('#nearest').css("visibility", "visible"); 
+		   });
+		   
+	    		
+		}
 	
 
-
-
+		
 	
 	</script>
 
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
 	<script
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAqmLfX-y8ALh9UU0d48ddAKL3WNpK7ti4&callback=initMap"
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+
+	<script
+		src="https://maps.googleapis.com/maps/api/js?libraries=geometry&key=AIzaSyAqmLfX-y8ALh9UU0d48ddAKL3WNpK7ti4&callback=initMap"
 		defer></script>
 
 	<script defer src="markerwithlabel.js"></script>
