@@ -11,6 +11,8 @@ import com.ePark.model.Users;
 public class CarParkDto {
 
 	private String name;
+	
+	private String email;
 
 	private String carParkAddress1;
 
@@ -54,14 +56,15 @@ public class CarParkDto {
 	public CarParkDto() {
 	}
 
-	public CarParkDto(String name, String carParkAddress1, String carParkAddress2, String carParkCity,
+	public CarParkDto(String name, String email, String carParkAddress1, String carParkAddress2, String carParkCity,
 			String carParkPostcode, int spaces, int isDisabled, BigDecimal price, BigDecimal rate,
-			CarParkStatus carParkStatus, Set<Users> users, Set<CarParkSpots> carParkSpots, String mondayFrom,
+			CarParkStatus carParkStatus, Set<Users> users, Set<CarParkSpots> carParkSpots, String comment, String mondayFrom,
 			String mondayTo, String tuesdayFrom, String tuesdayTo, String wednesdayFrom, String wednesdayTo,
 			String thursdayFrom, String thursdayTo, String fridayFrom, String fridayTo, String saturdayFrom,
 			String saturdayTo, String sundayFrom, String sundayTo) {
 		super();
 		this.name = name;
+		this.email = email;
 		this.carParkAddress1 = carParkAddress1;
 		this.carParkAddress2 = carParkAddress2;
 		this.carParkCity = carParkCity;
@@ -73,6 +76,7 @@ public class CarParkDto {
 		this.carParkStatus = carParkStatus;
 		this.users = users;
 		this.carParkSpots = carParkSpots;
+		this.comment = comment;
 		this.mondayFrom = mondayFrom;
 		this.mondayTo = mondayTo;
 		this.tuesdayFrom = tuesdayFrom;
@@ -96,6 +100,14 @@ public class CarParkDto {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getCarParkAddress1() {

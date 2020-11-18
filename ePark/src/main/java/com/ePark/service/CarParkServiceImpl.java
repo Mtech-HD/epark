@@ -1,7 +1,8 @@
 package com.ePark.service;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.sql.Time;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +22,6 @@ import com.ePark.model.ParkingRate;
 import com.ePark.model.Users;
 import com.ePark.model.Week;
 import com.ePark.repository.CarParkRepository;
-import com.ePark.repository.CarParkSpotRepository;
 import com.ePark.repository.UserRepository;
 
 @Service
@@ -32,9 +32,6 @@ public class CarParkServiceImpl implements CarParkService {
 
 	@Autowired
 	private CarParkRepository carParkRepo;
-
-	@Autowired
-	private CarParkSpotRepository carParkSpotRepo;
 
 	@Override
 	public List<CarParks> findAll() {
@@ -56,61 +53,35 @@ public class CarParkServiceImpl implements CarParkService {
 		Users user = userRepo.findByUsername(auth.getName());
 		users.add(user);
 
-		CarParks carPark = new CarParks(carParkDto.getName(), carParkDto.getCarParkAddress1(),
+		CarParks carPark = new CarParks(carParkDto.getName(), carParkDto.getEmail(), carParkDto.getCarParkAddress1(),
 				carParkDto.getCarParkAddress2(), carParkDto.getCarParkCity(), carParkDto.getCarParkPostcode(),
-				carParkDto.getPrice(), carParkDto.getCarParkStatus(), new Date(), rate, users, "");
+				carParkDto.getPrice(), carParkDto.getCarParkStatus(), new Date(), rate, users);
 
+		List<Week> weekValues = Arrays.asList(Week.values());
 		Set<CarParkTimes> carParkTimes = new HashSet<CarParkTimes>();
 
-			CarParkTimes mondayTime = new CarParkTimes();
-			mondayTime.setDayOfWeek(Week.MONDAY);
-			mondayTime.setOpenTime(carParkDto.getMondayFrom());
-			mondayTime.setCloseTime(carParkDto.getMondayTo());
-			mondayTime.setCarParks(carPark);
-			carParkTimes.add(mondayTime);
-			
-			CarParkTimes tuesdayTime = new CarParkTimes();
-			tuesdayTime.setDayOfWeek(Week.TUESDAY);
-			tuesdayTime.setOpenTime(carParkDto.getTuesdayFrom());
-			tuesdayTime.setCloseTime(carParkDto.getTuesdayTo());
-			tuesdayTime.setCarParks(carPark);
-			carParkTimes.add(tuesdayTime);
-			
-			CarParkTimes wednesdayTime = new CarParkTimes();
-			wednesdayTime.setDayOfWeek(Week.WEDNESDAY);
-			wednesdayTime.setOpenTime(carParkDto.getWednesdayFrom());
-			wednesdayTime.setCloseTime(carParkDto.getWednesdayTo());
-			wednesdayTime.setCarParks(carPark);
-			carParkTimes.add(wednesdayTime);
+		for (Week weekValue : weekValues) {
+			CarParkTimes carParkTime = new CarParkTimes();
+			carParkTime.setDayOfWeek(weekValue);
 
-			CarParkTimes thursdayTime = new CarParkTimes();
-			thursdayTime.setDayOfWeek(Week.THURSDAY);
-			thursdayTime.setOpenTime(carParkDto.getThursdayFrom());
-			thursdayTime.setCloseTime(carParkDto.getThursdayTo());
-			thursdayTime.setCarParks(carPark);
-			carParkTimes.add(thursdayTime);
+			String day = weekValue.toString().substring(0, 1).toUpperCase()
+					+ weekValue.toString().substring(1).toLowerCase();
+			String getFrom = "get" + day + "From";
+			String getTo = "get" + day + "To";
+			Method getFromMethod;
+			Method getToMethod;
+			try {
+				getFromMethod = carParkDto.getClass().getMethod(getFrom);
+				getToMethod = CarParkDto.class.getMethod(getTo);
+				carParkTime.setOpenTime((String) getFromMethod.invoke(carParkDto));
+				carParkTime.setCloseTime((String) getToMethod.invoke(carParkDto));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
-			CarParkTimes fridayTime = new CarParkTimes();
-			fridayTime.setDayOfWeek(Week.FRIDAY);
-			fridayTime.setOpenTime(carParkDto.getFridayFrom());
-			fridayTime.setCloseTime(carParkDto.getFridayTo());
-			fridayTime.setCarParks(carPark);
-			carParkTimes.add(fridayTime);
-
-			CarParkTimes saturdayTime = new CarParkTimes();
-			saturdayTime.setDayOfWeek(Week.SATURDAY);
-			saturdayTime.setOpenTime(carParkDto.getSaturdayFrom());
-			saturdayTime.setCloseTime(carParkDto.getSaturdayTo());
-			saturdayTime.setCarParks(carPark);
-			carParkTimes.add(saturdayTime);
-
-			CarParkTimes sundayTime = new CarParkTimes();
-			sundayTime.setDayOfWeek(Week.SUNDAY);
-			sundayTime.setOpenTime(carParkDto.getSundayFrom());
-			sundayTime.setCloseTime(carParkDto.getSundayTo());
-			sundayTime.setCarParks(carPark);
-			carParkTimes.add(sundayTime);
-		
+			carParkTime.setCarParks(carPark);
+			carParkTimes.add(carParkTime);
+		}
 
 		carPark.setCarParkTimes(carParkTimes);
 

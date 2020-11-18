@@ -1,8 +1,8 @@
 package com.ePark.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -18,15 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ePark.dto.CarParkDto;
-import com.ePark.model.CarParkSpots;
+import com.ePark.model.CarParkComments;
 import com.ePark.model.CarParkStatus;
-import com.ePark.model.CarParkTimes;
 import com.ePark.model.CarParks;
 import com.ePark.model.Users;
-import com.ePark.repository.UserRepository;
+import com.ePark.model.Week;
+import com.ePark.service.CarParkCommentService;
 import com.ePark.service.CarParkService;
-import com.ePark.service.CarParkSpotService;
-import com.ePark.service.CarParkTimeService;
+import com.ePark.service.UserService;
 
 @RestController
 public class CarParkController {
@@ -35,13 +34,10 @@ public class CarParkController {
 	private CarParkService carParkService;
 
 	@Autowired
-	private CarParkSpotService carParkSpotService;
-	
-	@Autowired
-	private CarParkTimeService carParkTimeService;
+	private CarParkCommentService carParkCommentService;
 
 	@Autowired
-	private UserRepository userRepo;
+	private UserService userService;
 
 	@GetMapping("/addcarpark")
 	public ModelAndView showAddCarPark() {
@@ -81,7 +77,7 @@ public class CarParkController {
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		Users user = userRepo.findByUsername(auth.getName());
+		Users user = userService.findByUsername(auth.getName());
 
 		List<CarParks> carParks = carParkService.findByUsers(user);
 		ModelAndView mv = new ModelAndView("viewcarpark");
@@ -94,36 +90,23 @@ public class CarParkController {
 	@RequestMapping("/home")
 	public ModelAndView home() {
 
-		Collection<CarParks> carParks = carParkService.findByCarParkStatus(CarParkStatus.APPROVED);
-		List<String> carParkAddresses = new ArrayList<>();
-		for (CarParks carPark : carParks) {
-			String fullAddress = "";
-			fullAddress += carPark.getCarParkAddress1() + ", " + carPark.getCarParkAddress2() + ", "
-					+ carPark.getCarParkCity() + ", " + carPark.getCarParkPostcode();
-			carParkAddresses.add(fullAddress);
-		}
+		List<CarParks> carParks = carParkService.findByCarParkStatus(CarParkStatus.APPROVED);
+		List<Week> weekValues = Arrays.asList(Week.values());
 
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("home");
-		mv.addObject("carParkAddresses", carParkAddresses);
+		mv.addObject("weekValues", weekValues);
 		mv.addObject("carParks", carParks);
 		return mv;
 	}
-	
-	/*
-	 * @RequestMapping("/home/getapproved") public List<CarParks> getApproved() {
-	 * 
-	 * List<CarParks> carParks =
-	 * carParkService.findByCarParkStatus(CarParkStatus.APPROVED);
-	 * 
-	 * return carParks; }
-	 */
+
 
 	@RequestMapping("/viewcarpark/approve/{carParkId}")
-	public ModelAndView approve(@PathVariable(name = "carParkId") long carParkId, @ModelAttribute("carParkDto") CarParkDto carParkDto) {
+	public ModelAndView approve(@PathVariable(name = "carParkId") long carParkId,
+			@ModelAttribute("carParkDto") CarParkDto carParkDto) {
 		CarParks carPark = carParkService.findByCarParkId(carParkId);
 		carPark.setCarParkStatus(CarParkStatus.APPROVED);
-		carPark.setCarParkComment(carParkDto.getComment());
+
 		carPark.setDateModified(new Date());
 		carParkService.save(carPark);
 		ModelAndView mv = new ModelAndView();
@@ -132,39 +115,37 @@ public class CarParkController {
 	}
 
 	@RequestMapping("/viewcarpark/reject/{carParkId}")
-	public ModelAndView reject(@PathVariable(name = "carParkId") long carParkId, @ModelAttribute("carParkDto") CarParkDto carParkDto) {
+	public ModelAndView reject(@PathVariable(name = "carParkId") long carParkId,
+			@ModelAttribute("carParkDto") CarParkDto carParkDto) {
 		CarParks carPark = carParkService.findByCarParkId(carParkId);
 		carPark.setCarParkStatus(CarParkStatus.REJECTED);
-		carPark.setCarParkComment(carParkDto.getComment());
+
 		carPark.setDateModified(new Date());
 		carParkService.save(carPark);
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("redirect:/viewcarpark?success");
 		return mv;
 	}
-
-	@RequestMapping("/viewcarpark/{carParkId}")
-	public ModelAndView viewCarParkDetails(@PathVariable(name = "carParkId") long carParkId) {
-		CarParks carPark = carParkService.findByCarParkId(carParkId);
-		List<CarParkSpots> carParkSpots = carParkSpotService.findByCarParks(carPark);
+	
+	@RequestMapping("/viewcarpark/addcomment/{carParkId}")
+	public ModelAndView addComment(@PathVariable(name = "carParkId") long carParkId,
+			@ModelAttribute("carParkDto") CarParkDto carParkDto) {
 		
-		List<CarParkTimes> carParkTimes = carParkTimeService.getCarParkTimes(carPark.getCarParkId());
-		int isDisabled = 0;
-		for (CarParkSpots carParkSpot : carParkSpots) {
-			if (carParkSpot.isDisabled()) {
-				isDisabled++;
-			}
-		}
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+		Users user = userService.findByUsername(auth.getName());
+		
+		CarParks carPark = carParkService.findByCarParkId(carParkId);
+		
+		CarParkComments carParkComment = new CarParkComments(carParkDto.getComment(), new Date(), user, carPark);
+		
+		carParkCommentService.save(carParkComment);
+		
 		ModelAndView mv = new ModelAndView();
-		mv.setViewName("viewcarparkdetails");
-		mv.addObject("carparkcomment", carPark.getCarParkComment());
-		mv.addObject("isDisabled", isDisabled);
-		mv.addObject("owners", carPark.getUsers());
-		mv.addObject("carparkspots", carParkSpots);
-		mv.addObject("carparktimes", carParkTimes);
-
+		mv.setViewName("redirect:/viewcarpark?comment");
 		return mv;
 	}
+
+
 
 }

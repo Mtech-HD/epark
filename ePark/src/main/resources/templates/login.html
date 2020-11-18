@@ -20,8 +20,7 @@
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
 	integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
 	crossorigin="anonymous"></script>
-
-
+<script src="https://kit.fontawesome.com/44f3988e32.js" crossorigin="anonymous"></script>
 </head>
 
 <style>
@@ -53,8 +52,8 @@ body {
 						aria-haspopup="true" aria-expanded="false"> My Account </a>
 						<div class="dropdown-menu"
 							aria-labelledby="navbarDropdownMenuLink">
-							<a class="dropdown-item" href="/login">Log in</a> <a
-								class="dropdown-item" href="/registration">Register</a>
+							<a class="dropdown-item" href="/login"><i class="fas fa-sign-in-alt"></i>&nbsp;Log in</a> <a
+								class="dropdown-item" href="/registration"><i class="fas fa-user-plus"></i>&nbsp;Register</a>
 						</div></li>
 				</div>
 			</ul>
@@ -123,7 +122,7 @@ body {
 			</div>
 			<br>
 			<div class="form-group">
-				<button type="submit" class="btn btn-success">Login</button>
+				<button type="submit" class="btn btn-success"><i class="fas fa-sign-in-alt"></i>&nbsp; Login</button>
 				<span>New user? <a href="/" th:href="@{registration}">Register
 						here</a></span>
 			</div>

@@ -13,5 +13,5 @@ public interface UserService extends UserDetailsService{
 
 	Users findByUserId(long userId);
 	
-
+	Users findByUsername(String username);
 }
