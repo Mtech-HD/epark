@@ -1,6 +1,6 @@
 package com.ePark.dto;
 
-import com.ePark.model.Roles;
+import com.ePark.entity.Roles;
 
 public class UserRegistrationDto {
 
@@ -14,6 +14,8 @@ public class UserRegistrationDto {
 
 	private String email;
 
+	private String customerId;
+
 	private String roleName;
 
 	private Roles roles;
@@ -22,13 +24,14 @@ public class UserRegistrationDto {
 	}
 
 	public UserRegistrationDto(String username, String password, String firstName, String lastName, String email,
-			String roleName) {
+			String customerId, String roleName) {
 		super();
 		this.username = username;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
+		this.customerId = customerId;
 		this.roleName = roleName;
 	}
 
@@ -86,6 +89,14 @@ public class UserRegistrationDto {
 
 	public void setRoles(Roles roles) {
 		this.roles = roles;
+	}
+
+	public String getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
 	}
 
 }

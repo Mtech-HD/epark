@@ -1,6 +1,6 @@
 package com.ePark.dto;
 
-import com.ePark.model.Users;
+import com.ePark.entity.Users;
 
 public class VehicleDto {
 	

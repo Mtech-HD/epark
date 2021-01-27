@@ -1,4 +1,7 @@
-package com.ePark.model;
+package com.ePark.entity;
+
+import java.time.LocalTime;
+import java.time.OffsetTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -9,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -23,8 +28,12 @@ public class CarParkTimes {
 	private long carParkTimeId;
 
 	private Week dayOfWeek;
-	private String openTime;
-	private String closeTime;
+	
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime openTime;
+	
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime closeTime;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
 	@JoinColumn(name = "carParkId", nullable = false)
@@ -34,7 +43,7 @@ public class CarParkTimes {
 
 	}
 
-	public CarParkTimes(Week dayOfWeek, String openTime, String closeTime, CarParks carParks) {
+	public CarParkTimes(Week dayOfWeek, LocalTime openTime, LocalTime closeTime, CarParks carParks) {
 		super();
 		this.dayOfWeek = dayOfWeek;
 		this.openTime = openTime;
@@ -45,7 +54,7 @@ public class CarParkTimes {
 	public long getCarParkTimeId() {
 		return carParkTimeId;
 	}
-
+	
 	public void setCarParkTimeId(long carParkTimeId) {
 		this.carParkTimeId = carParkTimeId;
 	}
@@ -58,19 +67,19 @@ public class CarParkTimes {
 		this.dayOfWeek = dayOfWeek;
 	}
 
-	public String getOpenTime() {
+	public LocalTime getOpenTime() {
 		return openTime;
 	}
 
-	public void setOpenTime(String openTime) {
+	public void setOpenTime(LocalTime openTime) {
 		this.openTime = openTime;
 	}
 
-	public String getCloseTime() {
+	public LocalTime getCloseTime() {
 		return closeTime;
 	}
 
-	public void setCloseTime(String closeTime) {
+	public void setCloseTime(LocalTime closeTime) {
 		this.closeTime = closeTime;
 	}
 
@@ -81,8 +90,5 @@ public class CarParkTimes {
 	public void setCarParks(CarParks carParks) {
 		this.carParks = carParks;
 	}
-
-
-
-
+	
 }

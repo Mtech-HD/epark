@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{main-layout}">
+
+<head>
+
+</head>
+<body>
+
+	<!--  Navigation Bar -->
+
+
+
+	<!--  HTML registration form -->
+	<div layout:fragment="content">
+		<div class="main">
+			<div
+				th:replace="~{bookingfragment :: bookingFlowSteps(${bookingFlow})}"></div>
+		</div>
+
+		<div class="main">
+			<div class="ui grid">
+
+				<div class="row">
+					<div class="eleven wide column">
+						<form class="ui form" method="post" th:action="@{/booking/dates}"
+							id="form" th:object="${bookingFlow.booking}">
+
+							<th:block th:if="${#fields.hasErrors('endTime')}">
+								<div class="ui tiny red message">
+									<i class="close icon"> </i>
+									<div th:errors="*{endTime}"></div>
+								</div>
+							</th:block>
+
+							<div class="ui segments">
+
+								<div class="ui top attached label secondary">Select Dates</div>
+
+
+								<div class="ui segment" style="padding: 25px;">
+
+
+
+									<div class="ui grid">
+										<div class="row"
+											th:if="${bookingFlow.booking.carParks.getDisabledSpots().size() > 0}">
+											<div class="column">
+												<div class="ui toggle checkbox">
+													<input type="checkbox" th:field="*{isDisabled}"
+														id="checkSunday"> <label for="Rate">
+														Disabled space </label>
+												</div>
+											</div>
+										</div>
+
+										<div class="equal width row">
+											<div class="column ui labeled input">
+
+												<label class="toplabel" for="Rate"> From: </label>
+												<div class="ui left icon fluid input margin-bottom-10">
+													<i class="calendar outline icon"></i> <input type="text"
+														class="datepicker field open" name="start" required
+														autofocus="autofocus" id="startDatePicker"
+														placeholder="dd/mm/yy"
+														th:value="${#temporals.format(bookingFlow.booking.startDate, 'dd/MM/yyyy')}">
+
+
+													<input type="hidden" id="altStartDatePicker"
+														th:field="*{startDate}">
+												</div>
+
+												<div class="ui left icon fluid input">
+													<i class="clock icon"></i> <input type="text"
+														class="field time" id="startTimePicker"
+														placeholder="--:--" autofocus="autofocus"
+														th:field="*{startTime}">
+												</div>
+
+											</div>
+											<div class="column">
+												<label class="toplabel" for="Rate">To:</label>
+												<div class="ui left icon fluid input margin-bottom-10">
+													<i class="calendar outline icon"></i> <input type="text"
+														class="field" required autofocus="autofocus"
+														id="endDatePicker" placeholder="dd/mm/yy"
+														th:value="${#temporals.format(bookingFlow.booking.endDate, 'dd/MM/yyyy')}">
+
+													<input type="hidden" id="altEndDatePicker"
+														th:field="*{endDate}">
+												</div>
+
+												<div class="ui left icon fluid input">
+													<i class="time icon"></i> <input type="text"
+														class="field time" id="endTimePicker" placeholder="--:--"
+														autofocus="autofocus" th:field="*{endTime}">
+												</div>
+
+
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="margin-top-10">
+								<button class="ui button" type="submit" name="cancel" formnovalidate>Cancel</button>
+								<button type="submit" class="ui primary button">&nbsp;
+									Next &nbsp;</button>
+							</div>
+						</form>
+					</div>
+					<div class="five wide column">
+						<div th:insert="~{bookingfragment :: quickSummary}"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+
+
+	<div layout:fragment="script">
+		<script type="text/javascript">
+			function getDate(element) {
+				var date;
+				try {
+					date = $.datepicker.parseDate("dd/mm/yy", element.value);
+				} catch (error) {
+					date = null;
+				}
+				return date;
+			}
+
+			function getDayOfWeek(element) {
+				var day = $.datepicker.formatDate('DD', element);
+				return day;
+			}
+
+			function updatePrice() {
+				const url = '/booking/dates?prices';
+				const data = $("#form").serialize();
+
+				$.ajax({
+					type : "POST",
+					data : $("#form").serialize(),
+					url : '/booking/dates?prices',
+					success : function(result) {
+						$("#quickSummary").replaceWith(result);
+					}
+				});
+			}
+
+			$(document)
+					.ready(
+							function() {
+
+								const startDatePicker = $("#startDatePicker")
+										.datepicker(
+												{
+													// beforeShowDay: function(date) {
+
+													//     return [date.getDay() == 6 || date.getDay() == 0,""];
+													//},
+													dateFormat : "dd/mm/yy",
+													altFormat : 'yy-mm-dd',
+													altField : "#altStartDatePicker",
+													minDate : 0,
+													onSelect : function() {
+														var seldate = $(this)
+																.datepicker(
+																		'getDate');
+														seldate = seldate
+																.toDateString();
+														seldate = seldate
+																.split(' ');
+														var weekday = new Array();
+														weekday['Mon'] = "MONDAY";
+														weekday['Tue'] = "TUESDAY";
+														weekday['Wed'] = "WEDNESDAY";
+														weekday['Thu'] = "THURSDAY";
+														weekday['Fri'] = "FRIDAY";
+														weekday['Sat'] = "SATURDAY";
+														weekday['Sun'] = "SUNDAY";
+														var dayOfWeek = weekday[seldate[0]];
+														getOpeningTimes(dayOfWeek);
+																endDatePicker
+																		.datepicker(
+																				"option",
+																				"minDate",
+																				getDate(this)),
+																endDatePicker
+																		.datepicker(
+																				"option",
+																				"maxDate",
+																				getDate(this)),
+																endDatePicker
+																		.datepicker(
+																				"setDate",
+																				getDate(this))
+													}
+
+												})
+												
+								startDatePicker.blur(); //to avoid bug
+								
+								const endDatePicker = $("#endDatePicker")
+										.datepicker({
+											dateFormat : "dd/mm/yy",
+											altFormat : 'yy-mm-dd',
+											altField : "#altEndDatePicker",
+											minDate : 0
+										})
+
+								const startTimePicker = $("#startTimePicker")
+										.timepicker(
+												{
+													scrollbar : true,
+													interval : 15,
+													disableTextInput : true,
+													listWidth : 1,
+													timeFormat : 'HH:mm',
+													change : function() {
+														endTimePicker
+																.timepicker(
+																		'option',
+																		'minTime',
+																		this
+																				.val());
+														endTimePicker
+																.timepicker(
+																		'option',
+																		'startTime',
+																		this
+																				.val());
+														endTimePicker
+																.timepicker(
+																		'option',
+																		'interval',
+																		60);
+													}
+												})
+
+								const endTimePicker = $("#endTimePicker")
+										.timepicker({
+											scrollbar : true,
+											disableTextInput : true,
+											listWidth : 1,
+											timeFormat : 'HH:mm',
+											change : function() {
+												updatePrice();
+											}
+										});
+
+								function getOpeningTimes(dayOfWeek) {
+									$
+											.ajax({
+												type : "POST",
+												data : {
+													"dayOfWeek" : dayOfWeek
+												},
+												url : '/booking/dates?endDate',
+												success : function(carParkTime) {
+													if (carParkTime.openTime != '00:00:00'
+															&& carParkTime.closeTime != '00:00:00') {
+																startTimePicker
+																		.timepicker(
+																				'option',
+																				'minTime',
+																				carParkTime.openTime),
+																startTimePicker
+																		.timepicker(
+																				'option',
+																				'maxTime',
+																				carParkTime.closeTime),
+																endTimePicker
+																		.timepicker(
+																				'option',
+																				'minTime',
+																				carParkTime.openTime),
+																endTimePicker
+																		.timepicker(
+																				'option',
+																				'maxTime',
+																				carParkTime.closeTime)
+													}
+												},
+												error : function(response) {
+													console.log(response);
+												}
+											});
+								}
+
+							});
+		</script>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{main-layout}">
+
+<head>
+
+</head>
+<body>
+
+	<!--  Navigation Bar -->
+
+
+
+	<!--  HTML registration form -->
+	<div layout:fragment="content">
+		<div class="main">
+			<div
+				th:replace="~{bookingfragment :: bookingFlowSteps(${bookingFlow})}"></div>
+		</div>
+
+		<div class="main">
+			<div class="ui grid">
+				<div class="row">
+					<div class="eleven wide column">
+						<form method="post" th:action="@{/booking/vehicles}"
+							id="vehicleData">
+
+
+
+							<div class="alert alert-danger alert-dismissible fade show"
+								id="error" role="alert">Please select a vehicle</div>
+
+
+							<div th:insert="~{bookingfragment :: vehicles}" id="vehiclesTable"></div>
+
+
+								<div th:insert="~{bookingfragment :: vehiclesAdd}"
+									id="vehicleAddForm" class="margin-top-20"></div>
+							
+
+							<div class="margin-top-20">
+								<button class="ui button" type="submit" name="back"
+									formnovalidate>Back</button>
+								<button type="submit" id="nextButton" class="ui primary button">&nbsp;
+									Next &nbsp;</button>
+							</div>
+						</form>
+					</div>
+					<div class="five wide column">
+						<div th:insert="~{bookingfragment :: quickSummary}"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div layout:fragment="script">
+
+		<script>
+			$(document).ready(function() {
+				$("#error").hide();
+				$('.ui.checkbox').checkbox();
+			});
+
+			$('#expandVehicleAdd').click(
+					function() {
+						if ($('#vehicleAddBody').css("display") == "block") {
+							$('#vehicleAddBody').slideUp(function() {
+								$('#vehicleAddBody').css('display', 'none');
+							});
+							$('#vehicleExpandSymbol').removeClass("minus")
+									.addClass("add");
+						} else {
+
+							$('#vehicleAddBody').slideDown(function() {
+
+								$('#vehicleAddBody').css('display', 'block');
+							});
+							$('#vehicleExpandSymbol').removeClass("add")
+									.addClass("minus");
+						}
+					});
+
+			$('#addVehicleButton').click(function() {
+				$('#vehicleData').addClass('loading');
+				var data = $('#vehicleData').serialize();
+				$("#vehiclesTable").load("/addvehicles?" + data, function() {
+					$('#vehicleData').removeClass('loading');
+				});
+				$('#vehicleAddBody').css('display', 'none');
+				$('#vehicleExpandSymbol').removeClass("minus").addClass("add");
+				$('#vehicleData').form('clear');
+			});
+
+			function removeVehicle(vehicleId) {
+				$('#vehicleData').addClass('loading');
+				$("#vehiclesTable").load(
+						"/removeVehicle?vehicleId=" + vehicleId, function() {
+							$('#vehicleData').removeClass('loading');
+						});
+			}
+
+			$('input[type="checkbox"]').on('change', function() {
+				$('input[type="checkbox"]').not(this).prop('checked', false);
+			});
+
+			$('#nextButton').click(function(e) {
+				if ($('input[type="checkbox"]:checked').length == 0) {
+					e.preventDefault();
+					$("#error").show();
+				}
+			});
+
+			
+		</script>
+	</div>
+
+</body>
+</html>

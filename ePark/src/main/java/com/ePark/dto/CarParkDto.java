@@ -1,12 +1,14 @@
 package com.ePark.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalTime;
 import java.util.Set;
 
-import com.ePark.model.CarParkSpots;
-import com.ePark.model.CarParkStatus;
-import com.ePark.model.Users;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.ePark.entity.CarParkSpots;
+import com.ePark.entity.CarParkStatus;
+import com.ePark.entity.Users;
 
 public class CarParkDto {
 
@@ -38,30 +40,44 @@ public class CarParkDto {
 
 	private Set<CarParkSpots> carParkSpots;
 
-	private String mondayFrom;
-	private String mondayTo;
-	private String tuesdayFrom;
-	private String tuesdayTo;
-	private String wednesdayFrom;
-	private String wednesdayTo;
-	private String thursdayFrom;
-	private String thursdayTo;
-	private String fridayFrom;
-	private String fridayTo;
-	private String saturdayFrom;
-	private String saturdayTo;
-	private String sundayFrom;
-	private String sundayTo;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime mondayFrom;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime mondayTo;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime tuesdayFrom;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime tuesdayTo;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime wednesdayFrom;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime wednesdayTo;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime thursdayFrom;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime thursdayTo;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime fridayFrom;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime fridayTo;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime saturdayFrom;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime saturdayTo;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime sundayFrom;
+	@DateTimeFormat(pattern = "HH:mm")
+	private LocalTime sundayTo;
 
 	public CarParkDto() {
 	}
 
 	public CarParkDto(String name, String email, String carParkAddress1, String carParkAddress2, String carParkCity,
 			String carParkPostcode, int spaces, int isDisabled, BigDecimal price, BigDecimal rate,
-			CarParkStatus carParkStatus, Set<Users> users, Set<CarParkSpots> carParkSpots, String comment, String mondayFrom,
-			String mondayTo, String tuesdayFrom, String tuesdayTo, String wednesdayFrom, String wednesdayTo,
-			String thursdayFrom, String thursdayTo, String fridayFrom, String fridayTo, String saturdayFrom,
-			String saturdayTo, String sundayFrom, String sundayTo) {
+			CarParkStatus carParkStatus, Set<Users> users, Set<CarParkSpots> carParkSpots, String comment, LocalTime mondayFrom,
+			LocalTime mondayTo, LocalTime tuesdayFrom, LocalTime tuesdayTo, LocalTime wednesdayFrom, LocalTime wednesdayTo,
+			LocalTime thursdayFrom, LocalTime thursdayTo, LocalTime fridayFrom, LocalTime fridayTo, LocalTime saturdayFrom,
+			LocalTime saturdayTo, LocalTime sundayFrom, LocalTime sundayTo) {
 		super();
 		this.name = name;
 		this.email = email;
@@ -206,115 +222,115 @@ public class CarParkDto {
 		this.comment = comment;
 	}
 
-	public String getMondayFrom() {
+	public LocalTime getMondayFrom() {
 		return mondayFrom;
 	}
 
-	public void setMondayFrom(String mondayFrom) {
+	public void setMondayFrom(LocalTime mondayFrom) {
 		this.mondayFrom = mondayFrom;
 	}
 
-	public String getMondayTo() {
+	public LocalTime getMondayTo() {
 		return mondayTo;
 	}
 
-	public void setMondayTo(String mondayTo) {
+	public void setMondayTo(LocalTime mondayTo) {
 		this.mondayTo = mondayTo;
 	}
 
-	public String getTuesdayFrom() {
+	public LocalTime getTuesdayFrom() {
 		return tuesdayFrom;
 	}
 
-	public void setTuesdayFrom(String tuesdayFrom) {
+	public void setTuesdayFrom(LocalTime tuesdayFrom) {
 		this.tuesdayFrom = tuesdayFrom;
 	}
 
-	public String getTuesdayTo() {
+	public LocalTime getTuesdayTo() {
 		return tuesdayTo;
 	}
 
-	public void setTuesdayTo(String tuesdayTo) {
+	public void setTuesdayTo(LocalTime tuesdayTo) {
 		this.tuesdayTo = tuesdayTo;
 	}
 
-	public String getWednesdayFrom() {
+	public LocalTime getWednesdayFrom() {
 		return wednesdayFrom;
 	}
 
-	public void setWednesdayFrom(String wednesdayFrom) {
+	public void setWednesdayFrom(LocalTime wednesdayFrom) {
 		this.wednesdayFrom = wednesdayFrom;
 	}
 
-	public String getWednesdayTo() {
+	public LocalTime getWednesdayTo() {
 		return wednesdayTo;
 	}
 
-	public void setWednesdayTo(String wednesdayTo) {
+	public void setWednesdayTo(LocalTime wednesdayTo) {
 		this.wednesdayTo = wednesdayTo;
 	}
 
-	public String getThursdayFrom() {
+	public LocalTime getThursdayFrom() {
 		return thursdayFrom;
 	}
 
-	public void setThursdayFrom(String thursdayFrom) {
+	public void setThursdayFrom(LocalTime thursdayFrom) {
 		this.thursdayFrom = thursdayFrom;
 	}
 
-	public String getThursdayTo() {
+	public LocalTime getThursdayTo() {
 		return thursdayTo;
 	}
 
-	public void setThursdayTo(String thursdayTo) {
+	public void setThursdayTo(LocalTime thursdayTo) {
 		this.thursdayTo = thursdayTo;
 	}
 
-	public String getFridayFrom() {
+	public LocalTime getFridayFrom() {
 		return fridayFrom;
 	}
 
-	public void setFridayFrom(String fridayFrom) {
+	public void setFridayFrom(LocalTime fridayFrom) {
 		this.fridayFrom = fridayFrom;
 	}
 
-	public String getFridayTo() {
+	public LocalTime getFridayTo() {
 		return fridayTo;
 	}
 
-	public void setFridayTo(String fridayTo) {
+	public void setFridayTo(LocalTime fridayTo) {
 		this.fridayTo = fridayTo;
 	}
 
-	public String getSaturdayFrom() {
+	public LocalTime getSaturdayFrom() {
 		return saturdayFrom;
 	}
 
-	public void setSaturdayFrom(String saturdayFrom) {
+	public void setSaturdayFrom(LocalTime saturdayFrom) {
 		this.saturdayFrom = saturdayFrom;
 	}
 
-	public String getSaturdayTo() {
+	public LocalTime getSaturdayTo() {
 		return saturdayTo;
 	}
 
-	public void setSaturdayTo(String saturdayTo) {
+	public void setSaturdayTo(LocalTime saturdayTo) {
 		this.saturdayTo = saturdayTo;
 	}
 
-	public String getSundayFrom() {
+	public LocalTime getSundayFrom() {
 		return sundayFrom;
 	}
 
-	public void setSundayFrom(String sundayFrom) {
+	public void setSundayFrom(LocalTime sundayFrom) {
 		this.sundayFrom = sundayFrom;
 	}
 
-	public String getSundayTo() {
+	public LocalTime getSundayTo() {
 		return sundayTo;
 	}
 
-	public void setSundayTo(String sundayTo) {
+	public void setSundayTo(LocalTime sundayTo) {
 		this.sundayTo = sundayTo;
 	}
 

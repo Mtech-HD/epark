@@ -1,4 +1,4 @@
-package com.ePark.model;
+package com.ePark.entity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -18,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicUpdate;
@@ -70,6 +71,10 @@ public class CarParks {
 
 	@OneToMany(mappedBy = "carParks", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<CarParkTimes> carParkTimes;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "carParks", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Bookings> bookings;
 
 	public CarParks() {
 
@@ -212,10 +217,18 @@ public class CarParks {
 		this.carParkComments = carParkComments;
 	}
 
+	public Set<Bookings> getBookings() {
+		return bookings;
+	}
+
+	public void setBookings(Set<Bookings> bookings) {
+		this.bookings = bookings;
+	}
+
 	public Set<CarParkSpots> getDisabledSpots() {
 		Set<CarParkSpots> disabledSpots = new HashSet<CarParkSpots>();
 		for (CarParkSpots carParkSpot : carParkSpots) {
-			if (carParkSpot.isDisabled() == true) {
+			if (carParkSpot.getIsDisabled() == true) {
 				disabledSpots.add(carParkSpot);
 			}
 		}

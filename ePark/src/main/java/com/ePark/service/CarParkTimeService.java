@@ -2,20 +2,26 @@ package com.ePark.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ePark.model.CarParkTimes;
-import com.ePark.model.CarParks;
+import com.ePark.entity.CarParkTimes;
+import com.ePark.entity.CarParks;
+import com.ePark.repository.CarParkTimeRepository;
 
 @Service
-public interface CarParkTimeService {
-	
-	
-	List<CarParkTimes> findByCarParks(CarParks carPark);
+public class CarParkTimeService {
 
+	@Autowired
+	private CarParkTimeRepository carParkTimeRepo;
 	
-	List<CarParkTimes> getCarParkTimes(long carParkId);
+	public List<CarParkTimes> findByCarParks(CarParks carPark) {
+		
+		return carParkTimeRepo.findByCarParks(carPark);
+	}
+	
+	public List<CarParkTimes> getCarParkTimes(long carParkId) {
+		
+		return carParkTimeRepo.getCarParkTimes(carParkId);
+	}
 }
-
-
-

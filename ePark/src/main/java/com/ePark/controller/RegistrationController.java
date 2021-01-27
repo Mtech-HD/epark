@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ePark.dto.UserRegistrationDto;
-import com.ePark.model.Roles;
-import com.ePark.model.Users;
-import com.ePark.repository.UserRepository;
+import com.ePark.entity.Roles;
+import com.ePark.entity.Users;
 import com.ePark.service.RoleService;
+import com.ePark.service.StripeService;
 import com.ePark.service.UserService;
+import com.stripe.exception.StripeException;
+import com.stripe.model.Customer;
 
 @Controller
 public class RegistrationController {
@@ -31,6 +33,9 @@ public class RegistrationController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private StripeService paymentsService;
 
 
 	@ModelAttribute("user")
@@ -48,9 +53,14 @@ public class RegistrationController {
 	}
 	
 	@PostMapping("/registration")
-	public String registerUser(@ModelAttribute("user") UserRegistrationDto registrationDto) {
+	public String registerUser(@ModelAttribute("user") UserRegistrationDto registrationDto) throws StripeException {
+		
+		Customer customer = paymentsService.createCustomer(registrationDto);
+		registrationDto.setCustomerId(customer.getId());
+		
 		Roles role = roleService.findByName(registrationDto.getRoleName());
 		registrationDto.setRoles(role);		
+		
 		userService.save(registrationDto);
 		return "redirect:/login?registrationSuccess";
 		

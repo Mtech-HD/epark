@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ePark.model.CarParkStatus;
-import com.ePark.model.CarParks;
-import com.ePark.model.Users;
+import com.ePark.entity.CarParkStatus;
+import com.ePark.entity.CarParks;
+import com.ePark.entity.Users;
 
 
 @Repository

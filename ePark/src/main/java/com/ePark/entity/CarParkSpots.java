@@ -1,4 +1,4 @@
-package com.ePark.model;
+package com.ePark.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,9 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
@@ -30,24 +32,21 @@ public class CarParkSpots {
 	@JoinColumn(name = "carParkId", nullable = false)
 	private CarParks carParks;
 
+	private int spaceNumber;
+
+	@JsonIgnore
+	@OneToOne(mappedBy = "carParkSpots")
+	private Bookings bookings;
+
 	public CarParkSpots() {
 
 	}
 
-	public CarParkSpots(CarParks carParks, boolean isDisabled) {
-		this.isDisabled = isDisabled;
-		this.carParks = carParks;
-	}
-	
-	public CarParkSpots(boolean isDisabled) {
-		this.isDisabled = isDisabled;
-	}
-
-	public CarParkSpots(long carParkSpotId, boolean isDisabled, CarParks carParks) {
+	public CarParkSpots(CarParks carParks, boolean isDisabled, int spaceNumber) {
 		super();
-		this.carParkSpotId = carParkSpotId;
 		this.isDisabled = isDisabled;
 		this.carParks = carParks;
+		this.spaceNumber = spaceNumber;
 	}
 
 	public long getCarParkSpotId() {
@@ -58,11 +57,11 @@ public class CarParkSpots {
 		this.carParkSpotId = carParkSpotId;
 	}
 
-	public boolean isDisabled() {
+	public boolean getIsDisabled() {
 		return isDisabled;
 	}
 
-	public void setDisabled(boolean isDisabled) {
+	public void setIsDisabled(boolean isDisabled) {
 		this.isDisabled = isDisabled;
 	}
 
@@ -72,6 +71,26 @@ public class CarParkSpots {
 
 	public void setCarParks(CarParks carParks) {
 		this.carParks = carParks;
+	}
+
+	public int getSpaceNumber() {
+		return spaceNumber;
+	}
+
+	public void setSpaceNumber(int spaceNumber) {
+		this.spaceNumber = spaceNumber;
+	}
+
+	public Bookings getBookings() {
+		return bookings;
+	}
+
+	public void setBookings(Bookings bookings) {
+		this.bookings = bookings;
+	}
+
+	public boolean isReserved() {
+		return bookings != null;
 	}
 
 }

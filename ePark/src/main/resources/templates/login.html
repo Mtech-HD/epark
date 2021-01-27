@@ -1,135 +1,156 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8" name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>ePark Login</title>
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-	crossorigin="anonymous">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{main-layout}">
 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-	integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-	crossorigin="anonymous"></script>
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-	integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-	crossorigin="anonymous"></script>
-<script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-	integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-	crossorigin="anonymous"></script>
-<script src="https://kit.fontawesome.com/44f3988e32.js" crossorigin="anonymous"></script>
-</head>
 
-<style>
-body {
-	padding-top: 56px;
-}
-</style>
 <body>
 
 	<!--  Navigation Bar -->
 
-	<nav
-		class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-		<a class="navbar-brand" href="">ePark</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse"
-			data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
-			aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="navbarNavDropdown">
-			<ul class="navbar-nav">
-				<li class="nav-item active"><a class="nav-link" href="/home">Home
-						<span class="sr-only">(current)</span>
-				</a></li>
-				<div sec:authorize="isAnonymous()">
-					<li class="nav-item dropdown"><a
-						class="nav-link dropdown-toggle" href="#"
-						id="navbarDropdownMenuLink" data-toggle="dropdown"
-						aria-haspopup="true" aria-expanded="false"> My Account </a>
-						<div class="dropdown-menu"
-							aria-labelledby="navbarDropdownMenuLink">
-							<a class="dropdown-item" href="/login"><i class="fas fa-sign-in-alt"></i>&nbsp;Log in</a> <a
-								class="dropdown-item" href="/registration"><i class="fas fa-user-plus"></i>&nbsp;Register</a>
-						</div></li>
-				</div>
-			</ul>
-		</div>
-	</nav>
+
 
 
 	<!--  HTML registration form  -->
 
+	<div layout:fragment="content">
+		<div class="ui container">
+			<div
+				style="width: 600px; margin-left: auto; margin-right: auto; margin-top: 40px;">
+				<div class="ui segments">
 
-	<div class="align-items-center container ">
+					<div class="ui segment secondary">Login Page</div>
 
 
-		<br> <br> <br>
-		<h1>Login Page</h1>
-		<br>
+					<div class="ui segment">
+						<form th:action="@{/login}" method="post">
 
-		<form th:action="@{/login}" method="post">
+							<!-- Error Message -->
+						
+								<div class="ui negative message margin-10" id="error">
+									<i class="close icon"></i> Invalid username or password
+								</div>
+		
+							<!-- Logout Message -->
 
-			<!-- Error Message -->
-			<div th:if="${param.error}">
-				<div class="alert alert-danger alert-dismissible fade show"
-					role="alert">
-					Invalid username or password
-					<button type="button" class="close" data-dismiss="alert"
-						aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
+						
+								<div class="ui info message margin-10" id="logout">
+									<i class="close icon"></i> You have been logged out
+								</div>
+						
+
+
+							<!-- Registration success message -->
+							
+								<div class="ui info message margin-10" id="registrationSuccess">
+									<i class="close icon"></i> You have registered successfully
+								</div>
+
+
+
+							<div class="group">
+								<label class="leftlabel" for="username"> <span>Username</span>
+									<input type="text" id="username" name="username" class="field borderless"
+									placeholder="Enter username" required autofocus="autofocus" /></label>
+
+							</div>
+							<div class="group">
+								<label class="leftlabel" for="password"> <span>Password</span>
+									<input type="password" id="password" name="password"
+									class="field borderless" placeholder="Enter password" required
+									autofocus="autofocus" /></label>
+							</div>
+							<div class="ui checkbox margin-10">
+
+								<input type="checkbox" class="form-check-input" id="remember-me"
+									name="remember-me"> <label class="form-check-label"
+									for="remember-me">Remember me?</label>
+							</div>
+
+							<div class="margin-10">
+								<button type="submit" class="ui fluid positive button">
+									Login
+								</button>
+								<a class="ui fluid button margin-top-10"
+									th:href="@{registration}">Sign Up</a>
+							</div>
+
+						</form>
+					</div>
 				</div>
 			</div>
-
-			<!-- Logout Message -->
-			<div th:if="${param.logout}">
-				<div class="alert alert-info alert-dismissible fade show"
-					role="alert">
-					You have been logged out
-					<button type="button" class="close" data-dismiss="alert"
-						aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			</div>
-
-			<!-- Registration success message -->
-			<div th:if="${param.registrationSuccess}">
-
-				<div class="alert alert-info alert-dismissible fade show"
-					role="alert">
-					You have registered successfully
-					<button type="button" class="close" data-dismiss="alert"
-						aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label class="control-label" for="username"> Username: </label> <input
-					type="text" id="username" name="username" class="form-control"
-					placeholder="Enter username" required autofocus="autofocus" />
-			</div>
-			<div class="form-group">
-				<label class="control-label" for="password"> Password: </label> <input
-					type="password" id="password" name="password" class="form-control"
-					placeholder="Enter password" required autofocus="autofocus" />
-			</div>
-			<br>
-			<div class="form-group">
-				<button type="submit" class="btn btn-success"><i class="fas fa-sign-in-alt"></i>&nbsp; Login</button>
-				<span>New user? <a href="/" th:href="@{registration}">Register
-						here</a></span>
-			</div>
-		</form>
+		</div>
 	</div>
 
-
-
+	<div layout:fragment="script">
+		<script>
+			$(document)
+					.ready(
+							function() {
+								$('#logout').hide();
+								$('#error').hide();
+								$('#registrationSuccess').hide();
+								var urlParams = new URLSearchParams(
+										window.location.search);
+								if (urlParams.has('logout')) {
+									$('#logout').show();
+									setTimeout(
+											function() {
+												$('#logout')
+														.slideUp(
+																350,
+																function() {
+																	if ($(
+																			'#logout')
+																			.css(
+																					'display') == 'none') {
+																		window.location.href = window.location.href
+																				.split("?")[0]
+																	}
+																});
+											}, 5000);
+								} else if (urlParams.has('error')) {
+									$('#error').show();
+									setTimeout(
+											function() {
+												$('#error')
+														.slideUp(
+																350,
+																function() {
+																	if ($(
+																			'#error')
+																			.css(
+																					'display') == 'none') {
+																		window.location.href = window.location.href
+																				.split("?")[0]
+																	}
+																});
+											}, 5000);
+								} else if (urlParams.has('registrationSuccess')) {
+									$('#registrationSuccess').show();
+									setTimeout(
+											function() {
+												$('#registrationSuccess')
+														.slideUp(
+																350,
+																function() {
+																	if ($(
+																			'#registrationSuccess')
+																			.css(
+																					'display') == 'none') {
+																		window.location.href = window.location.href
+																				.split("?")[0]
+																	}
+																});
+											}, 5000);
+								}
+							});
+			
+			$('.message .close').on('click', function() {
+				$(this).parent().hide();
+			});
+		</script>
+	</div>
 </body>
 </html>

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+</head>
+<body>
+
+	<div th:fragment="bookingFlowSteps(bookingFlow)"
+		class="ui fluid ordered mini steps">
+
+		<div class="step"
+			th:each="stepDescription,stat : ${bookingFlow.stepDescriptions}"
+			th:with="step=${T(com.ePark.service.BookingFlow.Step).from(stat.index)},
+         isActive=${bookingFlow.isActive(step)},isCompleted=${bookingFlow.isCompleted(stat.index)}"
+			th:classappend="${isActive} ? 'active' : (${isCompleted} ? 'completed')">
+			<div class="content">
+				<div class="title" th:text="${stepDescription.title}"></div>
+			</div>
+		</div>
+	</div>
+
+
+	<div th:fragment="vehiclesAdd">
+
+		<div class="ui small segments">
+			<div class="ui top segment secondary pointer" id="expandVehicleAdd">Add avehicle
+				<i id="vehicleExpandSymbol" class="float-right add icon"></i> &nbsp;
+
+			</div>
+
+			<div id="vehicleAddBody" class="ui segment"
+				style="display: none; padding: 15px">
+				<div class="group">
+					<label class="leftlabel"> <span>Registration</span> <input
+						class="field borderless" type="text" name="registration"
+						placeholder="Registration" />
+					</label>
+				</div>
+				<div class="group">
+					<label class="leftlabel"> <span>Make</span> <input
+						class="field borderless" type="text" name="make"
+						placeholder="Make" />
+					</label>
+				</div>
+				<div class="group">
+					<label class="leftlabel"> <span>Colour</span> <input
+						class="field borderless" type="text" name="colour"
+						placeholder="Colour" />
+					</label>
+				</div>
+				<div style="padding: 10px">
+					<button class="ui primary button fluid" type="button"
+						id="addVehicleButton">Add vehicle</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div th:fragment="vehicles">
+
+		<table class="ui table">
+			<thead>
+				<tr class="ui segment secondary">
+					<th th:unless="${session.bookingFlow == null}"
+						style="text-align: center">Select</th>
+					<th>Registration</th>
+					<th>Make</th>
+					<th>Colour</th>
+					<th style="text-align: center">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<th:block th:if="${user != null}">
+					<tr th:each="vehicle : ${user.vehicles}" class="ui segment">
+						<td th:unless="${session.bookingFlow == null}"
+							style="text-align: center"><input type="checkbox"
+							th:value="${vehicle.vehicleId}"
+							class="ui checkbox vertical-middle"
+							th:object="${bookingFlow.booking}" th:field="*{vehicles}">
+						</td>
+						<td th:text="${vehicle.registration}"></td>
+						<td th:text="${vehicle.make}"></td>
+						<td th:text="${vehicle.colour}"></td>
+						<td class="pointer underline red" style="text-align: center"
+							th:onclick="'javascript:removeVehicle(' + ${vehicle.vehicleId} + ');'">Remove</td>
+					</tr>
+				</th:block>
+				<th:block th:unless="${user != null}">
+					<tr class="ui segment">
+						<td colspan="4">You have no vehicles on your account.</td>
+					</tr>
+				</th:block>
+			</tbody>
+		</table>
+
+	</div>
+
+
+	<div th:fragment="review">
+
+		<h3>Car Park</h3>
+		<table class="ui very basic table">
+			<tbody>
+				<tr>
+					<td>Name</td>
+					<td th:text="${bookingFlow.booking.carParks.name}"></td>
+				</tr>
+				<tr class="border_bottom">
+					<td>Address</td>
+					<td style="white-space: pre"
+						th:text="${bookingFlow.booking.carParks.carParkAddress1}+
+					', &nbsp;'+${bookingFlow.booking.carParks.carParkAddress2}+
+					', &nbsp;'+${bookingFlow.booking.carParks.carParkCity}+
+					', &nbsp;'+${bookingFlow.booking.carParks.carParkPostcode}"></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<h3>Times</h3>
+		<table class="ui very basic table">
+			<tbody>
+				<tr>
+					<td>Starts</td>
+					<td
+						th:text="${#temporals.format(bookingFlow.booking.startDate, 'dd/MM/yyyy')}"></td>
+					<td th:text="${bookingFlow.booking.startTime}"></td>
+				</tr>
+				<tr class="border_bottom">
+					<td>Ends</td>
+					<td
+						th:text="${#temporals.format(bookingFlow.booking.endDate, 'dd/MM/yyyy')}"></td>
+					<td th:text="${bookingFlow.booking.endTime}"></td>
+				</tr>
+			</tbody>
+		</table>
+
+
+
+		<table class="ui very basic table">
+			<h3>Vehicle</h3>
+			<tbody>
+				<tr class="border_bottom">
+					<td>Vehicle</td>
+					<td th:text="${bookingFlow.booking.vehicles.registration}"></td>
+					<td th:text="${bookingFlow.booking.vehicles.make}"></td>
+					<td th:text="${bookingFlow.booking.vehicles.colour}"></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<table class="ui very basic table">
+			<h3>Cost</h3>
+			<tbody>
+				<tr class="border_bottom">
+					<td class="bold">Total</td>
+					<td
+						th:text="${#numbers.formatCurrency(bookingFlow.booking.calculatePrice())}">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+
+
+	</div>
+
+	<div th:fragment="t&c">
+		<div class="ui segments">
+			<div class="ui top attached label secondary">Terms & Conditions</div>
+			<div class="ui segment">
+				<p>By acknowledging our booking policies, you understand the
+					following</p>
+
+				<input type="checkbox" required class="ui checkbox vertical-middle">
+				<label>&nbsp;&nbsp;I understand</label>
+
+			</div>
+		</div>
+
+	</div>
+
+
+
+	<div th:fragment="quickSummary" id="quickSummary">
+		<div class="ui segments">
+			<div class="ui top attached label inverted blue">Summary</div>
+			<div class="ui segment">
+
+				<p class="bold" th:text="${bookingFlow.booking.carParks.name}"></p>
+
+				<div class="margin-top-10">
+					<p
+						th:text="${bookingFlow.booking.carParks.carParkAddress1}+
+					', '+${bookingFlow.booking.carParks.carParkAddress2}+
+					', '+${bookingFlow.booking.carParks.carParkCity}+
+					', '+${bookingFlow.booking.carParks.carParkPostcode}"></p>
+				</div>
+				<div class="ui divider"></div>
+				<table class="summary">
+					<tbody>
+
+						<tr>
+							<td class="bold">Rate</td>
+							<td
+								th:text="'£'+${bookingFlow.booking.carParks.price}+'/'+
+                ${bookingFlow.booking.carParks.parkingRate}"></td>
+						</tr>
+						<tr>
+							<td class="bold">Hours</td>
+							<td th:text="${bookingFlow.booking.calculateDuration()}"></td>
+						</tr>
+
+						<tr class="ui divider">
+							<td class="bold">Total</td>
+							<td>
+								<h5
+									th:text="${#numbers.formatCurrency(bookingFlow.booking.calculatePrice())}"></h5>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+	<div th:fragment="cardsTable">
+
+		<table class="ui table" id="cards">
+			<thead class="ui top segment secondary">
+				<tr>
+					<th th:unless="${session.bookingFlow == null}"
+						style="text-align: center">Select</th>
+					<th>Card Number</th>
+					<th>Expiry Date</th>
+					<th></th>
+					<th style="text-align: center">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<th:block th:if="${cards != null}">
+					<tr th:each="card : ${cards.getData()}" class="ui segment">
+						<td th:unless="${session.bookingFlow == null}"
+							style="text-align: center"><input type="checkbox"
+							th:value="${card.id}" th:object="${cards}"
+							class="ui checkbox vertical-middle" name="paymentMethodId">
+						</td>
+						<td th:text="'xxxx xxxx xxxx ' +${card.card.last4}"></td>
+						<td th:text="${card.card.expMonth}+'/'+${card.card.expYear}"></td>
+						<th:block th:if="${defaultCard == card.id}">
+							<td class="collapsing" style="text-align: center">Default</td>
+						</th:block>
+						<th:block th:unless="${defaultCard == card.id}">
+							<td class="collapsing  pointer underline blue" style="text-align: center"
+							th:attr="onclick=|setDefaultCard('${card.id}')|">Set as default</td>
+						</th:block>
+						
+						<td class="pointer underline red" style="text-align: center"
+							th:attr="onclick=|removeCard('${card.id}')|">Remove</td>
+					</tr>
+				</th:block>
+				<th:block th:unless="${cards != null}">
+					<tr class="ui segment">
+						<td colspan="4">You have no cards on your account.</td>
+					</tr>
+				</th:block>
+			</tbody>
+		</table>
+
+	</div>
+
+
+	<div th:fragment="cardsAdd">
+
+
+		<div class="ui small segments">
+			<div class="ui top segment secondary pointer" id="expandCardAdd">Add a card
+				<i id="cardExpandSymbol" class="add icon float-right"></i> &nbsp;
+
+			</div>
+
+
+			<div id="cardAddBody" class="ui segment"
+				style="display: none; padding: 15px">
+
+				<div class="group">
+					<label class="leftlabel"> <span>Name</span> <input
+						class="field borderless" type="text" id="cardHolderName"
+						placeholder="Card number" />
+					</label>
+				</div>
+				<div class="group">
+
+
+
+					<label class="leftlabel"> <span>Card</span>
+						<div id="card-element" class="field"></div>
+					</label>
+				</div>
+				<!-- Used to display form errors. -->
+				<div id="card-errors" role="alert"></div>
+
+
+				<div style="padding: 10px;">
+					<button class="ui button primary fluid" type="button"
+						id="cardButton">Add Card</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div th:fragment="spotBookings">
+		<div class="ui segment padding-20 min-height-800"
+			id="spotBookingsSegment">
+
+
+			<th:block th:if="${not #lists.isEmpty(spotBookings)}">
+				<div th:each="spotBooking : ${spotBookings}">
+					<div class="ui segments margin-bottom-20">
+
+						<div class="ui top attached label"
+							th:text="'Booking ID: '+ ${spotBooking.bookingId}"></div>
+
+
+						<table class="ui table margin-bottom-0 no-border">
+							<tbody>
+								<tr>
+									<td rowspan="2" class="right aligned">Start:</td>
+									<td rowspan="2" class="left aligned"><h5
+											th:text="${spotBooking.startTime}"></h5></td>
+									<td class="collapsing border-left">Registration:</td>
+									<td><div class="ui label"><span th:text="${spotBooking.vehicles.registration}"></span></div></td>
+
+								</tr>
+								<tr>
+									<td class="border-left">Date:</td>
+									<td
+										th:text="${#temporals.format(spotBooking.startDate, 'dd/MM/yyyy')}"></td>
+								</tr>
+								<tr>
+									<td rowspan="2" class="right aligned">End:</td>
+									<td rowspan="2" class="left aligned"><h5
+											th:text="${spotBooking.endTime}"></h5></td>
+									<td class="collapsing border-left">User ID:</td>
+									<td th:text="${spotBooking.users.userId}"></td>
+
+								</tr>
+								<tr>
+									<td class="collapsing border-left">Amount:</td>
+									<td th:text="'£'+${spotBooking.amount}"></td>
+								</tr>
+
+							</tbody>
+							<tfoot>
+								<tr>
+									<th colspan="4">
+										<button type="button" class="ui small button primary charge"
+											th:stripeId="${spotBooking.users.stripeId}">Charge
+											Customer</button>
+									</th>
+								</tr>
+							</tfoot>
+
+						</table>
+
+
+
+
+					</div>
+				</div>
+			</th:block>
+			<th:block th:unless="${not #lists.isEmpty(spotBookings)}">
+				<div class="ui segment">
+					<div class="ui middle aligned grid">
+						<div class="row">
+							<div class="sixteen wide center aligned column">
+								<i class="file huge outline icon"></i>
+								<h5>There are no bookings for this space</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+			</th:block>
+		</div>
+	</div>
+
+
+
+
+	<div th:fragment="bookingsInfo">
+
+
+		<div class="ui segment" id="bookingsInfoSegment">
+			<th:block th:if="${booking != null}">
+				<div class="ui segments">
+
+					<div class="ui top attached label secondary">
+						Booking Information
+
+						<div class="float-right">
+							Created:&nbsp;<span th:text="${booking.bookingCreated}"></span>
+						</div>
+
+					</div>
+
+					<div class="ui segment">
+						<table class="ui very basic table">
+							<tbody>
+								<tr>
+									<td>Booking ID:</td>
+									<td th:text="${booking.bookingId}"></td>
+								</tr>
+								<tr>
+									<td>Car Park:</td>
+									<td th:text="${booking.carParks.name}"></td>
+								</tr>
+								<tr>
+									<td>Date:</td>
+									<td th:text="${booking.startDate}"></td>
+								</tr>
+								<tr>
+									<td>From:</td>
+									<td th:text="${booking.startTime}"></td>
+								</tr>
+								<tr>
+									<td>To:</td>
+									<td th:text="${booking.endTime}"></td>
+								</tr>
+								<tr>
+									<td>Space Number:</td>
+									<td th:text="${booking.carParkSpots.spaceNumber}"></td>
+								</tr>
+								<td>Disabled Space:</td>
+								<td
+									th:text="${booking.carParkSpots.isDisabled == true} ? 'Yes' : 'No'"></td>
+								</tr>
+							</tbody>
+						</table>
+
+					</div>
+				</div>
+				<div class="ui segments">
+					<div class="ui top attached label secondary">Payment
+						Information</div>
+
+					<table class="ui table">
+						<tbody>
+
+							<tr>
+								<td>Payment ID:</td>
+								<td th:text="${booking.paymentId}"></td>
+							</tr>
+							</tr>
+							<td>Transaction ID:</td>
+							<td th:text="${payment.charges.data[0].balanceTransaction}"></td>
+
+							</tr>
+							<tr>
+								<td>Payment Card:</td>
+								<td
+									th:text="'xxxx xxxx xxxx '+${payment.charges.data[0].paymentMethodDetails.card.last4}"></td>
+
+							</tr>
+							<tr>
+								<td>Amount:</td>
+								<td
+									th:text="'£' +${#numbers.formatDecimal(payment.amount / 100, 0, 'COMMA', 2, 'POINT')}"></td>
+							</tr>
+
+						</tbody>
+
+					</table>
+				</div>
+			</th:block>
+		</div>
+
+	</div>
+
+
+
+
+
+</body>
+</html>

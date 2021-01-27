@@ -1,569 +1,532 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8" name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>ePark</title>
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-	crossorigin="anonymous">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{main-layout}">
 
 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-	integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-	crossorigin="anonymous"></script>
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-	integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-	crossorigin="anonymous"></script>
-<script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-	integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-	crossorigin="anonymous"></script>
-
-
-<link rel="stylesheet"
-	href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
-<script
-	src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
-
-<style>
-body {
-	padding-top: 56px;
-}
-</style>
-
-</head>
 <body>
 
 	<!--  Navigation Bar -->
 
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-		<a class="navbar-brand" href="">ePark</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse"
-			data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
-			aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-
-		</div>
-		<div class="collapse navbar-collapse" id="navbarNavDropdown">
-			<ul class="navbar-nav">
-				<li class="nav-item active"><a class="nav-link" href="/home">Home
-						<span class="sr-only">(current)</span>
-				</a></li>
-				<div sec:authorize="isAnonymous()">
-					<li class="nav-item dropdown"><a
-						class="nav-link dropdown-toggle" href="#"
-						id="navbarDropdownMenuLink" data-toggle="dropdown"
-						aria-haspopup="true" aria-expanded="false"> My Account </a>
-						<div class="dropdown-menu"
-							aria-labelledby="navbarDropdownMenuLink">
-							<a class="dropdown-item" href="/login">Log in</a> <a
-								class="dropdown-item" href="/registration">Register</a>
-						</div></li>
-				</div>
-
-
-				<li class="nav-item dropdown" sec:authorize="isAuthenticated()"><a
-					class="nav-link dropdown-toggle" href="#"
-					id="navbarDropdownMenuLink" data-toggle="dropdown"
-					aria-haspopup="true" aria-expanded="false"> My Account </a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a sec:authorize="hasAnyAuthority('USER')" class="dropdown-item"
-							href="#">View reservations</a> <a class="dropdown-item" href="#">View
-							account details</a> <a class="dropdown-item" href="/logout">Log
-							out</a>
-					</div></li>
-
-				<li class="nav-item dropdown" sec:authorize="isAuthenticated()"><a
-					class="nav-link dropdown-toggle" href="#"
-					id="navbarDropdownMenuLink" data-toggle="dropdown"
-					aria-haspopup="true" aria-expanded="false"> Manage car parks </a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a class="dropdown-item" href="/viewcarparkforuser">View car
-							parks</a> <a class="dropdown-item" href="/addcarpark">Add car
-							parks</a>
-					</div></li>
-				<li class="nav-item dropdown"
-					sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')"><a
-					class="nav-link dropdown-toggle" href="#"
-					id="navbarDropdownMenuLink" data-toggle="dropdown"
-					aria-haspopup="true" aria-expanded="false"> Admin Menu </a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a class="dropdown-item" href="/viewcarpark">View car park
-							submissions</a> <a class="dropdown-item" href="">View
-							reservations</a>
-					</div></li>
-			</ul>
-
-		</div>
-	</nav>
 
 	<!--  HTML registration form -->
+	<div layout:fragment="content" style="min-height: 1100px">
 
-	<div class="align-items-center container ">
+
+		<div class="ui container">
 
 
-		<br> <br> <br>
-		<div class="form_group">
-			<h1>Add a car park</h1>
-		</div>
-		<br>
-
-		<form th:action="@{/addcarpark}" method="post" th:object="${carpark}">
-
-			<!-- Registration success message -->
 			<div th:if="${param.success}">
-				<div class="alert alert-info alert-dismissible fade show">
-					Car park submitted successfully
-					<button type="button" class="close" data-dismiss="alert"
-						aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
+				<div class="ui positive message margin-bottom-10">
+					<i class="close icon"></i> Car park submitted successfully
 				</div>
 			</div>
 
+			<form th:action="@{/addcarpark}" method="post" th:object="${carpark}"
+				class="ui form" id="addCarParkForm">
+
+				<div class="ui segments">
+
+					<div class="ui top attached segment secondary">Add a car park</div>
+
+					<div class="ui segment padding-20">
+					
+						<div
+							class="ui horizontal divider margin-top-20 field">Details</div>
 
 
-			<div class="form-row">
-				<div class="form-group col-md-6">
-					<label class="control-label" for="name"> Name: </label> <input
-						type="text" id="name" class="form-control" th:field="*{name}"
-						placeholder="Enter a name" required autofocus="autofocus" />
-				</div>
-				<div class="form-group col-md-6">
-					<label class="control-label" for="email"> Email: </label> <input
-						type="text" id="email" class="form-control" th:field="*{email}"
-						placeholder="email@example.com" required autofocus="autofocus" />
-				</div>
-			</div>
-			<div class="form-row">
-				<div class="form-group col-md-6">
+						<div class="two fields padding-sides-20">
 
-					<label class="control-label" for="address1"> Address 1: </label> <input
-						type="text" id="address2" class="form-control"
-						th:field="*{carParkAddress1}" required
-						placeholder="Address line 1" autofocus="autofocus" />
-				</div>
+							<div class="field">
+
+								<label> Name: </label><input type="text" id="name"
+									th:field="*{name}" placeholder="Enter a name" required
+									autofocus="autofocus" />
+
+							</div>
 
 
-				<div class="form-group col-md-6">
-					<label class="control-label" for="firstname"> Address 2: </label> <input
-						type="text" id="address2" class="form-control"
-						th:field="*{carParkAddress2}" placeholder="Address line 2"
-						required autofocus="autofocus" />
-				</div>
-			</div>
-			<div class="form-row">
-				<div class="form-group col-md-6">
-					<label class="control-label" for="address3"> City: </label> <input
-						type="text" id="address3" class="form-control"
-						th:field="*{carParkCity}" placeholder="Address line 3" required
-						autofocus="autofocus" />
-				</div>
-				<div class="form-group col-md-6">
-					<label class="control-label" for="postcode"> Postcode: </label> <input
-						type="text" id="postcode" class="form-control"
-						th:field="*{carParkPostcode}" placeholder="Address postcode"
-						required autofocus="autofocus" />
-				</div>
-			</div>
-			<div class="form-row">
-				<div class="form-group col-md-3">
-					<label class="control-label" for="noofspaces">Total
-						available spaces:</label><input type="number" id="noofspaces"
-						class="form-control" max="300" th:field="*{spaces}"
-						placeholder="Number of spaces available" required
-						autofocus="autofocus" />
-				</div>
-				<div class="form-group col-md-3">
-					<label class="control-label" for="noofdisabled">Disabled
-						spaces:</label><input type="number" id="noofdisabled" class="form-control"
-						max="300" th:field="*{isDisabled}"
-						placeholder="Number of disabled spaces" required
-						autofocus="autofocus" />
-				</div>
+							<div class="field">
+								<label>Email: </label><input type="text" id="email"
+									th:field="*{email}" placeholder="email@example.com" required
+									autofocus="autofocus" />
+							</div>
 
-
-
-				<div class="form-group col-md-3">
-					<label class="control-label" for="Amount"> Parking cost: </label>
-					<div class="input-group mb-3">
-						<div class="input-group-prepend">
-							<span class="input-group-text">£</span>
 						</div>
-						<input type="number" class="form-control" min="0.00"
-							max="10000.00" step="0.01" id="Amount" th:field="*{price}"
-							placeholder="0.00" required autofocus="autofocus">
-					</div>
-				</div>
+						<div
+							class="ui horizontal divider margin-top-50 field">Address</div>
+
+						<div class="two fields padding-sides-20">
+							<div class="field">
+
+								<label for="address1"> Address 1:</label> <input type="text"
+									id="address2" th:field="*{carParkAddress1}" required
+									placeholder="Address line 1" autofocus="autofocus" />
+							</div>
 
 
-				<div class="form-group col-md-3">
-					<label class="control-label" for="Rate"> Parking Rate: </label>
-					<div class="btn-group btn-group-toggle" data-toggle="buttons">
-						<label class="btn btn-light active" data-toggle="tooltip"
-							data-placement="bottom" title="Charges the customer per hour">
-							<input type="radio" th:field="*{rate}" th:value="1.0"
-							class="form-check-input" name="options" id="option1"
-							autocomplete="off" checked> Hourly Rate
-						</label> <label class="btn btn-light" data-toggle="tooltip"
-							data-placement="bottom"
-							title="Charges the customer every 30 minutes"> <input
-							type="radio" th:field="*{rate}" th:value="0.5"
-							class="form-check-input" name="options" id="option2"
-							autocomplete="off"> 30 Minute Rate
-						</label>
-					</div>
-				</div>
-			</div>
-
-			<div class="form-row">
-				<div class="form-group col-md-1">
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="" id="247">
-						<label class="control-label" for="Rate"> 24/7 </label>
-					</div>
-				</div>
-
-				<div class="form-group col-md-2">
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="" id="7to6">
-						<label class="control-label"> Business Hours </label>
-					</div>
-				</div>
-			</div>
-			<div class="form-row timerow">
-
-				<div class="form-group col">
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value=""
-							id="checkMonday"> <label class="control-label" for="Rate">
-							Monday: </label>
-					</div>
-
-					<label class="control-label" for="Rate"> From: </label> <input
-						disabled type="text" class="form-control time open"
-						id="MondayFrom" th:field="*{MondayFrom}" placeholder="--:--"
-						required autofocus="autofocus" /> <label class="control-label"
-						for="Rate"> To: </label> <input type="text" th:field="*{MondayTo}"
-						class="form-control time closed" id="MondayTo" placeholder="--:--"
-						disabled required autofocus="autofocus" />
-
-				</div>
-				<div class="form-group col">
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value=""
-							id="checkTuesday"> <label class="control-label"
-							for="Rate"> Tuesday: </label>
-					</div>
-					<label class="control-label" for="Rate"> From: </label> <input
-						disabled th:field="*{TuesdayFrom}" type="text"
-						class="form-control time open" id="TuesdayFrom"
-						placeholder="--:--" required autofocus="autofocus"> <label
-						class="control-label" for="Rate"> To: </label> <input type="text"
-						th:field="*{TuesdayTo}" class="form-control time closed"
-						id="TuesdayTo" placeholder="--:--" required disabled
-						autofocus="autofocus" step="60">
-				</div>
-				<div class="form-group col">
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value=""
-							id="checkWednesday"> <label class="control-label"
-							for="Rate"> Wednesday: </label>
-					</div>
-					<label class="control-label" for="Rate"> From: </label> <input
-						disabled th:field="*{WednesdayFrom}" type="text"
-						class="form-control time open" id="WednesdayFrom"
-						placeholder="--:--" required autofocus="autofocus" /> <label
-						class="control-label" for="Rate"> To: </label> <input type="text"
-						th:field="*{WednesdayTo}" class="form-control time closed"
-						id="WednesdayTo" placeholder="--:--" required disabled
-						autofocus="autofocus" />
-				</div>
-				<div class="form-group col">
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value=""
-							id="checkThursday"> <label class="control-label"
-							for="Rate"> Thursday: </label>
-					</div>
-					<label class="control-label" for="Rate"> From: </label> <input
-						disabled th:field="*{ThursdayFrom}" type="text"
-						class="form-control time open" id="ThursdayFrom"
-						placeholder="--:--" required autofocus="autofocus" /> <label
-						class="control-label" for="Rate"> To: </label> <input type="text"
-						th:field="*{ThursdayTo}" class="form-control time closed"
-						id="ThursdayTo" placeholder="--:--" required disabled
-						autofocus="autofocus" />
-				</div>
-				<div class="form-group col">
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value=""
-							id="checkFriday"> <label class="control-label" for="Rate">
-							Friday: </label>
-					</div>
-					<label class="control-label" for="Rate"> From: </label> <input
-						disabled th:field="*{FridayFrom}" type="text"
-						class="form-control time open" id="FridayFrom" placeholder="--:--"
-						required autofocus="autofocus" /> <label class="control-label"
-						for="Rate"> To: </label> <input type="text" th:field="*{FridayTo}"
-						class="form-control time closed" id="FridayTo" placeholder="--:--"
-						required disabled autofocus="autofocus" />
-				</div>
-				<div class="form-group col">
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value=""
-							id="checkSaturday"> <label class="control-label"
-							for="Rate"> Saturday: </label>
-					</div>
-					<label class="control-label" for="Rate"> From: </label> <input
-						disabled th:field="*{SaturdayFrom}" type="text"
-						class="form-control time open" id="SaturdayFrom"
-						placeholder="--:--" required autofocus="autofocus" /> <label
-						class="control-label" for="Rate"> To: </label> <input type="text"
-						th:field="*{SaturdayTo}" class="form-control time closed"
-						id="SaturdayTo" placeholder="--:--" required disabled
-						autofocus="autofocus" />
-				</div>
-				<div class="form-group col">
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" id="checkSunday">
-						<label class="control-label" for="Rate"> Sunday: </label>
-					</div>
-					<label class="control-label" for="Rate"> From: </label> <input
-						disabled th:field="*{SundayFrom}" type="text"
-						class="form-control time open" id="SundayFrom" placeholder="--:--"
-						required autofocus="autofocus" /> <label class="control-label"
-						for="Rate"> To: </label> <input type="text" th:field="*{SundayTo}"
-						disabled class="form-control time closed" id="SundayTo"
-						placeholder="--:--" required autofocus="autofocus" />
-				</div>
-
-
-
-			</div>
-
-			<br>
-
-
-			<div class="form-group">
-				<button type="button" class="btn btn-primary mb-2"
-					data-toggle="modal" data-target="#submitcarpark">Submit
-					for approval</button>
-			</div>
-
-
-			<div class="modal" role="dialog" id="submitcarpark">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">Submit Car Park</h5>
-							<button type="button" class="close" data-dismiss="modal"
-								aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
+							<div class="field">
+								<label for="firstname"> Address 2:</label> <input type="text"
+									id="address2" th:field="*{carParkAddress2}"
+									placeholder="Address line 2" required autofocus="autofocus" />
+							</div>
 						</div>
-						<div class="modal-body">
-							<p>You are about to submit this car park for approval</p>
+
+						<div class="two fields padding-sides-20">
+							<div class="field">
+								<label for="address3">City: </label><input type="text"
+									id="address3" th:field="*{carParkCity}"
+									placeholder="Address line 3" required autofocus="autofocus" />
+							</div>
+							<div class="field">
+								<label for="postcode">Postcode: </label> <input type="text"
+									id="postcode" th:field="*{carParkPostcode}"
+									placeholder="Address postcode" required autofocus="autofocus" />
+							</div>
 						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary"
-								data-dismiss="modal">Close</button>
-							<button type="submit" class="btn btn-primary">Submit</button>
+
+
+						<div
+							class="ui horizontal divider margin-top-50 field">Spaces</div>
+
+						<div class="two fields padding-sides-20">
+							<div class="field">
+								<label for="noofspaces">Total spaces:</label><input
+									type="number" id="noofspaces" max="200" th:field="*{spaces}"
+									placeholder="Number of spaces available" required
+									autofocus="autofocus">
+							</div>
+							<div class="field">
+								<label for="noofdisabled">Disabled spaces:</label><input
+									type="number" id="noofdisabled" max="200"
+									th:field="*{isDisabled}"
+									placeholder="Number of disabled spaces" required
+									autofocus="autofocus">
+							</div>
+
+						</div>
+
+						<div
+							class="ui horizontal divider margin-top-50 field">Pricing</div>
+
+						<div class="two fields padding-sides-20">
+							<div class="field">
+								<label for="Amount"> Parking cost:</label> <input type="number"
+									min="0.00" max="10000.00" step="0.01" id="Amount"
+									th:field="*{price}" placeholder="0.00" required
+									autofocus="autofocus">
+
+							</div>
+
+
+							<div class="field">
+								<label for="Rate">Parking Rate:</label>
+								<div class="ui radio">
+									<input type="radio" th:field="*{rate}" th:value="1.0" 
+										name="options" id="option1" autocomplete="off" checked>&nbsp;
+									Hourly Rate &nbsp;&nbsp;&nbsp; <input type="radio" th:field="*{rate}"
+										th:value="0.5" name="options" id="option2" autocomplete="off">&nbsp;
+									30 Minute Rate
+								</div>
+
+
+
+							</div>
+						</div>
+						<div
+							class="ui horizontal divider margin-top-50 field">Opening
+							Hours</div>
+
+						<div class="fields padding-sides-20">
+							<div class="field">
+								<div class="ui checkbox">
+									<input type="checkbox" value="" id="247"> <label>
+										24/7 </label>
+								</div>
+							</div>
+
+							<div class="three wide field">
+								<div class="ui checkbox">
+									<input type="checkbox" value="" id="7to6"> <label>
+										Business Hours </label>
+								</div>
+							</div>
+						</div>
+						<div class="fields padding-sides-20 timerow">
+
+							<div class="field">
+								<div class="ui checkbox">
+									<input class="days-checkbox" type="checkbox" value=""
+										id="checkMonday"> <label> Monday </label>
+								</div>
+								<div>
+									<label class="toplabel margin-top-10" for="Rate"> From:
+									</label> <input disabled type="text" class="time-field-sm time open"
+										id="MondayFrom" th:field="*{MondayFrom}" placeholder="Closed"
+										required autofocus="autofocus" /> <label
+										class="toplabel margin-top-10" for="Rate"> To: </label> <input
+										type="text" th:field="*{MondayTo}"
+										class="time-field-sm time closed" id="MondayTo"
+										placeholder="Closed" disabled required autofocus="autofocus" />
+								</div>
+							</div>
+							<div class="field">
+								<div class="ui checkbox">
+									<input class="days-checkbox" type="checkbox" value=""
+										id="checkTuesday"> <label class="control-label"
+										for="Rate"> Tuesday: </label>
+								</div>
+								<div>
+									<label class="toplabel margin-top-10" for="Rate"> From:
+									</label> <input disabled th:field="*{TuesdayFrom}" type="text"
+										class="time-field-sm time open" id="TuesdayFrom"
+										placeholder="Closed" required autofocus="autofocus"> <label
+										class="toplabel margin-top-10" for="Rate"> To: </label> <input
+										type="text" th:field="*{TuesdayTo}"
+										class="time-field-sm time closed" id="TuesdayTo"
+										placeholder="Closed" required disabled autofocus="autofocus"
+										step="60">
+								</div>
+							</div>
+							<div class="field">
+								<div class="ui checkbox">
+									<input class="days-checkbox" type="checkbox" value=""
+										id="checkWednesday"> <label> Wednesday: </label>
+								</div>
+								<div>
+									<label class="toplabel margin-top-10" for="Rate"> From:
+									</label> <input disabled th:field="*{WednesdayFrom}" type="text"
+										class="time-field-sm time open" id="WednesdayFrom"
+										placeholder="Closed" required autofocus="autofocus" /> <label
+										class="toplabel margin-top-10" for="Rate"> To: </label> <input
+										type="text" th:field="*{WednesdayTo}"
+										class="time-field-sm time closed" id="WednesdayTo"
+										placeholder="Closed" required disabled autofocus="autofocus" />
+								</div>
+							</div>
+							<div class="field">
+								<div class="ui checkbox">
+									<input class="days-checkbox" type="checkbox" value=""
+										id="checkThursday"> <label class="control-label"
+										for="Rate"> Thursday: </label>
+								</div>
+								<div>
+									<label class="toplabel margin-top-10" for="Rate"> From:
+									</label> <input disabled th:field="*{ThursdayFrom}" type="text"
+										class="time-field-sm time open" id="ThursdayFrom"
+										placeholder="Closed" required autofocus="autofocus" /> <label
+										class="toplabel margin-top-10" for="Rate"> To: </label> <input
+										type="text" th:field="*{ThursdayTo}"
+										class="time-field-sm time closed" id="ThursdayTo"
+										placeholder="Closed" required disabled autofocus="autofocus" />
+								</div>
+							</div>
+							<div class="field">
+								<div class="ui checkbox">
+									<input class="days-checkbox" type="checkbox" value=""
+										id="checkFriday"> <label class="control-label"
+										for="Rate"> Friday: </label>
+								</div>
+								<div>
+									<label class="toplabel margin-top-10" for="Rate"> From:
+									</label> <input disabled th:field="*{FridayFrom}" type="text"
+										class="time-field-sm time open" id="FridayFrom"
+										placeholder="Closed" required autofocus="autofocus" /> <label
+										class="toplabel margin-top-10" for="Rate"> To: </label> <input
+										type="text" th:field="*{FridayTo}"
+										class="time-field-sm time closed" id="FridayTo"
+										placeholder="Closed" required disabled autofocus="autofocus" />
+								</div>
+							</div>
+							<div class="field">
+								<div class="ui checkbox">
+									<input class="days-checkbox" type="checkbox" value=""
+										id="checkSaturday"> <label for="Rate">
+										Saturday: </label>
+								</div>
+								<div>
+									<label class="toplabel margin-top-10"> From: </label> <input
+										disabled th:field="*{SaturdayFrom}" type="text"
+										class="time-field-sm time open" id="SaturdayFrom"
+										placeholder="Closed" required autofocus="autofocus" /> <label
+										class="toplabel margin-top-10"> To: </label> <input
+										type="text" th:field="*{SaturdayTo}"
+										class="time-field-sm time closed" id="SaturdayTo"
+										placeholder="Closed" required disabled autofocus="autofocus" />
+								</div>
+							</div>
+							<div class="field">
+								<div class="ui checkbox">
+									<input class="days-checkbox" type="checkbox" id="checkSunday">
+									<label> Sunday</label>
+								</div>
+								<div>
+									<label class="toplabel margin-top-10"> From: </label> <input
+										disabled th:field="*{SundayFrom}" type="text"
+										class="time-field-sm time open" id="SundayFrom"
+										placeholder="Closed" required autofocus="autofocus" /> <label
+										class="toplabel margin-top-10" for="Rate"> To: </label> <input
+										type="text" th:field="*{SundayTo}" disabled
+										class="time-field-sm time closed" id="SundayTo"
+										placeholder="Closed" required autofocus="autofocus" />
+								</div>
+							</div>
+
+
+						</div>
+
+
+
+						<div class="field padding-sides-20">
+							<button class="ui button primary" type="button" id="modalButton">Submit
+								for approval</button>
+						</div>
+
+
+						<div class="ui tiny modal" id="submitcarpark">
+							<div class="header">
+								<h5>Submit Car Park</h5>
+							</div>
+							<div class="content">
+								<p>You are about to submit this car park for approval</p>
+							</div>
+							<div class="actions">
+								<button type="button" class="ui deny button">Close</button>
+								<button type="submit" form="addCarParkForm"
+									class="ui ok primary button">Submit</button>
+							</div>
+
+
 						</div>
 					</div>
 				</div>
-			</div>
-		</form>
 
+			</form>
+
+		</div>
 	</div>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
 
 
-	<script type="text/javascript">
-		$(document)
-				.ready(
-						function() {
-							$('.time').timepicker({
-								scrollbar : true,
-								disableTextInput : true,
-								listWidth : 1,
-								timeFormat : 'HH:mm',
-								change : function() {
-									$('#247').prop('checked', false);
-									$('#7to6').prop('checked', false);
+
+	<div layout:fragment="script">
+
+		<script type="text/javascript">
+			$(document)
+					.ready(
+							function() {
+								$('#success').hide();
+								var urlParams = new URLSearchParams(
+										window.location.search);
+								if (urlParams.has('success')) {
+									$('#success').show();
+									setTimeout(
+											function() {
+												$('#success')
+														.slideUp(
+																350,
+																function() {
+																	if ($(
+																			'#success')
+																			.css(
+																					'display') == 'none') {
+																		window.location.href = window.location.href
+																				.split("?")[0]
+																	}
+																});
+											}, 5000);
 								}
-							})
-
-							$('.timerow .form-check-input').change(function() {
-								$('#247').prop('checked', false);
-								$('#7to6').prop('checked', false);
-
 							});
 
-							$('#247').change(
-									function() {
-										if ($('#247').is(':checked')) {
-											$('.timerow .form-check-input')
-													.prop('checked', true);
-											$('.time').val('00:00');
-											$('.timerow .time').prop(
-													'disabled', false);
-											$('#7to6').prop('checked', false);
-										} else {
-											$('.time').val(null);
-											$('.timerow .form-check-input')
-													.prop('checked', false);
-											$('.timerow .time').prop(
-													'disabled', true);
+			$(document).ready(
+					function() {
+						$('.time').timepicker({
+							scrollbar : true,
+							disableTextInput : true,
+							listWidth : 1,
+							timeFormat : 'HH:mm',
+							change : function() {
+								$('#247').prop('checked', false);
+								$('#7to6').prop('checked', false);
+							}
+						})
 
-										}
-									});
+						$('.timerow .form-check-input').change(function() {
+							$('#247').prop('checked', false);
+							$('#7to6').prop('checked', false);
 
-							$('#7to6').change(
-									function() {
-										if ($('#7to6').is(':checked')) {
-											$('.timerow .form-check-input')
-													.prop('checked', true);
-											$('.time.open').val('07:00');
-											$('.time.closed').val('18:00');
-											$('.timerow .time').prop(
-													'disabled', false);
-											$('#247').prop('checked', false);
-										} else {
-											$('.time').val(null);
-											$('.timerow .form-check-input')
-													.prop('checked', false);
-											$('.timerow .time').prop(
-													'disabled', true);
-
-										}
-									});
-
-							$('#checkMonday').change(
-									function() {
-										if ($('#checkMonday').is(
-												':not(:checked)')) {
-											$('#MondayFrom').prop('disabled',
-													true).val(null);
-											$('#MondayTo').prop('disabled',
-													true).val(null)
-													.removeClass('.time');
-
-										} else {
-											$('#MondayFrom').prop('disabled',
-													false);
-											$('#MondayTo').prop('disabled',
-													false);
-										}
-									});
-							$('#checkTuesday').change(
-									function() {
-										if ($('#checkTuesday').is(
-												':not(:checked)')) {
-											$('#TuesdayFrom').prop('disabled',
-													true).val(null);
-											$('#TuesdayTo').prop('disabled',
-													true).val(null);
-										} else {
-											$('#TuesdayFrom').prop('disabled',
-													false);
-											$('#TuesdayTo').prop('disabled',
-													false);
-										}
-									});
-							$('#checkWednesday')
-									.change(
-											function() {
-												if ($('#checkWednesday').is(
-														':not(:checked)')) {
-													$('#WednesdayFrom').prop(
-															'disabled', true)
-															.val(null);
-													$('#WednesdayTo').prop(
-															'disabled', true)
-															.val(null);
-												} else {
-													$('#WednesdayFrom').prop(
-															'disabled', false);
-													$('#WednesdayTo').prop(
-															'disabled', false);
-												}
-											});
-							$('#checkThursday').change(
-									function() {
-										if ($('#checkThursday').is(
-												':not(:checked)')) {
-											$('#ThursdayFrom').prop('disabled',
-													true).val(null);
-											$('#ThursdayTo').prop('disabled',
-													true).val(null);
-										} else {
-											$('#ThursdayFrom').prop('disabled',
-													false);
-											$('#ThursdayTo').prop('disabled',
-													false);
-										}
-									});
-							$('#checkFriday').change(
-									function() {
-										if ($('#checkFriday').is(
-												':not(:checked)')) {
-											$('#FridayFrom').prop('disabled',
-													true).val(null);
-											$('#FridayTo').prop('disabled',
-													true).val(null);
-										} else {
-											$('#FridayFrom').prop('disabled',
-													false);
-											$('#FridayTo').prop('disabled',
-													false);
-										}
-									});
-							$('#checkSaturday').change(
-									function() {
-										if ($('#checkSaturday').is(
-												':not(:checked)')) {
-											$('#SaturdayFrom').prop('disabled',
-													true).val(null);
-											$('#SaturdayTo').prop('disabled',
-													true).val(null);
-										} else {
-											$('#SaturdayFrom').prop('disabled',
-													false);
-											$('#SaturdayTo').prop('disabled',
-													false);
-										}
-									});
-
-							$('#checkSunday').change(
-									function() {
-										if ($('#checkSunday').is(
-												':not(:checked)')) {
-											$('#SundayFrom').prop('disabled',
-													true).val(null);
-											$('#SundayTo').prop('disabled',
-													true).val(null);
-										} else {
-											$('#SundayFrom').prop('disabled',
-													false);
-											$('#SundayTo').prop('disabled',
-													false);
-										}
-									});
 						});
-	</script>
 
+						$('#247').change(
+								function() {
+									if ($('#247').is(':checked')) {
+										$('.timerow .days-checkbox').prop(
+												'checked', true);
+										$('.time').val('00:00');
+										$('.timerow .time').prop('disabled',
+												false);
+										$('#7to6').prop('checked', false);
+									} else {
+										$('.time').val(null);
+										$('.timerow .days-checkbox').prop(
+												'checked', false);
+										$('.timerow .time').prop('disabled',
+												true);
+
+									}
+								});
+
+						$('#7to6').change(
+								function() {
+									if ($('#7to6').is(':checked')) {
+										$('.timerow .days-checkbox').prop(
+												'checked', true);
+										$('.time.open').val('07:00');
+										$('.time.closed').val('18:00');
+										$('.timerow .time').prop('disabled',
+												false);
+										$('#247').prop('checked', false);
+									} else {
+										$('.time').val(null);
+										$('.timerow .days-checkbox').prop(
+												'checked', false);
+										$('.timerow .time').prop('disabled',
+												true);
+
+									}
+								});
+
+						$('#checkMonday')
+								.change(
+										function() {
+											if ($('#checkMonday').is(
+													':not(:checked)')) {
+												$('#MondayFrom').prop(
+														'disabled', true).val(
+														null);
+												$('#MondayTo').prop('disabled',
+														true).val(null)
+														.removeClass('.time');
+
+											} else {
+												$('#MondayFrom').prop(
+														'disabled', false);
+												$('#MondayTo').prop('disabled',
+														false);
+											}
+										});
+						$('#checkTuesday')
+								.change(
+										function() {
+											if ($('#checkTuesday').is(
+													':not(:checked)')) {
+												$('#TuesdayFrom').prop(
+														'disabled', true).val(
+														null);
+												$('#TuesdayTo').prop(
+														'disabled', true).val(
+														null);
+											} else {
+												$('#TuesdayFrom').prop(
+														'disabled', false);
+												$('#TuesdayTo').prop(
+														'disabled', false);
+											}
+										});
+						$('#checkWednesday').change(
+								function() {
+									if ($('#checkWednesday').is(
+											':not(:checked)')) {
+										$('#WednesdayFrom').prop('disabled',
+												true).val(null);
+										$('#WednesdayTo')
+												.prop('disabled', true).val(
+														null);
+									} else {
+										$('#WednesdayFrom').prop('disabled',
+												false);
+										$('#WednesdayTo').prop('disabled',
+												false);
+									}
+								});
+						$('#checkThursday').change(
+								function() {
+									if ($('#checkThursday')
+											.is(':not(:checked)')) {
+										$('#ThursdayFrom').prop('disabled',
+												true).val(null);
+										$('#ThursdayTo').prop('disabled', true)
+												.val(null);
+									} else {
+										$('#ThursdayFrom').prop('disabled',
+												false);
+										$('#ThursdayTo')
+												.prop('disabled', false);
+									}
+								});
+						$('#checkFriday')
+								.change(
+										function() {
+											if ($('#checkFriday').is(
+													':not(:checked)')) {
+												$('#FridayFrom').prop(
+														'disabled', true).val(
+														null);
+												$('#FridayTo').prop('disabled',
+														true).val(null);
+											} else {
+												$('#FridayFrom').prop(
+														'disabled', false);
+												$('#FridayTo').prop('disabled',
+														false);
+											}
+										});
+						$('#checkSaturday').change(
+								function() {
+									if ($('#checkSaturday')
+											.is(':not(:checked)')) {
+										$('#SaturdayFrom').prop('disabled',
+												true).val(null);
+										$('#SaturdayTo').prop('disabled', true)
+												.val(null);
+									} else {
+										$('#SaturdayFrom').prop('disabled',
+												false);
+										$('#SaturdayTo')
+												.prop('disabled', false);
+									}
+								});
+
+						$('#checkSunday')
+								.change(
+										function() {
+											if ($('#checkSunday').is(
+													':not(:checked)')) {
+												$('#SundayFrom').prop(
+														'disabled', true).val(
+														null);
+												$('#SundayTo').prop('disabled',
+														true).val(null);
+											} else {
+												$('#SundayFrom').prop(
+														'disabled', false);
+												$('#SundayTo').prop('disabled',
+														false);
+											}
+										});
+					});
+			
+
+
+			$('.message .close').on('click', function() {
+				$(this).parent().hide();
+			});
+
+			$('#modalButton').click(function() {
+				$('#submitcarpark').modal('show');
+			})
+		</script>
+	</div>
 
 </body>
 </html>
