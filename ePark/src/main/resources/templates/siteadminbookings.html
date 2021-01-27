@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{main-layout}">
+<head>
+<div layout:fragment="styles">
+	<style>
+</style>
+</div>
+</head>
+
+<body>
+
+
+	<div layout:fragment="content">
+
+
+		<div class="ui container">
+
+
+			<div class="ui grid">
+				<div class="row">
+					<div class="four wide column">
+						<div class="margin-top-40 ">
+							<h1>View Spaces</h1>
+						</div>
+					</div>
+					<div class="twelve wide column right aligned">
+						<div class="row">
+							<div class="ui labeled input">
+								<label class="ui label" style="padding-right: 1px;"><i
+									class="calendar outline icon"></i></label> <input type="text"
+									class="field" id="dateSelector" placeholder="Date"
+									autofocus="autofocus" style="text-align: center;">
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="row">
+
+					<div class="four wide column">
+						<table id="carparkspots" class="ui celled selectable table">
+							<thead>
+								<tr style="text-align: center; vertical-align: top">
+									<th>Space ID</th>
+									<th>Disabled</th> 
+								</tr>
+							</thead>
+							<tbody id="spaces">
+
+								<tr th:each="spot : ${carpark.carParkSpots}"
+									class='clickable-row pointer'
+									th:spotId="${spot.carParkSpotId}"
+									style="text-align: center; vertical-align: top">
+									<td><span th:text="${spot.spaceNumber}"></span></td>
+									<td><i class="wheelchair grey icon"></i></td>
+	
+								</tr>
+
+							</tbody>
+						</table>
+					</div>
+					<div class="twelve wide column">
+						<div th:insert="~{bookingfragment :: spotBookings}"
+							id="spotBookings"></div>
+
+
+					</div>
+
+
+				</div>
+			</div>
+
+			<div class="ui modal tiny">
+				<div class="header">Charge Customer</div>
+				<div class="content">
+					<p>Late Departure Fee: &nbsp;£10</p>
+					<p id="customer"></p>
+					<p>Charging this customer will result in the immediate subsequent booking being reassigned to an empty space.</p>
+				</div>
+				<div class="actions">
+					<div class="ui negative approve button">Charge</div>
+					<div class="ui cancel button">Cancel</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+
+
+	<br>
+	<br>
+	<br>
+	<th:block layout:fragment="script">
+		<script th:inline="javascript">
+
+			 
+
+
+			$(document).ready(
+					function() {
+						
+						
+						$('#carparkspots').DataTable(
+								{
+									lengthMenu : [ 5, 10 ],
+									lengthChange : false,
+									searching : false,
+									info : false,
+									columnDefs: [
+										{ orderable: false, targets: [1] } ],
+									dom : "<'ui grid margin-top-0'" + "<'row dt-table'"
+											+ "<'sixteen wide column'tr>" + ">" + "<'row'"
+											+ "<'sixteen wide column'p>" + ">" + ">"
+								}
+
+						);
+						$('#carparkspots tr:first-child').addClass("active");
+						
+						 var dateSelector = $("#dateSelector").datepicker({
+								dateFormat : "dd/mm/yy",
+								startDate : '01/01/1997',
+								//minDate : 0
+								onSelect : function() {
+
+									getSpotBookings();
+
+								}
+							});
+						 
+						$("#dateSelector").datepicker().datepicker("setDate",
+									new Date());
+						
+						getSpotBookings();
+						
+						dateSelector.blur(); //to avoid bug
+						
+						
+						
+
+						
+						$('#spotBookings').on('click', '.charge', function() {
+							var stripeId = $(this).attr("stripeId");
+							$('#customer').html('Customer ID: '+stripeId);
+							$('.ui.modal').modal('show');
+							
+						});
+
+						
+						$("#carparkspots").on('click', '.clickable-row', function() {
+							$('.clickable-row').not(this).removeClass('active');
+							$(this).addClass('active');
+
+							getSpotBookings();
+
+						});
+						
+						function getSpotBookings() {
+							var date = $("#dateSelector").val();
+							var spotParam = "carParkSpotId=" + $('#carparkspots .clickable-row.active').attr("spotId");
+							var url = "/findByCarParkSpotsAndStartDate/?" + spotParam + "&date=" + date;
+							
+							$('#spotBookingsSegment').addClass('loading');
+							$("#spotBookings").load(url, function() {
+								$('#spotBookingsSegment').removeClass('loading');
+							});
+						}
+
+					});
+			 
+
+				
+
+
+					 
+	
+		</script>
+
+
+	</th:block>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{main-layout}">
+
+<head>
+
+</head>
+<body>
+
+	<!--  Navigation Bar -->
+
+
+
+	<!--  HTML registration form -->
+	<div layout:fragment="content">
+		<div class="main">
+			<div
+				th:replace="~{bookingfragment :: bookingFlowSteps(${bookingFlow})}"></div>
+		</div>
+		<div class="main">
+
+			<form class="ui form" th:action="@{/booking/payment}" method="post"
+				id="paymentForm">
+				<div class="ui grid">
+
+				<div class="alert alert-danger alert-dismissible fade show"
+					id="error" role="alert">Please select a card</div>
+
+				<div class="equal width row">
+					<div class="column">
+						<div th:insert="~{bookingfragment :: cardsTable}" id="cardsTable"></div>
+					</div>
+					<div class="column">
+						<div th:insert="~{bookingfragment :: cardsAdd}" id="cardAddForm"></div>
+					</div>
+				</div>
+
+				<br>
+				<div class="row">
+					<div class="column">
+						<button class="ui button" name="back" formnovalidate>Back</button>
+						<button class="ui button primary" id="payButton"
+							th:text="'Pay '+${#numbers.formatCurrency(bookingFlow.booking.calculatePrice())}"></button>
+					</div>
+				</div>
+</div>
+			</form>
+
+		</div>
+	</div>
+
+
+
+	<br>
+	<br>
+
+
+	<div layout:fragment="script">
+
+		<script>
+			$(document).ready(function() {
+				$("#error").hide();
+			});
+
+			var stripe = Stripe('pk_test_51I0pttDkduQieys2MADcS5sCigV27VmPRFdPHzv2Exo7GwiHxyqEC8BUepCebyCqJZBgPiI1vkScowlNTS0MfjZd00DyUdcLiL');
+
+			// Create an instance of Elements.
+			var elements = stripe.elements();
+
+			var style = {
+				base : {
+					iconColor : '#666EE8',
+					color : '#31325F',
+					lineHeight : '40px',
+					fontWeight : 300,
+					fontFamily : 'sans-serif',
+					fontSize : '13.5px',
+
+					'::placeholder' : {
+						color : '#C0C0C0',
+					}
+				},
+				invalid : {
+					color : '#fa755a',
+					iconColor : '#fa755a'
+				}
+			};
+
+			var card = elements.create('card', {
+				style : style
+			});
+			card.mount('#card-element');
+
+			$('#expandCardAdd').click(
+					function() {
+						if (cardAddBody.style.display === 'block') {
+							$('#cardAddBody').slideUp(function() {
+								$('#cardAddBody').css('display', 'none');
+							});
+							$('#cardExpandSymbol').removeClass("minus")
+									.addClass("add");
+						} else {
+
+							$('#cardAddBody').slideDown(function() {
+
+								$('#cardAddBody').css('display', 'block');
+							});
+							$('#cardExpandSymbol').removeClass("add").addClass(
+									"minus");
+						}
+					});
+
+			$('#cardButton')
+					.click(
+							
+							function() {
+								$('#paymentForm').addClass('loading form');
+								stripe
+										.createPaymentMethod(
+												{
+													type : 'card',
+													card : card,
+													billing_details : {
+														name : $(
+																'#cardHolderName')
+																.val(),
+													},
+												})
+										.then(
+												function(result) {
+													if (result.error) {
+
+														// Display error.message in your UI
+														//resultContainer.textContent = result.error.message;
+													} else {
+														// You have successfully created a new PaymentMethod
+														//resultContainer.textContent = "Created payment method: " + result.paymentMethod.id;
+														$("#cardsTable")
+																.load(
+																		"/addcard?paymentMethodId="
+																				+ result.paymentMethod.id, function() {
+																					$('#paymentForm').removeClass('loading form');
+																		});
+														$('#cardAddBody').css(
+																'display',
+																'none');
+														$('#cardExpandSymbol')
+																.removeClass(
+																		"minus")
+																.addClass("add");
+														
+
+													}
+
+												});
+
+							});
+
+			function removeCard(paymentMethodId) {
+				$('#paymentForm').addClass('loading form');
+				$("#cardsTable").load(
+						"/removeCard/?paymentMethodId=" + paymentMethodId, function() {
+							$('#paymentForm').removeClass('loading form');
+						});
+
+			}
+
+			$('input[type="checkbox"]').on('change', function() {
+				$('input[type="checkbox"]').not(this).prop('checked', false);
+			});
+
+			$('#payButton').click(function(e) {
+				if ($('input[type="checkbox"]:checked').length == 0) {
+					e.preventDefault();
+					$("#error").show();
+				}
+			});
+
+			$('.ui.checkbox').checkbox();
+		</script>
+	</div>
+
+</body>
+</html>

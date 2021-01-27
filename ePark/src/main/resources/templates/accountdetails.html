@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{main-layout}">
+
+<body>
+
+	<!--  Navigation Bar -->
+
+
+	<div layout:fragment="content">
+		<div class="ui container">
+
+			<div class="ui tabular menu topMenu margin-bottom-30">
+				<a class="active item" data-tab="details"> Account Details </a> <a
+					class="item" data-tab="bookings"> Bookings </a> <a class="item"
+					data-tab="cards"> Payment Cards </a> <a class="item"
+					data-tab="vehicles">Vehicles </a>
+			</div>
+
+
+			<div data-tab="details" class="ui active tab">
+				<div class="group">
+					<label class="leftlabel"><span>Username:</span> <input
+						disabled class="field borderless" th:value="${user.getUsername()}"></label>
+				</div>
+				<div class="group">
+					<label class="leftlabel"><span>Email:</span> <input
+						disabled class="field borderless" th:value="${user.getEmail()}"></label>
+				</div>
+				<div class="group">
+					<label class="leftlabel"><span>First Name:</span> <input
+						disabled class="field borderless"
+						th:value="${user.getFirstName()}"></label>
+				</div>
+				<div class="group">
+					<label class="leftlabel"><span>Last Name:</span> <input
+						disabled class="field borderless" th:value="${user.getLastName()}"></label>
+				</div>
+				<div class="group">
+					<label class="leftlabel"><span>Stripe ID:</span> <input
+						disabled class="field borderless" th:value="${user.getStripeId()}"></label>
+				</div>
+
+			</div>
+
+
+			<div data-tab="bookings" class="ui tab">
+				<div class="ui grid">
+					<div class="row">
+
+
+						<div class="four wide column">
+
+							<table id="bookingTable" class="ui celled selectable table">
+								<thead>
+									<tr style="text-align: center; vertical-align: top">
+			
+										<th>Booking ID</th>
+										<th>Cost</th> 
+									</tr>
+								</thead>
+								<tbody>
+
+									<tr th:each="booking: ${user.bookings}"
+										class='clickable-row pointer'
+										th:bookingId="${booking.bookingId}"
+										style="text-align: center; vertical-align: top">
+							
+										<td th:text="${booking.bookingId}"></td>
+										<td><a class="ui tiny blue tag label" th:text="'£'+${booking.amount}"></a></td>
+					
+									</tr>
+
+								</tbody>
+							</table>
+
+						</div>
+						
+					<div class="twelve wide column">
+						<div th:insert="~{bookingfragment :: bookingsInfo}"
+							id="bookingsInfo"></div>
+
+
+					</div>
+
+					</div>
+				</div>
+			</div>
+
+
+			<div data-tab="vehicles" class="ui tab">
+				<form class="ui form" method="post" id="vehicleData">
+					<div class="ui grid">
+						<div class="equal width row">
+							<div class="column">
+								<div th:insert="~{bookingfragment :: vehicles}"
+									id="vehiclesTable"></div>
+							</div>
+							<div class="column">
+
+
+								<div th:insert="~{bookingfragment :: vehiclesAdd}"
+									id="vehicleAddForm"></div>
+
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<div data-tab="cards" class="ui tab">
+				<form class="ui form" id="paymentForm">
+					<div class="ui grid">
+						<div class="equal width row">
+							<div class="column">
+								<div th:insert="~{bookingfragment :: cardsTable}"
+									id="cardsTable"></div>
+							</div>
+							<div class="column">
+
+								<div th:insert="~{bookingfragment :: cardsAdd}" id="cardAddForm"></div>
+
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		</div>
+	</div>
+
+
+
+
+
+
+
+	<div layout:fragment="script">
+		<script th:inline="javascript">
+			$(document).ready(function() {
+				$('#bookingTable').DataTable(
+						{
+							lengthMenu : [ 5, 10 ],
+							lengthChange : false,
+							searching : false,
+							info : false,
+							dom : "<'ui grid margin-top-0'" + "<'row dt-table'"
+									+ "<'sixteen wide column'tr>" + ">" + "<'row'"
+									+ "<'sixteen wide column'p>" + ">" + ">"
+						}
+
+				);
+				$('#bookingTable tr:first-child').addClass("active");
+				getBooking();
+
+				
+				function getBooking() {
+					var bookingParam = "bookingId=" + $('#bookingTable .clickable-row.active').attr("bookingid");
+					var url = "/getBooking/?" + bookingParam;
+					
+					$('#bookingsInfoSegment').addClass('loading');
+					$("#bookingsInfo").load(url, function() {
+						$('#bookingsInfoSegment').removeClass('loading');
+					});
+				}
+				
+				$("#bookingTable").on('click', '.clickable-row', function() {
+					$('.clickable-row').not(this).removeClass('active');
+					$(this).addClass('active');
+
+					getBooking();
+
+				});
+				
+
+				$('.ui.vertical.tabular.menu .item').tab({
+					history : false
+
+				});
+			});
+
+			$('.topMenu.ui.tabular.menu .item').tab({
+				history : false,
+			});
+
+			$('#expandVehicleAdd').click(
+					function() {
+						if ($('#vehicleAddBody').css("display") == "block") {
+							$('#vehicleAddBody').slideUp(function() {
+								$('#vehicleAddBody').css('display', 'none');
+							});
+							$('#vehicleExpandSymbol').removeClass("minus")
+									.addClass("add");
+						} else {
+
+							$('#vehicleAddBody').slideDown(function() {
+
+								$('#vehicleAddBody').css('display', 'block');
+							});
+							$('#vehicleExpandSymbol').removeClass("add")
+									.addClass("minus");
+						}
+					});
+
+			$('#addVehicleButton').click(function() {
+				$('#vehicleData').addClass('loading');
+				var data = $('#vehicleData').serialize();
+				$("#vehiclesTable").load("/addvehicles?" + data, function() {
+					$('#vehicleData').removeClass('loading');
+				});
+				$('#vehicleAddBody').css('display', 'none');
+				$('#vehicleExpandSymbol').removeClass("minus").addClass("add");
+				$('#vehicleData').form('clear');
+			});
+
+			var stripe = Stripe('pk_test_51I0pttDkduQieys2MADcS5sCigV27VmPRFdPHzv2Exo7GwiHxyqEC8BUepCebyCqJZBgPiI1vkScowlNTS0MfjZd00DyUdcLiL');
+
+			// Create an instance of Elements.
+			var elements = stripe.elements();
+
+			var style = {
+				base : {
+					iconColor : '#666EE8',
+					color : '#31325F',
+					lineHeight : '40px',
+					fontWeight : 300,
+					fontFamily : 'sans-serif',
+					fontSize : '13.5px',
+
+					'::placeholder' : {
+						color : '#C0C0C0'
+					}
+				},
+				invalid : {
+					color : '#fa755a',
+					iconColor : '#fa755a'
+				}
+			};
+
+			var card = elements.create('card', {
+				style : style
+			});
+			card.mount('#card-element');
+
+			$('#expandCardAdd').click(
+					function() {
+						if (cardAddBody.style.display === 'block') {
+							$('#cardAddBody').slideUp(function() {
+								$('#cardAddBody').css('display', 'none');
+							});
+							$('#cardExpandSymbol').removeClass("minus")
+									.addClass("add");
+						} else {
+
+							$('#cardAddBody').slideDown(function() {
+
+								$('#cardAddBody').css('display', 'block');
+							});
+							$('#cardExpandSymbol').removeClass("add").addClass(
+									"minus");
+						}
+					});
+
+			$('#cardButton')
+					.click(
+							function() {
+								$('#paymentForm').addClass('loading');
+								stripe
+										.createPaymentMethod(
+												{
+													type : 'card',
+													card : card,
+													billing_details : {
+														name : $(
+																'#cardHolderName')
+																.val(),
+													},
+												})
+										.then(
+												function(result) {
+													if (result.error) {
+
+														// Display error.message in your UI
+														//resultContainer.textContent = result.error.message;
+													} else {
+														// You have successfully created a new PaymentMethod
+														$("#cardsTable")
+																.load(
+																		"/addcard?paymentMethodId="
+																				+ result.paymentMethod.id,
+																		function() {
+																			$(
+																					'#paymentForm')
+																					.removeClass(
+																							'loading');
+																		});
+														$('#cardAddBody').css(
+																'display',
+																'none');
+														$('#cardExpandSymbol')
+																.removeClass(
+																		"minus")
+																.addClass("add");
+
+													}
+												});
+							});
+
+			function removeVehicle(vehicleId) {
+				$('#vehicleData').addClass('loading');
+				$("#vehiclesTable").load(
+						"/removeVehicle/?vehicleId=" + vehicleId, function() {
+							$('#vehicleData').removeClass('loading');
+						});
+			}
+
+			function removeCard(paymentMethodId) {
+				$('#paymentForm').addClass('loading');
+				$("#cardsTable").load(
+						"/removeCard/?paymentMethodId=" + paymentMethodId,
+						function() {
+							$('#paymentForm').removeClass('loading');
+						});
+			}
+			
+			function setDefaultCard(paymentMethodId) {
+				$('#paymentForm').addClass('loading');
+				$("#cardsTable").load(
+						"/setdefaultcard/?paymentMethodId=" + paymentMethodId,
+						function() {
+							$('#paymentForm').removeClass('loading');
+						});
+			}
+			
+			
+		</script>
+	</div>
+
+</body>
+</html>

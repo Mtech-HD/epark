@@ -1,302 +1,147 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{main-layout}">
+
 <head>
-<meta charset="UTF-8" name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Home</title>
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-	crossorigin="anonymous">
-<style>
-.map-container {
-	position: fixed;
-	left: 25%;
-	bottom: 0;
-	right: 0;
-	top: 0;
-}
 
-#map {
-	width: 100%;
-	height: 100%;
-	float: right;
-	-moz-box-shadow: 0 0 2px #000;
-	-webkit-box-shadow: 0 0 2px #000;
-	box-shadow: 0 0 2px #000;
-}
-
-
-#backbar {
-	position: fixed;
-	background: #F0F0F0;
-	height: 35px;
-	width: 25%;
-	padding-top: 5px;
-	padding-left: 14px;
-	padding-right: 5px;
-	padding-bottom: 5px;
-	text-align: left;
-	border-bottom: 1px solid #B8B8B8;
-	visibility: hidden;
-}
-
-#nearest {
-	padding-top: 20px;
-	visibility: visible;
-	z-index: -1;
-}
-
-.jumbotron {
-	border: 1px solid #C8C8C8;
-	padding: 15px;
-}
-
-.jumbotron:hover {
-	background: #c9c9c9;
-	cursor: pointer;
-}
-
-.pointer {
-	cursor: pointer;
-} 
-
-.sideInfo {
-	position: fixed;
-	width: 25%;
-	height: 100%;
-	padding: 25px;
-	overflow-y: scroll;
-	overflow-x: hidden;
-	word-wrap: break-word;
-}
-
-#details {
-	padding-top: 60px;
-	visibility: hidden;
-	z-index: -1;
-}
-
-.markerdesign {
-	width: 60px;
-	height: 27px;
-	border: 2px solid #336C9D;
-	border-radius: 10px;
-	background: #FFFFFF;
-	text-align: center;
-	line-height: 25px;
-	font-weight: bold;
-	font-size: 15px;
-	color: #336C9D;
-}
-
-.markerdesignhover {
-	width: 60px;
-	height: 27px;
-	border: 2px solid #FFFFFF;
-	border-radius: 10px;
-	background: #336C9D;
-	text-align: center;
-	line-height: 25px;
-	font-weight: bold;
-	font-size: 15px;
-	color: #FFFFFF;
-}
-
-body {
-	padding-top: 56px;
-}
-</style>
-<script src="https://kit.fontawesome.com/44f3988e32.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
-	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-		<a class="navbar-brand" href="">e<i class="fas fa-parking"></i>ark</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse"
-			data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
-			aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="navbarNavDropdown">
-			<ul class="navbar-nav">
-				<li class="nav-item active"><a class="nav-link" href="/home">Home
-						<span class="sr-only">(current)</span>
-				</a></li>
-				<div sec:authorize="isAnonymous()">
-					<li class="nav-item dropdown"><a
-						class="nav-link dropdown-toggle" href="#"
-						id="navbarDropdownMenuLink" data-toggle="dropdown"
-						aria-haspopup="true" aria-expanded="false"> My Account </a>
-						<div class="dropdown-menu"
-							aria-labelledby="navbarDropdownMenuLink">
-							<a class="dropdown-item" href="/login">Log in</a> <a
-								class="dropdown-item" href="/registration">Register</a>
-						</div></li>
+
+	<div layout:fragment="content">
+		<div id="nearest" class="sideInfo margin-bottom-40">
+			<h5>Closest Car Parks</h5>
+			<hr class="solid">
+		</div>
+
+		<div id="backbar" class="shadow">
+			<a id="backbutton" class="pointer"> <i
+				class="chevron left icon" style="margin-right:1px;"></i>Back
+			</a>
+		</div>
+
+		<div id="details" class="sideInfo">
+
+			<div class="ui segment">
+				<h2 id="carparkname"></h2>
+			</div>
+
+			<div class="form-group">
+				<a id="reservebutton" class="ui primary button fluid" href=""><i
+					class="far fa-calendar-check fa-lg "></i>&nbsp; Reserve</a>
+			</div>
+
+
+			<table class="ui very basic table margin-top-10">
+				<tbody>
+					<tr>
+
+						<td class="align-top"><i class="far fa-address-book fa-lg"></i></td>
+						<td class="align-top">Address:</td>
+						<td id="address"></td>
+					</tr>
+					<tr>
+						<td><i class="far fa-clock fa-lg"></i></td>
+						<td>Rate:</td>
+						<td id="parkingrate"></td>
+					</tr>
+					<tr>
+						<td><i class="fas fa-pound-sign fa-lg"></i></td>
+						<td>Price:</td>
+						<td id="price"></td>
+					</tr>
+					<tr>
+						<td><i class="fas fa-car-side fa-lg"></i></td>
+						<td>Spaces:</td>
+						<td id="spaces"></td>
+					</tr>
+					<tr>
+						<td><i class="fas fa-wheelchair fa-lg"></i></td>
+						<td>Disabled:</td>
+						<td id="disabled"></td>
+					</tr>
+					<tr>
+						<td><i class="far fa-envelope fa-lg"></i></td>
+						<td>Email:</td>
+						<td id="email"></td>
+					</tr>
+				</tbody>
+			</table>
+
+
+
+			<hr class="solid">
+
+			<table class="ui very basic table margin-top-10 margin-bottom-30">
+				<thead>
+					<th><i class="far fa-calendar-alt fa-lg"></i></th>
+					<th><i class="fas fa-door-open fa-lg"></i>&nbsp;From
+					</th>
+					<th><i class="fas fa-door-closed fa-lg"></i>&nbsp;To</th>
+
+				</thead>
+				<tbody>
+				<tr>
+					<td class="six wide column">Monday</td>
+					<td id="mondayfrom"></td>
+					<td id="mondayto"></td>
+				</tr>
+				<tr class="row">
+					<td>Tuesday</td>
+					<td id="tuesdayfrom">--</td>
+					<td id="tuesdayto">--</td>
+				</tr>
+				<tr>
+					<td>Wednesday</td>
+					<td id="wednesdayfrom">--</td>
+					<td id="wednesdayto">--</td>
+				</tr>
+				<tr class="row">
+					<td>Thursday</td>
+					<td id="thursdayfrom">--</td>
+					<td id="thursdayto">--</td>
+				</tr>
+				<tr class="row">
+					<td>Friday</td>
+					<td id="fridayfrom">--</td>
+					<td id="fridayto">--</td>
+				</tr>
+				<tr>
+					<td>Saturday</td>
+					<td id="saturdayfrom">--</td>
+					<td  id="saturdayto">--</td>
+				</tr>
+				<tr>
+					<td>Sunday</td>
+					<td id="sundayfrom"></td>
+					<td id="sundayto"></td>
+				</tr>
+</tbody>
+				</table>
+
+
+
+
 				</div>
 
 
-				<li class="nav-item dropdown" sec:authorize="isAuthenticated()"><a
-					class="nav-link dropdown-toggle" href="#"
-					id="navbarDropdownMenuLink" data-toggle="dropdown"
-					aria-haspopup="true" aria-expanded="false"> My Account </a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a sec:authorize="hasAnyAuthority('USER', 'ADMIN')"
-							class="dropdown-item" href="#"><i class="fas fa-list fa-md"></i>&nbsp; View reservations</a>
-						<div class="dropdown-divider"></div>
-						<a sec:authorize="hasAnyAuthority('USER', 'ADMIN')"
-							class="dropdown-item" href="viewvehicles"><i class="fas fa-car-side fa-md"></i>&nbsp; View vehicles</a> <a
-							sec:authorize="hasAnyAuthority('USER', 'ADMIN')"
-							class="dropdown-item" href="/addvehicles">Add vehicles</a>
-						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="#"><i class="fas fa-user-circle fa-md"></i>&nbsp; View account details</a>
-						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="/logout">Log out</a>
-					</div></li>
-
-				<li class="nav-item dropdown"
-					sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN','CARPARKOWNER')"><a
-					class="nav-link dropdown-toggle" href="#"
-					id="navbarDropdownMenuLink" data-toggle="dropdown"
-					aria-haspopup="true" aria-expanded="false"> Manage car parks </a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a class="dropdown-item" href="/viewcarparkforuser"><i class="fas fa-list fa-md"></i>&nbsp; View car
-							parks</a> <a class="dropdown-item" href="/addcarpark"><i class="far fa-plus-square fa-md"></i>&nbsp; Add car
-							parks</a>
-					</div></li>
-				<li class="nav-item dropdown"
-					sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')"><a
-					class="nav-link dropdown-toggle" href="#"
-					id="navbarDropdownMenuLink" data-toggle="dropdown"
-					aria-haspopup="true" aria-expanded="false"> Admin Menu </a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						<a class="dropdown-item" href="/viewcarpark"><i class="fas fa-list fa-md"></i>&nbsp; View car park
-							submissions</a> <a class="dropdown-item" href=""><i class="fas fa-list fa-md"></i>&nbsp; View
-							reservations</a>
-					</div></li>
-
-			</ul>
-
-		</div>
-
-		<form class="form-inline my-2 my-lg-0">
-			<input class="form-control mr-sm-2" type="search"
-				placeholder="Search" aria-label="Search">
-			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-		</form>
-	</nav>
-
-	<div id="nearest" class="sideInfo">
-		<h5>Closest Car Parks</h5>
-		<hr class="solid">
-	</div>
-
-	<div id="backbar">
-		<a id="backbutton" class="pointer" style="color: #404040;">
-			<i class="fas fa-arrow-left fa-md"></i>&nbsp; Back</a>
-	</div>
-
-	<div id="details" class="sideInfo">
-
-		<div class="jumbotron">
-			<h2 id="carparkname"></h2>
-		</div>
-
-		<div class="form-group">
-			<a role="button" id="reservebutton"
-				class="btn btn-primary mb-2 btn-block" href=""><i class="far fa-calendar-check fa-lg "></i>&nbsp; Reserve</a>
-		</div>
-
-		<dl class="row">
-
-			<dt class="col-sm-1"><i class="far fa-address-book fa-lg"></i></dt>
-			<dt class="col-sm-4">Address:</dt>
-			<dd class="col-sm-7" id="address"></dd>
-
-			<dt class="col-sm-1"><i class="far fa-clock fa-lg"></i></dt>
-			<dt class="col-sm-4">Rate:</dt>
-			<dd class="col-sm-7" id="parkingrate"></dd>
-
-			<dt class="col-sm-1"><i class="fas fa-pound-sign fa-lg"></i></dt>
-			<dt class="col-sm-4">Price:</dt>
-			<dd class="col-sm-7" id="price"></dd>
-
-			<dt class="col-sm-1"><i class="fas fa-car-side fa-lg"></i></dt>
-			<dt class="col-sm-4">Spaces:</dt>
-			<dd class="col-sm-7" id="spaces"></dd>
-
-			<dt class="col-sm-1"><i class="fas fa-wheelchair fa-lg"></i></dt>
-			<dt class="col-sm-4">Disabled:</dt>
-			<dd class="col-sm-7" id="disabled"></dd>
-
-			<dt class="col-sm-1"><i class="far fa-envelope fa-lg"></i></dt>
-			<dt class="col-sm-4">Email:</dt>
-			<dd class="col-sm-7" id="email"></dd>
-		</dl>
-
-		<hr class="solid">
-		<dl class="row">
-			<dd class="col-sm-12">
-				<dl class="row">
-					<dt class="col-sm-5"><i class="far fa-calendar-alt fa-lg"></i></dt>
-					<dt class="col-sm-3"><i class="fas fa-door-open fa-lg"></i>&nbsp;From</dt>
-					<dt class="col-sm-3"><i class="fas fa-door-closed fa-lg"></i>&nbsp;To</dt>
-				</dl>
-				<dl class="row">
-					<dt class="col-sm-5">Monday</dt>
-					<dd class="col-sm-3" id="mondayfrom">--</dd>
-					<dd class="col-sm-3" id="mondayto">--</dd>
-				</dl>
-				<dl class="row">
-					<dt class="col-sm-5">Tuesday</dt>
-					<dd class="col-sm-3" id="tuesdayfrom">--</dd>
-					<dd class="col-sm-3" id="tuesdayto">--</dd>
-				</dl>
-				<dl class="row">
-					<dt class="col-sm-5">Wednesday</dt>
-					<dd class="col-sm-3" id="wednesdayfrom">--</dd>
-					<dd class="col-sm-3" id="wednesdayto">--</dd>
-				</dl>
-				<dl class="row">
-					<dt class="col-sm-5">Thursday</dt>
-					<dd class="col-sm-3" id="thursdayfrom">--</dd>
-					<dd class="col-sm-3" id="thursdayto">--</dd>
-				</dl>
-				<dl class="row">
-					<dt class="col-sm-5">Friday</dt>
-					<dd class="col-sm-3" id="fridayfrom">--</dd>
-					<dd class="col-sm-3" id="fridayto">--</dd>
-				</dl>
-				<dl class="row">
-					<dt class="col-sm-5">Saturday</dt>
-					<dd class="col-sm-3" id="saturdayfrom">--</dd>
-					<dd class="col-sm-3" id="saturdayto">--</dd>
-				</dl>
-				<dl class="row">
-					<dt class="col-sm-5">Sunday</dt>
-					<dd class="col-sm-3" id="sundayfrom">--</dd>
-					<dd class="col-sm-3" id="sundayto">--</dd>
-				</dl>
-			</dd>
-		</dl>
-		<br>
 
 
 
+				<div class="map-container">
+					<div id="map"></div>
+				</div>
 
+				</div>
 
-	</div>
-
-
-	<div class="map-container">
-		<div id="map"></div>
-	</div>
-
-
-
-	<script th:inline="javascript">
+				<th:block layout:fragment="script">
+					<script th:inline="javascript">
 
 	  var weekValues = [[${weekValues}]];
 	  var carParks = [[${carParks}]];
+
 	  var markers = [];
 	  var isclosed = "Closed";
 	  var allday = "All day";
@@ -320,148 +165,54 @@ body {
 				mapTypeControlOptions : {
 					mapTypeIds : []
 				},
-				styles : [ {
-					"elementType" : "geometry",
-					"stylers" : [ {
-						"color" : "#ebe3cd"
-					} ]
-				}, {
-					"elementType" : "labels.text.fill",
-					"stylers" : [ {
-						"color" : "#523735"
-					} ]
-				}, {
-					"elementType" : "labels.text.stroke",
-					"stylers" : [ {
-						"color" : "#f5f1e6"
-					} ]
-				}, {
-					"featureType" : "administrative",
-					"elementType" : "geometry.stroke",
-					"stylers" : [ {
-						"color" : "#c9b2a6"
-					} ]
-				}, {
-					"featureType" : "administrative.land_parcel",
-					"elementType" : "geometry.stroke",
-					"stylers" : [ {
-						"color" : "#dcd2be"
-					} ]
-				}, {
-					"featureType" : "administrative.land_parcel",
-					"elementType" : "labels.text.fill",
-					"stylers" : [ {
-						"color" : "#ae9e90"
-					} ]
-				}, {
-					"featureType" : "landscape.natural",
-					"elementType" : "geometry",
-					"stylers" : [ {
-						"color" : "#dfd2ae"
-					} ]
-				}, {
-					"featureType" : "poi",
-					"elementType" : "geometry",
-					"stylers" : [ {
-						"color" : "#dfd2ae"
-					} ]
-				}, {
-					"featureType" : "poi",
-					"elementType" : "labels.text.fill",
-					"stylers" : [ {
-						"color" : "#93817c"
-					} ]
-				}, {
-					"featureType" : "poi.park",
-					"elementType" : "geometry.fill",
-					"stylers" : [ {
-						"color" : "#a5b076"
-					} ]
-				}, {
-					"featureType" : "poi.park",
-					"elementType" : "labels.text.fill",
-					"stylers" : [ {
-						"color" : "#447530"
-					} ]
-				}, {
-					"featureType" : "road",
-					"elementType" : "geometry",
-					"stylers" : [ {
-						"color" : "#f5f1e6"
-					} ]
-				}, {
-					"featureType" : "road.arterial",
-					"elementType" : "geometry",
-					"stylers" : [ {
-						"color" : "#fdfcf8"
-					} ]
-				}, {
-					"featureType" : "road.highway",
-					"elementType" : "geometry",
-					"stylers" : [ {
-						"color" : "#f8c967"
-					} ]
-				}, {
-					"featureType" : "road.highway",
-					"elementType" : "geometry.stroke",
-					"stylers" : [ {
-						"color" : "#e9bc62"
-					} ]
-				}, {
-					"featureType" : "road.highway.controlled_access",
-					"elementType" : "geometry",
-					"stylers" : [ {
-						"color" : "#e98d58"
-					} ]
-				}, {
-					"featureType" : "road.highway.controlled_access",
-					"elementType" : "geometry.stroke",
-					"stylers" : [ {
-						"color" : "#db8555"
-					} ]
-				}, {
-					"featureType" : "road.local",
-					"elementType" : "labels.text.fill",
-					"stylers" : [ {
-						"color" : "#806b63"
-					} ]
-				}, {
-					"featureType" : "transit.line",
-					"elementType" : "geometry",
-					"stylers" : [ {
-						"color" : "#dfd2ae"
-					} ]
-				}, {
-					"featureType" : "transit.line",
-					"elementType" : "labels.text.fill",
-					"stylers" : [ {
-						"color" : "#8f7d77"
-					} ]
-				}, {
-					"featureType" : "transit.line",
-					"elementType" : "labels.text.stroke",
-					"stylers" : [ {
-						"color" : "#ebe3cd"
-					} ]
-				}, {
-					"featureType" : "transit.station",
-					"elementType" : "geometry",
-					"stylers" : [ {
-						"color" : "#dfd2ae"
-					} ]
-				}, {
-					"featureType" : "water",
-					"elementType" : "geometry.fill",
-					"stylers" : [ {
-						"color" : "#b9d3c2"
-					} ]
-				}, {
-					"featureType" : "water",
-					"elementType" : "labels.text.fill",
-					"stylers" : [ {
-						"color" : "#92998d"
-					} ]
-				} ]
+				styles : [
+				    {
+				        "featureType": "all",
+				        "elementType": "all",
+				        "stylers": [
+				            {
+				                "hue": "#008eff"
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "road",
+				        "elementType": "all",
+				        "stylers": [
+				            {
+				                "saturation": "0"
+				            },
+				            {
+				                "lightness": "0"
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "transit",
+				        "elementType": "all",
+				        "stylers": [
+				            {
+				                "visibility": "off"
+				            }
+				        ]
+				    },
+				    {
+				        "featureType": "water",
+				        "elementType": "all",
+				        "stylers": [
+				            {
+				                "visibility": "simplified"
+				            },
+				            {
+				                "saturation": "-60"
+				            },
+				            {
+				                "lightness": "-20"
+				            }
+				        ]
+				    }
+				]
+				
 
 			});
 			google.maps.event.addListener(map, 'tilesloaded', find_closest_markers);
@@ -522,9 +273,9 @@ body {
 		   function car_park_details(marker) { 
 			   
 			   var carpark = marker.get("carpark");
-			    $('#nearest').css("visibility", "hidden"); 
-				$('#backbar').css("visibility", "visible"); 
-				$('#details').css("visibility", "visible"); 
+			    $('#nearest').css("display", "none"); 
+				$('#backbar').css("display", "block"); 
+				$('#details').css("display", "block"); 
 				
 				$('#carparkname').html(carpark.name);
 				$('#address').html(carpark.carParkAddress1 + "<br>" + carpark.carParkAddress2 + "<br>" + carpark.carParkCity + "<br>" + carpark.carParkPostcode);
@@ -542,22 +293,22 @@ body {
 				} */
 				$('#disabled').html(carpark.disabledSpots.length); 
 
-				$('#reservebutton').prop('href','/reserve/'+carpark.carParkId);
+				$('#reservebutton').prop('href','/booking/'+carpark.carParkId);
 				
 				//for (var x = 0; x < weekValues.length; x++) {
 					for (var y = 0; y < carpark.carParkTimes.length; y++) {
 						var timesList = carpark.carParkTimes[y];
-						
+	
 						//if (timesList.dayOfWeek === weekValues[x]) {
 							if (timesList.openTime == null && timesList.closeTime == null) {
 								$('#'+timesList.dayOfWeek.toLowerCase()+'from').html(isclosed);
 								$('#'+timesList.dayOfWeek.toLowerCase()+'to').html(isclosed);
-							} else if (timesList.openTime == "00:00" && timesList.closeTime == "00:00") {
+							} else if (timesList.openTime == "00:00:00" && timesList.closeTime == "00:00:00") {
 								$('#'+timesList.dayOfWeek.toLowerCase()+'from').html(allday);
 								$('#'+timesList.dayOfWeek.toLowerCase()+'to').html(allday);
 							} else {
-								$('#'+timesList.dayOfWeek.toLowerCase()+'from').html(timesList.openTime);
-								$('#'+timesList.dayOfWeek.toLowerCase()+'to').html(timesList.closeTime);
+								$('#'+timesList.dayOfWeek.toLowerCase()+'from').html(timesList.openTime.substring(0, 5));
+								$('#'+timesList.dayOfWeek.toLowerCase()+'to').html(timesList.closeTime.substring(0, 5));
 							}
 						//}
 						
@@ -578,7 +329,7 @@ body {
 			}
 
 		function find_closest_markers() {
-			if ($('#nearest').is(":visible")) {
+			if ($('#nearest').css("display")=="block") {
 		    for (i = 0; i < markers.length; i++) {
 		        var d = google.maps.geometry.spherical.computeDistanceBetween(markers[i].position, map.center);
 		        
@@ -592,7 +343,7 @@ body {
 		   
 		
 		function display_closest_markers() {
-			if ($('#nearest').is(":visible")) {
+			if ($('#nearest').css("display")=="block") {
 		   		var priceid = "priceid";
 		   		var spaceid = "spaceid";
 		   		var nameid = "nameid";
@@ -608,7 +359,7 @@ body {
 		   		for (var i = 0; i < range; i++) {
 		    		if ($('#'+nearestid+i).length == 0 ){
 		    	
-						var div = $('<div>').addClass("jumbotron").attr('id', nearestid+i);
+						var div = $('<div>').addClass("ui segment tiles").attr('id', nearestid+i);
 		/*	   			var table = $('<table>').addClass("table-bordered table-sm pointer");
 			   
  			    		table.append('<thead style="background: #0275d8;color: #FFFFFF;"><tr style="text-align: center; vertical-align: top"><th id="'+nameid+i+'" colspan="2"></th></tr></thead>');
@@ -644,37 +395,22 @@ body {
 		   });     
 		   
 		   $("#backbutton").click( function() {
-				$('#backbar').css("visibility", "hidden"); 
-				$('#details').css("visibility", "hidden"); 
-				$('#nearest').css("visibility", "visible"); 
+				$('#backbar').css("display", "none"); 
+				$('#details').css("display", "none"); 
+				$('#nearest').css("display", "block"); 
 		   });
 		   
 	    		
 		}
 	
-
-		
-	
 	</script>
+					<script
+						src="https://maps.googleapis.com/maps/api/js?libraries=geometry&key=AIzaSyAqmLfX-y8ALh9UU0d48ddAKL3WNpK7ti4&map_ids=b871c84433656771&callback=initMap"
+						defer></script>
 
 
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-		crossorigin="anonymous"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-		crossorigin="anonymous"></script>
-	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-		crossorigin="anonymous"></script>
 
-	<script
-		src="https://maps.googleapis.com/maps/api/js?libraries=geometry&key=AIzaSyAqmLfX-y8ALh9UU0d48ddAKL3WNpK7ti4&callback=initMap"
-		defer></script>
-
-	<script defer src="markerwithlabel.js"></script>
-
+					<script defer src="markerwithlabel.js"></script>
+				</th:block>
 </body>
 </html>

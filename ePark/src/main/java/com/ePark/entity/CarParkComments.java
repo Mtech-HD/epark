@@ -1,4 +1,4 @@
-package com.ePark.model;
+package com.ePark.entity;
 
 import java.util.Date;
 

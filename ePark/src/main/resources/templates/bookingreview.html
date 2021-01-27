@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{main-layout}">
+
+<head>
+
+</head>
+<body>
+
+	<!--  Navigation Bar -->
+
+
+
+	<!--  HTML registration form -->
+	<div layout:fragment="content">
+		<div class="main">
+			<div
+				th:replace="~{bookingfragment :: bookingFlowSteps(${bookingFlow})}"></div>
+		</div>
+
+		<div class="main">
+
+				<form method="post" th:action="@{/booking/review}">
+				<div class="ui grid">
+				<div class="row">
+				<div class="eleven wide column">
+					<div class="ui segments">
+						<div class="ui top attached label inverted blue">Summary</div>
+
+
+						<div class="ui segment">
+
+							<div th:insert="bookingfragment :: review" th:remove="tag" />
+						
+						</div>
+					</div>
+					</div>
+									
+			
+<div class="five wide column">
+		
+			<div th:insert="bookingfragment :: t&c" th:remove="tag" /></div>
+			</div>
+</div>
+			<div class="margin-top-20">
+				<button class="ui button" type="submit" name="back" formnovalidate>Back</button>
+				<button type="submit" class="ui button primary">
+					Continue to payment
+				</button>
+			</div>
+			</form>
+</div>
+		</div>
+
+
+		<br> <br>
+	
+
+
+
+</body>
+</html>

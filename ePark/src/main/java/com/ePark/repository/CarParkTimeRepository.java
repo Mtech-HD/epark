@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.ePark.model.CarParkTimes;
-import com.ePark.model.CarParks;
+import com.ePark.entity.CarParkTimes;
+import com.ePark.entity.CarParks;
 
 
 @Repository

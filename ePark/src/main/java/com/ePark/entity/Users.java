@@ -1,4 +1,4 @@
-package com.ePark.model;
+package com.ePark.entity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -40,6 +41,8 @@ public class Users {
 	@Column(unique = true)
 	private String email;
 
+	private String stripeId;
+
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "roleId"))
 	private Set<Roles> roles;
@@ -47,17 +50,25 @@ public class Users {
 	@OneToMany(mappedBy = "users", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<CarParkComments> carParkComments = new HashSet<CarParkComments>();
 
+	@OneToMany(mappedBy = "users", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Bookings> bookings = new HashSet<Bookings>();
+
+	@OneToMany(mappedBy = "users", cascade = CascadeType.REFRESH)
+	private Set<Vehicles> vehicles = new HashSet<Vehicles>();
+
 	public Users() {
 
 	}
 
-	public Users(String username, String password, String firstName, String lastName, String email, Set<Roles> roles) {
+	public Users(String username, String password, String firstName, String lastName, String email, String stripeId,
+			Set<Roles> roles) {
 		super();
 		this.username = username;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
+		this.stripeId = stripeId;
 		this.roles = roles;
 	}
 
@@ -123,6 +134,30 @@ public class Users {
 
 	public void setCarParkComments(Set<CarParkComments> carParkComments) {
 		this.carParkComments = carParkComments;
+	}
+
+	public Set<Bookings> getBookings() {
+		return bookings;
+	}
+
+	public void setBookings(Set<Bookings> bookings) {
+		this.bookings = bookings;
+	}
+
+	public String getStripeId() {
+		return stripeId;
+	}
+
+	public void setStripeId(String stripeId) {
+		this.stripeId = stripeId;
+	}
+
+	public Set<Vehicles> getVehicles() {
+		return vehicles;
+	}
+
+	public void setVehicles(Set<Vehicles> vehicles) {
+		this.vehicles = vehicles;
 	}
 
 	@Override

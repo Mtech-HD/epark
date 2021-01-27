@@ -3,18 +3,23 @@ package com.ePark;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
-import com.ePark.service.CarParkService;
-import com.ePark.service.CarParkServiceImpl;
+import com.ePark.entity.Users;
 import com.ePark.service.UserService;
+
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +31,12 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	public SpringTemplateEngine thymeleafLayoytDialect() {
+		SpringTemplateEngine engine = new SpringTemplateEngine();
+		engine.addDialect(new LayoutDialect());
+		return engine;
 	}
 
 	@Bean
@@ -42,19 +53,33 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.authenticationProvider(authProvider());
 	}
 
-	public String getCurrentUser(Authentication auth) {
-		String username = auth.getName();
-		return username;
+	public Users getCurrentUser() {
+
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+		Users user = userService.findByUsername(username);
+
+		return user;
+	}
+
+	public boolean isAuthenticated() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || AnonymousAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
+			return false;
+		}
+		return authentication.isAuthenticated();
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.csrf().disable().authorizeRequests().antMatchers("/login", "/home", "/registration/**", "/markerwithlabel.js", "/pin.png").permitAll()
-				.anyRequest().authenticated().and().formLogin().loginPage("/login").permitAll()
+		http.csrf().disable().authorizeRequests()
+				.antMatchers("/login", "/home", "/registration/**", "/css/**", "/markerwithlabel.js", "/pin.png")
+				.permitAll().anyRequest().authenticated().and().formLogin().loginPage("/login").permitAll()
 				.defaultSuccessUrl("/home").and().logout().invalidateHttpSession(true).clearAuthentication(true)
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login?logout")
-				.permitAll();
+				.deleteCookies("JSESSIONID").permitAll().and().rememberMe().userDetailsService(userService)
+				.tokenValiditySeconds(2592000);
 
 	}
 

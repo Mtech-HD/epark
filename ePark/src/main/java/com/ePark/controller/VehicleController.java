@@ -1,69 +1,65 @@
 package com.ePark.controller;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ePark.AppSecurityConfig;
 import com.ePark.dto.VehicleDto;
-import com.ePark.model.Users;
-import com.ePark.model.Vehicles;
-import com.ePark.repository.UserRepository;
+import com.ePark.entity.Vehicles;
+import com.ePark.service.BookingFlow;
 import com.ePark.service.VehicleService;
 
 @Controller
 public class VehicleController {
-	
-	@Autowired
-	private UserRepository userRepo;
-	
+
 	@Autowired
 	private VehicleService vehicleService;
+	
+	@Autowired
+	private AppSecurityConfig appSecurity;
 
 	@ModelAttribute("vehicle")
 	public VehicleDto vehicleDto() {
 		VehicleDto vehicleDto = new VehicleDto();
 		return vehicleDto;
 	}
-	
-	
+
 	@GetMapping("/viewvehicles")
 	public ModelAndView showViewVehicles() {
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("viewvehicles");
 		return mv;
 	}
-	
+
 	@GetMapping("/addvehicles")
-	public ModelAndView showAddVehicle() {
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("addvehicles");
-		return mv;
-	}
-	
-	
-	@PostMapping("/addvehicles")
-	public ModelAndView addVehicle(@ModelAttribute("vehicle") VehicleDto vehicleDto) {
-		
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		Set<Users> users = new HashSet<Users>();
-		Users user = userRepo.findByUsername(auth.getName());
-		users.add(user);
-		
-		Vehicles vehicle = new Vehicles(vehicleDto.getRegistration(), vehicleDto.getMake(), vehicleDto.getColour(), users);
-		
+	public String addVehicle(@RequestParam("registration") String registration, @RequestParam("make") String make,
+			@RequestParam("colour") String colour, Model model, @ModelAttribute("bookingFlow") Optional<BookingFlow> bookingFlow) {
+
+		Vehicles vehicle = new Vehicles(registration, make, colour, appSecurity.getCurrentUser());
+
 		vehicleService.save(vehicle);
-		
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("redirect:/addvehicles?success");
-		return mv;
+
+		model.addAttribute("user", appSecurity.getCurrentUser());
+		return "bookingfragment :: vehicles";
+	}
+
+	@Transactional
+	@GetMapping(value = "/removeVehicle", params = "vehicleId")
+	public String removeVehicle(@RequestParam("vehicleId") long vehicleId, Model model, @ModelAttribute("bookingFlow") Optional<BookingFlow> bookingFlow) {
+
+		vehicleService.deleteByVehicleId(vehicleId);
+
+		model.addAttribute("user", appSecurity.getCurrentUser());
+
+		return "bookingfragment :: vehicles";
 	}
 }
-

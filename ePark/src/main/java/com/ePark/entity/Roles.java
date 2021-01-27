@@ -1,4 +1,4 @@
-package com.ePark.model;
+package com.ePark.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

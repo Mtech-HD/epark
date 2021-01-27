@@ -1,17 +1,14 @@
-package com.ePark.model;
-
-import java.util.Set;
+package com.ePark.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -33,24 +30,24 @@ public class Vehicles {
 
 	private String colour;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name = "userVehicles", joinColumns = @JoinColumn(name = "vehicleId", referencedColumnName = "vehicleId"), inverseJoinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"))
-	private Set<Users> users;
+	@ManyToOne(cascade = CascadeType.DETACH)
+	@JoinColumn(name = "userId", nullable = false)
+	private Users users;
 
+	@OneToOne(mappedBy = "vehicles")
+	private Bookings bookings;
 
 	public Vehicles() {
 		super();
 	}
-	
-	public Vehicles(String registration, String make, String colour, Set<Users> users) {
+
+	public Vehicles(String registration, String make, String colour, Users users) {
 		super();
 		this.registration = registration;
 		this.make = make;
 		this.colour = colour;
 		this.users = users;
 	}
-
-
 
 	public long getVehicleId() {
 		return vehicleId;
@@ -84,12 +81,20 @@ public class Vehicles {
 		this.colour = colour;
 	}
 
-	public Set<Users> getUsers() {
+	public Users getUsers() {
 		return users;
 	}
 
-	public void setUsers(Set<Users> users) {
+	public void setUsers(Users users) {
 		this.users = users;
+	}
+
+	public Bookings getBookings() {
+		return bookings;
+	}
+
+	public void setBookings(Bookings bookings) {
+		this.bookings = bookings;
 	}
 
 }
