@@ -3,8 +3,6 @@ package com.ePark.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +16,6 @@ import com.ePark.entity.Users;
 import com.ePark.service.BookingFlow;
 import com.ePark.service.BookingService;
 import com.ePark.service.StripeService;
-import com.ePark.service.UserService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
@@ -103,5 +100,6 @@ public class AccountDetails {
 
 		return "bookingfragment :: bookingsInfo";
 	}
+
 	
 }

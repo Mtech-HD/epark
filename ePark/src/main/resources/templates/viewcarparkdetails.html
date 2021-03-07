@@ -9,324 +9,292 @@
 	<!--  Navigation Bar -->
 
 
-	<div layout:fragment="content">
-		<div class="ui container">
+	<div layout:fragment="content" th:remove="tag">
 
-			<div class="ui tabular menu margin-bottom-30">
-				<a class="active item" data-tab="carparkdetails"> Car Park
-					Details </a> <a class="item" data-tab="bookings"> Bookings </a> <a
-					class="item" data-tab="comments"> Comments </a>
-			</div>
+		<div class="pusher" style="min-height: 1000px;">
+			<div class="ui container">
 
-
-			<div data-tab="carparkdetails" class="ui active tab">
-				<div class="ui grid">
-
-
-					<div class="row">
-
-
-						<div class="nine wide column">
-							<div class="ui segments">
-
-								<div class="ui top segment secondary">
-									Car Park Information &nbsp; <a class="ui label"
-										th:each="owner : ${carpark.users}"><i class="user icon"></i><span
-										th:text="${owner.username}"></span></a> <a
-										th:class="(${carpark.carParkStatus.toString() == 'APPROVED'} ? 'ui green label float-right' : (${carpark.carParkStatus.toString() == 'SUBMITTED'} ? 'ui blue label float-right' : 'ui red label float-right'))"><i
-										th:class="(${carpark.carParkStatus.toString() == 'APPROVED'} ? 'check icon' : (${carpark.carParkStatus.toString() == 'SUBMITTED'} ? 'sync alternate icon' : 'x icon'))"></i><span
-										th:text="${carpark.carParkStatus}"></span></a>
-								</div>
-
-								<div class="ui segment">
-
-									<table class="ui very basic table">
-
-										<tbody>
-											<tr>
-												<td>Car Park ID:</td>
-												<td th:text="${carpark.carParkId}"></td>
-											</tr>
-											<tr>
-												<td>Car Park Name:</td>
-												<td th:text="${carpark.name}"></td>
-											</tr>
-											<tr>
-												<td>Address:</td>
-												<td
-													th:text="${carpark.carParkAddress1}+', '+${carpark.carParkAddress2}+', '+${carpark.carParkCity}+', '+${carpark.carParkPostcode}"></td>
-											</tr>
-											<tr>
-												<td>Email:</td>
-												<td th:text="${carpark.email}"></td>
-											</tr>
-											<tr>
-												<td>Parking Rate:</td>
-												<td th:text="'per/'+${carpark.parkingRate}"></td>
-											</tr>
-											<tr>
-												<td>Price:</td>
-												<td th:text="'£'+${carpark.price}"></td>
-											</tr>
-											<tr>
-												<td>Date Modified:</td>
-												<td th:text="${carpark.dateModified}"></td>
-											</tr>
-										</tbody>
-									</table>
-									<table class="ui table">
-										<tbody>
-											<tr>
-												<td>Spaces:</td>
-												<td th:text="${carpark.carParkSpots.size()}"></td>
-											</tr>
-											<tr>
-												<td>Disabled Spaces:</td>
-												<td th:text="${carpark.getDisabledSpots().size()}"></td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
-						<div class="seven wide column">
-
-							<th:block
-								th:if="${carpark.carParkStatus.toString()} == 'SUBMITTED'">
-
-								<div class="ui segments"
-									sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')">
-									<div class="ui top segment secondary">Actions</div>
-									<div class="ui segment">
-										<div class="tiny ui buttons">
-											<button class="ui button primary" th:onclick="approve()">Approve</button>
-											<div class="or"></div>
-											<button class="ui button" th:onclick="reject()">Reject</button>
-										</div>
-									</div>
-								</div>
-							</th:block>
-
-							<div class="ui segments">
-
-								<div class="ui top segment secondary">Opening Times</div>
-
-								<div class="ui segment">
-
-									<table class="ui very basic table">
-										<thead>
-											<tr>
-												<th>Day</th>
-												<th>From</th>
-												<th>To</th>
-											</tr>
-										</thead>
-
-										<tbody>
-											<tr th:each="carparktime : ${carpark.orderTimes()}">
-
-												<td th:text="${carparktime.dayOfWeek}"></td>
-												<td
-													th:text="(${carparktime.openTime} == null ? 'Closed' : (${carparktime.openTime} == '00:00' ? 'All day' : ${carparktime.openTime}))"></td>
-												<td
-													th:text="(${carparktime.closeTime} == null ? 'Closed' : (${carparktime.openTime} == '00:00' ? 'All day' : ${carparktime.closeTime}))"></td>
-											</tr>
-
-										</tbody>
-									</table>
-								</div>
-							</div>
-
-
-						</div>
-					</div>
+				<div class="ui tabular menu margin-bottom-30">
+					<a class="item" data-tab="carparkdetails"> Car Park Details </a> <a
+						class="item" data-tab="bookings"> Bookings </a> <a class="item"
+						data-tab="comments"> Comments </a>
 				</div>
-			</div>
 
 
-			<div data-tab="bookings" class="ui tab">
-				<div class="ui grid">
-					<div class="row">
+				<div data-tab="carparkdetails" class="ui active tab">
+					<div class="ui stackable grid">
 
 
-						<div class="four wide column">
-							<div class="ui vertical fluid tabular menu" id="bookings">
+						<div class="row">
 
 
-								<a th:each="booking: ${carpark.bookings}" class="item"
-									th:data-tab="${booking.bookingId}"> <span
-									th:text="'Booking ID: '+${booking.bookingId}"></span> <span
-									class="ui blue label" th:text="'£'+${booking.amount}"></span></a>
-							</div>
-						</div>
-
-						<div class="twelve wide column" id="bookingsInfo">
-
-							<div th:each="booking: ${carpark.bookings}"
-								th:data-tab="${booking.bookingId}" class="ui tab">
-
+							<div class="nine wide column">
 								<div class="ui segments">
 
 									<div class="ui top segment secondary">
-										Booking Information
-										<div class="float-right">
-											Created:&nbsp;<span th:text="${booking.bookingCreated}"></span>
-										</div>
+										Car Park Information &nbsp; <a class="ui label"
+											th:each="owner : ${carpark.users}"><i class="user icon"></i><span
+											th:text="${owner.username}"></span></a> <a
+											th:class="(${carpark.carParkStatus.toString() == 'APPROVED'} ? 'ui green label float-right' : (${carpark.carParkStatus.toString() == 'SUBMITTED'} ? 'ui blue label float-right' : 'ui red label float-right'))"><i
+											th:class="(${carpark.carParkStatus.toString() == 'APPROVED'} ? 'check icon' : (${carpark.carParkStatus.toString() == 'SUBMITTED'} ? 'sync alternate icon' : 'x icon'))"></i><span
+											th:text="${carpark.carParkStatus}"></span></a>
 									</div>
 
 									<div class="ui segment">
 
 										<table class="ui very basic table">
 
-
-
-
 											<tbody>
 												<tr>
-													<td>Booking ID:</td>
-													<td th:text="${booking.bookingId}"></td>
+													<td>Car Park ID:</td>
+													<td th:text="${carpark.carParkId}"></td>
 												</tr>
 												<tr>
-													<td>Car Park:</td>
-													<td th:text="${booking.carParks.name}"></td>
+													<td>Car Park Name:</td>
+													<td th:text="${carpark.name}"></td>
 												</tr>
 												<tr>
-													<td>Date:</td>
-													<td th:text="${booking.startDate}"></td>
+													<td>Address:</td>
+													<td
+														th:text="${carpark.carParkAddress1}+', '+${carpark.carParkAddress2}+', '+${carpark.carParkCity}+', '+${carpark.carParkPostcode}"></td>
 												</tr>
 												<tr>
-													<td>From:</td>
-													<td th:text="${booking.startTime}"></td>
+													<td>Email:</td>
+													<td th:text="${carpark.email}"></td>
 												</tr>
 												<tr>
-													<td>To:</td>
-													<td th:text="${booking.endTime}"></td>
+													<td>Parking Rate:</td>
+													<td th:text="'per/'+${carpark.parkingRate}"></td>
 												</tr>
 												<tr>
-													<td>Space Number:</td>
-													<td th:text="${booking.carParkSpots.spaceNumber}"></td>
+													<td>Price:</td>
+													<td th:text="'£'+${carpark.price}"></td>
 												</tr>
-												<td>Disabled Space:</td>
-												<td
-													th:text="${booking.carParkSpots.isDisabled == true} ? 'Yes' : 'No'"></td>
+												<tr>
+													<td>Date Modified:</td>
+													<td th:text="${carpark.dateModified}"></td>
+												</tr>
+											</tbody>
+										</table>
+										<table class="ui table">
+											<tbody>
+												<tr>
+													<td>Spaces:</td>
+													<td th:text="${carpark.carParkSpots.size()}"></td>
+												</tr>
+												<tr>
+													<td>Disabled Spaces:</td>
+													<td th:text="${carpark.getDisabledSpots().size()}"></td>
 												</tr>
 											</tbody>
 										</table>
 									</div>
+								</div>
+							</div>
+							<div class="seven wide column">
 
+								<th:block
+									th:if="${carpark.carParkStatus.toString()} == 'SUBMITTED'">
+
+									<div class="ui segments"
+										sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')">
+										<div class="ui top segment secondary">Actions</div>
+										<div class="ui segment">
+											<div class="tiny ui buttons">
+												<button class="ui button primary" th:onclick="approve()">Approve</button>
+												<div class="or"></div>
+												<button class="ui button" th:onclick="reject()">Reject</button>
+											</div>
+										</div>
+									</div>
+								</th:block>
+
+								<div class="ui segments">
+
+									<div class="ui top segment secondary">Opening Times</div>
+
+									<div class="ui segment">
+
+										<table class="ui very basic table">
+											<thead>
+												<tr>
+													<th>Day</th>
+													<th>From</th>
+													<th>To</th>
+												</tr>
+											</thead>
+
+											<tbody>
+												<tr th:each="carparktime : ${carpark.orderTimes()}">
+
+													<td th:text="${carparktime.dayOfWeek}"></td>
+													<td
+														th:text="(${carparktime.openTime} == null ? 'Closed' : (${carparktime.openTime} == '00:00' ? 'All day' : ${carparktime.openTime}))"></td>
+													<td
+														th:text="(${carparktime.closeTime} == null ? 'Closed' : (${carparktime.openTime} == '00:00' ? 'All day' : ${carparktime.closeTime}))"></td>
+												</tr>
+
+											</tbody>
+										</table>
+									</div>
+								</div>
+
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div data-tab="bookings" class="ui tab">
+					<div class="ui grid">
+						<div class="row">
+
+
+							<div class="four wide column">
+
+								<table id="bookingTable" class="ui celled selectable table">
+									<thead>
+										<tr style="text-align: center; vertical-align: top">
+
+											<th>Booking ID</th>
+											<th>Cost</th>
+										</tr>
+									</thead>
+									<tbody>
+
+										<tr th:each="booking: ${carpark.bookings}"
+											class='clickable-row pointer'
+											th:bookingId="${booking.bookingId}"
+											style="text-align: center; vertical-align: top">
+
+											<td th:text="${booking.bookingId}"></td>
+											<td><a class="ui blue label"
+												th:text="'£'+${booking.amount}"></a></td>
+
+										</tr>
+
+									</tbody>
+								</table>
+
+							</div>
+
+							<div class="twelve wide column">
+								<div th:insert="~{bookingfragment :: bookingsInfo}"
+									id="bookingsInfo"></div>
+
+
+							</div>
+
+
+
+
+
+						</div>
+					</div>
+				</div>
+
+
+
+
+
+				<div data-tab="comments" class="ui tab">
+
+
+					<form id="addcommentform" method="post"
+						th:action="'/viewcarparkdetails/addcomment/' + ${carpark.carParkId}"
+						th:object="${carParkDto}">
+
+
+						<div class="ui comments">
+							<div class="comment"
+								th:each="carparkcomment : ${carpark.carParkComments}">
+								<a class="avatar"> <i class="user large icon"></i>
+								</a>
+								<div class="content">
+									<a class="author" th:text="${carparkcomment.users}"></a>
+									<div class="metadata">
+										<div class="date"
+											th:text="${#dates.format(carparkcomment.dateCreated, 'dd/MM/yy HH:mm')}"></div>
+									</div>
+									<div class="text" th:text="${carparkcomment.comment}"></div>
+									<div class="actions">
+										<a class="reply active">Reply</a>
+									</div>
 
 								</div>
-								<div th:insert="~{bookingfragment :: paymentDetails}"
-									id="paymentDetails" class="margin-top-20"></div>
 							</div>
 						</div>
 
 
 
 
-					</div>
-				</div>
-			</div>
-
-
-
-
-
-			<div data-tab="comments" class="ui tab">
-
-
-				<form id="addcommentform" method="post"
-					th:action="'/viewcarparkdetails/addcomment/' + ${carpark.carParkId}"
-					th:object="${carParkDto}">
-
-
-					<table class="ui table"
-						style="table-layout: fixed; word-wrap: break-word;">
-						<thead>
-							<tr>
-
-								<th style="text-align: left; vertical-align: top" scope="col">Comment</th>
-								<th style="text-align: right; vertical-align: top; width: 20%;"
-									scope="col"></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr th:each="carparkcomment : ${carpark.carParkComments}">
-
-								<td style="text-align: left;"
-									th:text="${carparkcomment.users}+': '+${carparkcomment.comment}"></td>
-								<td style="text-align: right;"
-									th:text="${#dates.format(carparkcomment.dateCreated, 'dd/MM/yy HH:mm')}"></td>
-							</tr>
-						</tbody>
-					</table>
-
-
-					<div class="ui form">
-						<div class="ui fluid action input">
-							<input name="comment" required autofocus="autofocus"></input>
-							<button class="ui primary button" id="addcomment" type="submit">Add
-								comment</button>
+						<div class="ui form">
+							<div class="ui fluid action input">
+								<input name="comment" required autofocus="autofocus"></input>
+								<div class="ui primary submit labeled icon button">
+									<i class="icon edit"></i> Add Reply
+								</div>
+							</div>
 						</div>
+
+
+
+
+					</form>
+
+				</div>
+
+
+
+
+
+
+
+				<div class="ui tiny modal" id="approve">
+
+					<i class="close icon"></i>
+					<div class="header" th:text="${carpark.name}"></div>
+					<div class="cotent margin-20">You are about to approve this
+						car park</div>
+					<div class="actions">
+						<form
+							th:action="'/viewcarparkdetails/approve/' + ${carpark.carParkId}"
+							method="post">
+
+							<button class="ui positive button" type="submit">Approve</button>
+
+						</form>
 					</div>
-
-
-
-
-				</form>
-
-			</div>
-
-
-
-
-
-
-
-			<div class="ui tiny modal" id="approve">
-
-				<i class="close icon"></i>
-				<div class="header" th:text="${carpark.name}"></div>
-				<div class="cotent margin-20">You are about to approve this
-					car park</div>
-				<div class="actions">
-					<form
-						th:action="'/viewcarparkdetails/approve/' + ${carpark.carParkId}"
-						method="post">
-
-						<button class="ui positive button" type="submit">Approve</button>
-
-					</form>
 				</div>
-			</div>
 
-			<div class="ui tiny modal" id="reject">
+				<div class="ui tiny modal" id="reject">
 
-				<i class="close icon"></i>
-				<div class="header" th:text="${carpark.name}"></div>
-				<div class="cotent margin-20">You are about to reject this car
-					park</div>
-				<div class="actions">
-					<form
-						th:action="'/viewcarparkdetails/reject/' + ${carpark.carParkId}"
-						method="post">
+					<i class="close icon"></i>
+					<div class="header" th:text="${carpark.name}"></div>
+					<div class="cotent margin-20">You are about to reject this
+						car park</div>
+					<div class="actions">
+						<form
+							th:action="'/viewcarparkdetails/reject/' + ${carpark.carParkId}"
+							method="post">
 
-						<button class="ui red button" type="submit">Reject</button>
+							<button class="ui red button" type="submit">Reject</button>
 
-					</form>
+						</form>
+					</div>
 				</div>
+
+
+
+
+
+
+
+
+
+
 			</div>
-
-
-
-
-
-
-
-
-
-
-
 
 
 		</div>
@@ -339,12 +307,58 @@
 
 
 	<div layout:fragment="script">
-		<script th:inline="javascript">
-			$(document).ready(function() {
+		<script type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/jquery.address/1.6/jquery.address.js"></script>
 
-				$('#bookings :first-child').addClass("active");
-				$('#bookingsInfo > div:first-child').addClass("active");
-			});
+		<script th:inline="javascript">
+			$(document).ready(
+					function() {
+
+						$('#bookingTable').DataTable(
+								{
+									lengthMenu : [ 5, 10 ],
+									lengthChange : false,
+									searching : false,
+									info : false,
+									dom : "<'ui grid margin-top-0'"
+											+ "<'row dt-table'"
+											+ "<'sixteen wide column'tr>" + ">"
+											+ "<'row'"
+											+ "<'sixteen wide column'p>" + ">"
+											+ ">"
+								}
+
+						);
+						$('#bookingTable tr:first-child').addClass("active");
+						getBooking();
+
+						function getBooking() {
+							var bookingParam = "bookingId="
+									+ $('#bookingTable .clickable-row.active')
+											.attr("bookingid");
+							var url = "/getBooking/?" + bookingParam;
+
+							$('#bookingsInfoSegment').addClass('loading');
+							$("#bookingsInfo").load(
+									url,
+									function() {
+										$('#bookingsInfoSegment').removeClass(
+												'loading');
+									});
+						}
+
+						$("#bookingTable").on(
+								'click',
+								'.clickable-row',
+								function() {
+									$('.clickable-row').not(this).removeClass(
+											'active');
+									$(this).addClass('active');
+
+									getBooking();
+
+								});
+					});
 
 			function reject() {
 				$('#reject').modal('show');
@@ -355,7 +369,8 @@
 			}
 
 			$('.ui.tabular.menu .item').tab({
-				history : false
+				history : true,
+				historyType : 'hash'
 			});
 		</script>
 	</div>

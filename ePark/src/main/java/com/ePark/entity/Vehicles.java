@@ -11,11 +11,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(name = "vehicles")
+@DynamicUpdate
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "vehicleId")
 public class Vehicles {
 
@@ -34,6 +37,8 @@ public class Vehicles {
 	@JoinColumn(name = "userId", nullable = false)
 	private Users users;
 
+	private boolean isDefault;
+
 	@OneToOne(mappedBy = "vehicles")
 	private Bookings bookings;
 
@@ -41,12 +46,13 @@ public class Vehicles {
 		super();
 	}
 
-	public Vehicles(String registration, String make, String colour, Users users) {
+	public Vehicles(String registration, String make, String colour, Users users, boolean isDefault) {
 		super();
 		this.registration = registration;
 		this.make = make;
 		this.colour = colour;
 		this.users = users;
+		this.isDefault = isDefault;
 	}
 
 	public long getVehicleId() {
@@ -87,6 +93,14 @@ public class Vehicles {
 
 	public void setUsers(Users users) {
 		this.users = users;
+	}
+
+	public boolean getIsDefault() {
+		return isDefault;
+	}
+
+	public void setIsDefault(boolean isDefault) {
+		this.isDefault = isDefault;
 	}
 
 	public Bookings getBookings() {

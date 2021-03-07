@@ -4,30 +4,38 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{main-layout}">
 <head>
-<div layout:fragment="styles">
-	<style>
-</style>
-</div>
+
 </head>
 
 <body>
 
 
-	<div layout:fragment="content">
+	<div layout:fragment="content" th:remove="tag">
+
+		<div class="pusher">
+
+			<div class="ui container">
 
 
-		<div class="ui container">
-
-
-			<div class="ui grid">
-				<div class="row">
-					<div class="four wide column">
-						<div class="margin-top-40 ">
-							<h1>View Spaces</h1>
+				<div class="ui stackable grid">
+					<div class="row middle aligned">
+						<div class="four wide column">
+							<div class="margin-top-40 ">
+								<h1 class="padding-left-10">View Spaces</h1>
+							</div>
 						</div>
-					</div>
-					<div class="twelve wide column right aligned">
-						<div class="row">
+						<div class="eight wide column">
+							<div id="chargeSuccess"
+								class="ui positive message small margin-0">
+								<p>Charge was successful</p>
+							</div>
+
+							<div id="chargeError" class="ui negative message small margin-0">
+								<p>Charge was unsuccessful</p>
+							</div>
+						</div>
+						<div class="four wide column right aligned">
+
 							<div class="ui labeled input">
 								<label class="ui label" style="padding-right: 1px;"><i
 									class="calendar outline icon"></i></label> <input type="text"
@@ -35,151 +43,278 @@
 									autofocus="autofocus" style="text-align: center;">
 
 							</div>
+
 						</div>
 					</div>
-				</div>
 
 
-				<div class="row">
+					<div class="row">
 
-					<div class="four wide column">
-						<table id="carparkspots" class="ui celled selectable table">
-							<thead>
-								<tr style="text-align: center; vertical-align: top">
-									<th>Space ID</th>
-									<th>Disabled</th> 
-								</tr>
-							</thead>
-							<tbody id="spaces">
+						<div class="four wide column">
+							<table id="carparkspots" class="ui unstackable celled selectable table">
+								<thead>
+									<tr style="text-align: center; vertical-align: top">
+										<th>Space ID</th>
+										<th>Disabled</th>
+									</tr>
+								</thead>
+								<tbody id="spaces">
 
-								<tr th:each="spot : ${carpark.carParkSpots}"
-									class='clickable-row pointer'
-									th:spotId="${spot.carParkSpotId}"
-									style="text-align: center; vertical-align: top">
-									<td><span th:text="${spot.spaceNumber}"></span></td>
-									<td><i class="wheelchair grey icon"></i></td>
-	
-								</tr>
+									<tr th:each="spot : ${carpark.carParkSpots}"
+										class='clickable-row pointer'
+										th:spotId="${spot.carParkSpotId}"
+										style="text-align: center; vertical-align: top">
+										<td><span th:text="${spot.spaceNumber}"></span></td>
+										<td><i class="wheelchair grey icon"></i></td>
 
-							</tbody>
-						</table>
+									</tr>
+
+								</tbody>
+							</table>
+						</div>
+						<div class="twelve wide column">
+							<div th:insert="~{bookingfragment :: spotBookings}"
+								id="spotBookings"></div>
+
+
+						</div>
+
+
 					</div>
-					<div class="twelve wide column">
-						<div th:insert="~{bookingfragment :: spotBookings}"
-							id="spotBookings"></div>
+				</div>
+
+				<div class="ui modal tiny" id="chargeModal">
+					<div class="header">Charge Customer</div>
+					<div class="content">
+
+						<div>Late Departure Fee: &nbsp;£10</div>
+
+
+						<div class="margin-top-20" id="customer"></div>
+
+
+						<input type="hidden" id="stripeId" /> <input type="hidden"
+							id="bookingId">
 
 
 					</div>
 
+					<div class="actions">
+						<button class="ui negative approve button" type="submit"
+							id="charge">Charge</button>
+						<button class="ui cancel button" type="button">Cancel</button>
+					</div>
+				</div>
 
-				</div>
-			</div>
 
-			<div class="ui modal tiny">
-				<div class="header">Charge Customer</div>
-				<div class="content">
-					<p>Late Departure Fee: &nbsp;£10</p>
-					<p id="customer"></p>
-					<p>Charging this customer will result in the immediate subsequent booking being reassigned to an empty space.</p>
+
+
+				<div class="ui modal tiny" id="reassignModal">
+					<div class="header">Booking Actions</div>
+					<div class="content">
+
+						<div>
+							Booking ID: &nbsp;
+							<span id='reassignBookingId'></span>
+						</div>
+
+
+						<input type="hidden" id="bookingId">
+						<div class="ui segment padding-0" id="freeSpacesSegment">
+							<div th:insert="~{bookingfragment :: reassignFreeSpots}"
+								id="reassignFreeSpots"></div>
+						</div>
+						<div class="ui horizontal divider">Or</div>
+						<button
+						id="refundButton" class="ui primary fluid button" type="button">Refund and Cancel Booking</button>
+					</div>
+
+					<div class="actions">
+						<button class="ui cancel button" type="button">Cancel</button>
+					</div>
 				</div>
-				<div class="actions">
-					<div class="ui negative approve button">Charge</div>
-					<div class="ui cancel button">Cancel</div>
-				</div>
+
+
 			</div>
 
 		</div>
+
 	</div>
 
 
 
-
-	<br>
-	<br>
-	<br>
 	<th:block layout:fragment="script">
 		<script th:inline="javascript">
-
-			 
-
+			$('#chargeSuccess').hide();
+			$('#chargeError').hide();
 
 			$(document).ready(
 					function() {
-						
-						
+
 						$('#carparkspots').DataTable(
 								{
 									lengthMenu : [ 5, 10 ],
 									lengthChange : false,
 									searching : false,
 									info : false,
-									columnDefs: [
-										{ orderable: false, targets: [1] } ],
-									dom : "<'ui grid margin-top-0'" + "<'row dt-table'"
-											+ "<'sixteen wide column'tr>" + ">" + "<'row'"
-											+ "<'sixteen wide column'p>" + ">" + ">"
+									columnDefs : [ {
+										orderable : false,
+										targets : [ 1 ]
+									} ],
+									dom : "<'ui grid margin-top-0'"
+											+ "<'row dt-table'"
+											+ "<'column'tr>" + ">"
+											+ "<'row'"
+											+ "<'column'p>" + ">"
+											+ ">"
 								}
 
 						);
 						$('#carparkspots tr:first-child').addClass("active");
+
+						var dateSelector = $("#dateSelector").datepicker({
+							dateFormat : "dd/mm/yy",
+							startDate : '01/01/1997',
+							//minDate : 0
+							onSelect : function() {
+
+								getSpotBookings();
+
+							}
+						});
+
+						$("#dateSelector").datepicker().datepicker("setDate",
+								new Date());
+
+						getSpotBookings();
+
+						dateSelector.blur(); //to avoid bug
+
+						$('#spotBookings').on('click', '.charge', function() {
+							var stripeId = $(this).attr("stripeId");
+							//var bookingId = $(this).attr("bookingId");
+							$('#customer').html('Customer ID: ' + stripeId);
+							$('#stripeId').html(stripeId);
+							$('#chargeModal').modal('show');
+						});
 						
-						 var dateSelector = $("#dateSelector").datepicker({
-								dateFormat : "dd/mm/yy",
-								startDate : '01/01/1997',
-								//minDate : 0
-								onSelect : function() {
+
+						$('#spotBookings').on('click', '.reassign', function() {
+							var bookingId = $(this).attr("bookingId");
+
+							$('#reassignBookingId').html(bookingId);
+
+							var url = "/getFreeSpaces/?bookingId=" + bookingId;
+
+							$('#freeSpacesSegment').addClass('loading');
+							$("#reassignFreeSpots").load(url, function() {
+								$('#freeSpacesSegment').removeClass('loading');
+							});
+							
+							$('#reassignModal').modal('show');
+						});
+
+
+
+						$("#carparkspots").on(
+								'click',
+								'.clickable-row',
+								function() {
+									$('.clickable-row').not(this).removeClass(
+											'active');
+									$(this).addClass('active');
 
 									getSpotBookings();
 
-								}
-							});
-						 
-						$("#dateSelector").datepicker().datepicker("setDate",
-									new Date());
-						
-						getSpotBookings();
-						
-						dateSelector.blur(); //to avoid bug
-						
-						
-						
+								});
 
-						
-						$('#spotBookings').on('click', '.charge', function() {
-							var stripeId = $(this).attr("stripeId");
-							$('#customer').html('Customer ID: '+stripeId);
-							$('.ui.modal').modal('show');
-							
-						});
-
-						
-						$("#carparkspots").on('click', '.clickable-row', function() {
-							$('.clickable-row').not(this).removeClass('active');
-							$(this).addClass('active');
-
-							getSpotBookings();
-
-						});
-						
 						function getSpotBookings() {
 							var date = $("#dateSelector").val();
-							var spotParam = "carParkSpotId=" + $('#carparkspots .clickable-row.active').attr("spotId");
-							var url = "/findByCarParkSpotsAndStartDate/?" + spotParam + "&date=" + date;
-							
+							var spotParam = "carParkSpotId="
+									+ $('#carparkspots .clickable-row.active')
+											.attr("spotId");
+							var url = "/findByCarParkSpotsAndStartDate/?"
+									+ spotParam + "&date=" + date;
+
 							$('#spotBookingsSegment').addClass('loading');
-							$("#spotBookings").load(url, function() {
-								$('#spotBookingsSegment').removeClass('loading');
-							});
+							$("#spotBookings").load(
+									url,
+									function() {
+										$('#spotBookingsSegment').removeClass(
+												'loading');
+									});
 						}
 
+						$('#charge').click(
+								function() {
+									var stripeId = "stripeId="
+											+ $('#stripeId').text();
+									// 									var bookingId = "bookingId="
+									// 											+ $('#bookingId').val();
+
+									$('#spotBookingsSegment').addClass(
+											'loading');
+									$.ajax({
+										type : "GET",
+										url : "/chargeCustomer/?" + stripeId,
+										//+ "&" + bookingId,
+										success : function(result) {
+											$('#spotBookingsSegment')
+													.removeClass('loading');
+											if (result == "success") {
+												$('#chargeSuccess').show();
+											} else {
+												$('#chargeError').show();
+											}
+										}
+									})
+								});
+						
+
+
 					});
-			 
-
+			
+			function reassign(carParkSpotId) {
+				var date = $("#dateSelector").val();
+				var bookingId = $('#reassignBookingId').text();
+				var activeSpotId = $('#carparkspots .clickable-row.active').attr("spotId");
 				
+				var url = "/reassign/?bookingId=" + 
+				bookingId + "&carParkSpotId=" + carParkSpotId + "&activeSpotId=" 
+				+ activeSpotId + "&date=" + date; 
+				
+				$('#reassignModal').modal('hide');
+				
+				$('#spotBookingsSegment').addClass('loading');
+				$("#spotBookings").load(
+						url,
+						function() {
+							$('#spotBookingsSegment').removeClass(
+									'loading');
+						});
+			}
+			
+			$("#refundButton").click(function(){
+				var date = $("#dateSelector").val();
+				var bookingId = $('#reassignBookingId').text();
+				var activeSpotId = $('#carparkspots .clickable-row.active').attr("spotId");
+				
+				var url = "/refund/?bookingId=" + 
+				bookingId + "&activeSpotId=" 
+				+ activeSpotId + "&date=" + date; 
+				
+				$('#reassignModal').modal('hide');
+				
+				$('#spotBookingsSegment').addClass('loading');
+				$("#spotBookings").load(
+						url,
+						function() {
+							$('#spotBookingsSegment').removeClass(
+									'loading');
+						});
+			})
+			
 
-
-					 
-	
 		</script>
 
 

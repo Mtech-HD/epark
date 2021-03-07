@@ -11,302 +11,300 @@
 
 
 	<!--  HTML registration form -->
-	<div layout:fragment="content" style="min-height: 1100px">
+	<div layout:fragment="content" th:remove="tag">
+
+		<div class="pusher" style="min-height: 1200px;">
+			<div class="ui container">
 
 
-		<div class="ui container">
-
-
-			<div th:if="${param.success}">
-				<div class="ui positive message margin-bottom-10">
-					<i class="close icon"></i> Car park submitted successfully
-				</div>
-			</div>
-
-			<form th:action="@{/addcarpark}" method="post" th:object="${carpark}"
-				class="ui form" id="addCarParkForm">
-
-				<div class="ui segments">
-
-					<div class="ui top attached segment secondary">Add a car park</div>
-
-					<div class="ui segment padding-20">
-					
-						<div
-							class="ui horizontal divider margin-top-20 field">Details</div>
-
-
-						<div class="two fields padding-sides-20">
-
-							<div class="field">
-
-								<label> Name: </label><input type="text" id="name"
-									th:field="*{name}" placeholder="Enter a name" required
-									autofocus="autofocus" />
-
-							</div>
-
-
-							<div class="field">
-								<label>Email: </label><input type="text" id="email"
-									th:field="*{email}" placeholder="email@example.com" required
-									autofocus="autofocus" />
-							</div>
-
-						</div>
-						<div
-							class="ui horizontal divider margin-top-50 field">Address</div>
-
-						<div class="two fields padding-sides-20">
-							<div class="field">
-
-								<label for="address1"> Address 1:</label> <input type="text"
-									id="address2" th:field="*{carParkAddress1}" required
-									placeholder="Address line 1" autofocus="autofocus" />
-							</div>
-
-
-							<div class="field">
-								<label for="firstname"> Address 2:</label> <input type="text"
-									id="address2" th:field="*{carParkAddress2}"
-									placeholder="Address line 2" required autofocus="autofocus" />
-							</div>
-						</div>
-
-						<div class="two fields padding-sides-20">
-							<div class="field">
-								<label for="address3">City: </label><input type="text"
-									id="address3" th:field="*{carParkCity}"
-									placeholder="Address line 3" required autofocus="autofocus" />
-							</div>
-							<div class="field">
-								<label for="postcode">Postcode: </label> <input type="text"
-									id="postcode" th:field="*{carParkPostcode}"
-									placeholder="Address postcode" required autofocus="autofocus" />
-							</div>
-						</div>
-
-
-						<div
-							class="ui horizontal divider margin-top-50 field">Spaces</div>
-
-						<div class="two fields padding-sides-20">
-							<div class="field">
-								<label for="noofspaces">Total spaces:</label><input
-									type="number" id="noofspaces" max="200" th:field="*{spaces}"
-									placeholder="Number of spaces available" required
-									autofocus="autofocus">
-							</div>
-							<div class="field">
-								<label for="noofdisabled">Disabled spaces:</label><input
-									type="number" id="noofdisabled" max="200"
-									th:field="*{isDisabled}"
-									placeholder="Number of disabled spaces" required
-									autofocus="autofocus">
-							</div>
-
-						</div>
-
-						<div
-							class="ui horizontal divider margin-top-50 field">Pricing</div>
-
-						<div class="two fields padding-sides-20">
-							<div class="field">
-								<label for="Amount"> Parking cost:</label> <input type="number"
-									min="0.00" max="10000.00" step="0.01" id="Amount"
-									th:field="*{price}" placeholder="0.00" required
-									autofocus="autofocus">
-
-							</div>
-
-
-							<div class="field">
-								<label for="Rate">Parking Rate:</label>
-								<div class="ui radio">
-									<input type="radio" th:field="*{rate}" th:value="1.0" 
-										name="options" id="option1" autocomplete="off" checked>&nbsp;
-									Hourly Rate &nbsp;&nbsp;&nbsp; <input type="radio" th:field="*{rate}"
-										th:value="0.5" name="options" id="option2" autocomplete="off">&nbsp;
-									30 Minute Rate
-								</div>
-
-
-
-							</div>
-						</div>
-						<div
-							class="ui horizontal divider margin-top-50 field">Opening
-							Hours</div>
-
-						<div class="fields padding-sides-20">
-							<div class="field">
-								<div class="ui checkbox">
-									<input type="checkbox" value="" id="247"> <label>
-										24/7 </label>
-								</div>
-							</div>
-
-							<div class="three wide field">
-								<div class="ui checkbox">
-									<input type="checkbox" value="" id="7to6"> <label>
-										Business Hours </label>
-								</div>
-							</div>
-						</div>
-						<div class="fields padding-sides-20 timerow">
-
-							<div class="field">
-								<div class="ui checkbox">
-									<input class="days-checkbox" type="checkbox" value=""
-										id="checkMonday"> <label> Monday </label>
-								</div>
-								<div>
-									<label class="toplabel margin-top-10" for="Rate"> From:
-									</label> <input disabled type="text" class="time-field-sm time open"
-										id="MondayFrom" th:field="*{MondayFrom}" placeholder="Closed"
-										required autofocus="autofocus" /> <label
-										class="toplabel margin-top-10" for="Rate"> To: </label> <input
-										type="text" th:field="*{MondayTo}"
-										class="time-field-sm time closed" id="MondayTo"
-										placeholder="Closed" disabled required autofocus="autofocus" />
-								</div>
-							</div>
-							<div class="field">
-								<div class="ui checkbox">
-									<input class="days-checkbox" type="checkbox" value=""
-										id="checkTuesday"> <label class="control-label"
-										for="Rate"> Tuesday: </label>
-								</div>
-								<div>
-									<label class="toplabel margin-top-10" for="Rate"> From:
-									</label> <input disabled th:field="*{TuesdayFrom}" type="text"
-										class="time-field-sm time open" id="TuesdayFrom"
-										placeholder="Closed" required autofocus="autofocus"> <label
-										class="toplabel margin-top-10" for="Rate"> To: </label> <input
-										type="text" th:field="*{TuesdayTo}"
-										class="time-field-sm time closed" id="TuesdayTo"
-										placeholder="Closed" required disabled autofocus="autofocus"
-										step="60">
-								</div>
-							</div>
-							<div class="field">
-								<div class="ui checkbox">
-									<input class="days-checkbox" type="checkbox" value=""
-										id="checkWednesday"> <label> Wednesday: </label>
-								</div>
-								<div>
-									<label class="toplabel margin-top-10" for="Rate"> From:
-									</label> <input disabled th:field="*{WednesdayFrom}" type="text"
-										class="time-field-sm time open" id="WednesdayFrom"
-										placeholder="Closed" required autofocus="autofocus" /> <label
-										class="toplabel margin-top-10" for="Rate"> To: </label> <input
-										type="text" th:field="*{WednesdayTo}"
-										class="time-field-sm time closed" id="WednesdayTo"
-										placeholder="Closed" required disabled autofocus="autofocus" />
-								</div>
-							</div>
-							<div class="field">
-								<div class="ui checkbox">
-									<input class="days-checkbox" type="checkbox" value=""
-										id="checkThursday"> <label class="control-label"
-										for="Rate"> Thursday: </label>
-								</div>
-								<div>
-									<label class="toplabel margin-top-10" for="Rate"> From:
-									</label> <input disabled th:field="*{ThursdayFrom}" type="text"
-										class="time-field-sm time open" id="ThursdayFrom"
-										placeholder="Closed" required autofocus="autofocus" /> <label
-										class="toplabel margin-top-10" for="Rate"> To: </label> <input
-										type="text" th:field="*{ThursdayTo}"
-										class="time-field-sm time closed" id="ThursdayTo"
-										placeholder="Closed" required disabled autofocus="autofocus" />
-								</div>
-							</div>
-							<div class="field">
-								<div class="ui checkbox">
-									<input class="days-checkbox" type="checkbox" value=""
-										id="checkFriday"> <label class="control-label"
-										for="Rate"> Friday: </label>
-								</div>
-								<div>
-									<label class="toplabel margin-top-10" for="Rate"> From:
-									</label> <input disabled th:field="*{FridayFrom}" type="text"
-										class="time-field-sm time open" id="FridayFrom"
-										placeholder="Closed" required autofocus="autofocus" /> <label
-										class="toplabel margin-top-10" for="Rate"> To: </label> <input
-										type="text" th:field="*{FridayTo}"
-										class="time-field-sm time closed" id="FridayTo"
-										placeholder="Closed" required disabled autofocus="autofocus" />
-								</div>
-							</div>
-							<div class="field">
-								<div class="ui checkbox">
-									<input class="days-checkbox" type="checkbox" value=""
-										id="checkSaturday"> <label for="Rate">
-										Saturday: </label>
-								</div>
-								<div>
-									<label class="toplabel margin-top-10"> From: </label> <input
-										disabled th:field="*{SaturdayFrom}" type="text"
-										class="time-field-sm time open" id="SaturdayFrom"
-										placeholder="Closed" required autofocus="autofocus" /> <label
-										class="toplabel margin-top-10"> To: </label> <input
-										type="text" th:field="*{SaturdayTo}"
-										class="time-field-sm time closed" id="SaturdayTo"
-										placeholder="Closed" required disabled autofocus="autofocus" />
-								</div>
-							</div>
-							<div class="field">
-								<div class="ui checkbox">
-									<input class="days-checkbox" type="checkbox" id="checkSunday">
-									<label> Sunday</label>
-								</div>
-								<div>
-									<label class="toplabel margin-top-10"> From: </label> <input
-										disabled th:field="*{SundayFrom}" type="text"
-										class="time-field-sm time open" id="SundayFrom"
-										placeholder="Closed" required autofocus="autofocus" /> <label
-										class="toplabel margin-top-10" for="Rate"> To: </label> <input
-										type="text" th:field="*{SundayTo}" disabled
-										class="time-field-sm time closed" id="SundayTo"
-										placeholder="Closed" required autofocus="autofocus" />
-								</div>
-							</div>
-
-
-						</div>
-
-
-
-						<div class="field padding-sides-20">
-							<button class="ui button primary" type="button" id="modalButton">Submit
-								for approval</button>
-						</div>
-
-
-						<div class="ui tiny modal" id="submitcarpark">
-							<div class="header">
-								<h5>Submit Car Park</h5>
-							</div>
-							<div class="content">
-								<p>You are about to submit this car park for approval</p>
-							</div>
-							<div class="actions">
-								<button type="button" class="ui deny button">Close</button>
-								<button type="submit" form="addCarParkForm"
-									class="ui ok primary button">Submit</button>
-							</div>
-
-
-						</div>
+				<div th:if="${param.success}">
+					<div class="ui positive message margin-bottom-10">
+						<i class="close icon"></i> Car park submitted successfully
 					</div>
 				</div>
 
-			</form>
+				<form th:action="@{/addcarpark}" method="post"
+					th:object="${carpark}" class="ui form" id="addCarParkForm">
 
+					<div class="ui segments">
+
+						<div class="ui top attached segment secondary">Add a car
+							park</div>
+
+						<div class="ui segment padding-20">
+
+							<div class="ui horizontal divider margin-top-20 field">Details</div>
+
+
+							<div class="two fields padding-sides-20">
+
+								<div class="field">
+
+									<label> Name: </label><input type="text" id="name"
+										th:field="*{name}" placeholder="Enter a name" required
+										autofocus="autofocus" />
+
+								</div>
+
+
+								<div class="field">
+									<label>Email: </label><input type="text" id="email"
+										th:field="*{email}" placeholder="email@example.com" required
+										autofocus="autofocus" />
+								</div>
+
+							</div>
+							<div class="ui horizontal divider margin-top-50 field">Address</div>
+
+							<div class="two fields padding-sides-20">
+								<div class="field">
+
+									<label for="address1"> Address 1:</label> <input type="text"
+										id="address2" th:field="*{carParkAddress1}" required
+										placeholder="Address line 1" autofocus="autofocus" />
+								</div>
+
+
+								<div class="field">
+									<label for="firstname"> Address 2:</label> <input type="text"
+										id="address2" th:field="*{carParkAddress2}"
+										placeholder="Address line 2" required autofocus="autofocus" />
+								</div>
+							</div>
+
+							<div class="two fields padding-sides-20">
+								<div class="field">
+									<label for="address3">City: </label><input type="text"
+										id="address3" th:field="*{carParkCity}"
+										placeholder="Address line 3" required autofocus="autofocus" />
+								</div>
+								<div class="field">
+									<label for="postcode">Postcode: </label> <input type="text"
+										id="postcode" th:field="*{carParkPostcode}"
+										placeholder="Address postcode" required autofocus="autofocus" />
+								</div>
+							</div>
+
+
+							<div class="ui horizontal divider margin-top-50 field">Spaces</div>
+
+							<div class="two fields padding-sides-20">
+								<div class="field">
+									<label for="noofspaces">Total spaces:</label><input
+										type="number" id="noofspaces" max="200" th:field="*{spaces}"
+										placeholder="Number of spaces available" required
+										autofocus="autofocus">
+								</div>
+								<div class="field">
+									<label for="noofdisabled">Disabled spaces:</label><input
+										type="number" id="noofdisabled" max="200"
+										th:field="*{isDisabled}"
+										placeholder="Number of disabled spaces" required
+										autofocus="autofocus">
+								</div>
+
+							</div>
+
+							<div class="ui horizontal divider margin-top-50 field">Pricing</div>
+
+							<div class="two fields padding-sides-20">
+								<div class="field">
+									<label for="Amount"> Parking cost:</label> <input type="number"
+										min="0.00" max="10000.00" step="0.01" id="Amount"
+										th:field="*{price}" placeholder="0.00" required
+										autofocus="autofocus">
+
+								</div>
+
+
+								<div class="field">
+									<label for="Rate">Parking Rate:</label>
+									<div class="ui radio">
+										<input type="radio" th:field="*{rate}" th:value="1.0"
+											name="options" id="option1" autocomplete="off" checked>&nbsp;
+										Hourly Rate &nbsp;&nbsp;&nbsp; <input type="radio"
+											th:field="*{rate}" th:value="0.5" name="options" id="option2"
+											autocomplete="off">&nbsp; 30 Minute Rate
+									</div>
+
+
+
+								</div>
+							</div>
+							<div class="ui horizontal divider margin-top-50 field">Opening
+								Hours</div>
+
+							<div class="fields padding-sides-20">
+								<div class="field">
+									<div class="ui checkbox">
+										<input type="checkbox" value="" id="247"> <label>
+											24/7 </label>
+									</div>
+								</div>
+
+								<div class="three wide field">
+									<div class="ui checkbox">
+										<input type="checkbox" value="" id="7to6"> <label>
+											Business Hours </label>
+									</div>
+								</div>
+							</div>
+							<div class="fields padding-sides-20 timerow">
+
+								<div class="field">
+									<div class="ui checkbox">
+										<input class="days-checkbox" type="checkbox" value=""
+											id="checkMonday"> <label> Monday </label>
+									</div>
+									<div>
+										<label class="toplabel margin-top-10" for="Rate">
+											From: </label> <input disabled type="text"
+											class="time-field-sm time open" id="MondayFrom"
+											th:field="*{MondayFrom}" placeholder="Closed" required
+											autofocus="autofocus" /> <label
+											class="toplabel margin-top-10" for="Rate"> To: </label> <input
+											type="text" th:field="*{MondayTo}"
+											class="time-field-sm time closed" id="MondayTo"
+											placeholder="Closed" disabled required autofocus="autofocus" />
+									</div>
+								</div>
+								<div class="field">
+									<div class="ui checkbox">
+										<input class="days-checkbox" type="checkbox" value=""
+											id="checkTuesday"> <label class="control-label"
+											for="Rate"> Tuesday: </label>
+									</div>
+									<div>
+										<label class="toplabel margin-top-10" for="Rate">
+											From: </label> <input disabled th:field="*{TuesdayFrom}" type="text"
+											class="time-field-sm time open" id="TuesdayFrom"
+											placeholder="Closed" required autofocus="autofocus">
+										<label class="toplabel margin-top-10" for="Rate"> To:
+										</label> <input type="text" th:field="*{TuesdayTo}"
+											class="time-field-sm time closed" id="TuesdayTo"
+											placeholder="Closed" required disabled autofocus="autofocus"
+											step="60">
+									</div>
+								</div>
+								<div class="field">
+									<div class="ui checkbox">
+										<input class="days-checkbox" type="checkbox" value=""
+											id="checkWednesday"> <label> Wednesday: </label>
+									</div>
+									<div>
+										<label class="toplabel margin-top-10" for="Rate">
+											From: </label> <input disabled th:field="*{WednesdayFrom}"
+											type="text" class="time-field-sm time open"
+											id="WednesdayFrom" placeholder="Closed" required
+											autofocus="autofocus" /> <label
+											class="toplabel margin-top-10" for="Rate"> To: </label> <input
+											type="text" th:field="*{WednesdayTo}"
+											class="time-field-sm time closed" id="WednesdayTo"
+											placeholder="Closed" required disabled autofocus="autofocus" />
+									</div>
+								</div>
+								<div class="field">
+									<div class="ui checkbox">
+										<input class="days-checkbox" type="checkbox" value=""
+											id="checkThursday"> <label class="control-label"
+											for="Rate"> Thursday: </label>
+									</div>
+									<div>
+										<label class="toplabel margin-top-10" for="Rate">
+											From: </label> <input disabled th:field="*{ThursdayFrom}" type="text"
+											class="time-field-sm time open" id="ThursdayFrom"
+											placeholder="Closed" required autofocus="autofocus" /> <label
+											class="toplabel margin-top-10" for="Rate"> To: </label> <input
+											type="text" th:field="*{ThursdayTo}"
+											class="time-field-sm time closed" id="ThursdayTo"
+											placeholder="Closed" required disabled autofocus="autofocus" />
+									</div>
+								</div>
+								<div class="field">
+									<div class="ui checkbox">
+										<input class="days-checkbox" type="checkbox" value=""
+											id="checkFriday"> <label class="control-label"
+											for="Rate"> Friday: </label>
+									</div>
+									<div>
+										<label class="toplabel margin-top-10" for="Rate">
+											From: </label> <input disabled th:field="*{FridayFrom}" type="text"
+											class="time-field-sm time open" id="FridayFrom"
+											placeholder="Closed" required autofocus="autofocus" /> <label
+											class="toplabel margin-top-10" for="Rate"> To: </label> <input
+											type="text" th:field="*{FridayTo}"
+											class="time-field-sm time closed" id="FridayTo"
+											placeholder="Closed" required disabled autofocus="autofocus" />
+									</div>
+								</div>
+								<div class="field">
+									<div class="ui checkbox">
+										<input class="days-checkbox" type="checkbox" value=""
+											id="checkSaturday"> <label for="Rate">
+											Saturday: </label>
+									</div>
+									<div>
+										<label class="toplabel margin-top-10"> From: </label> <input
+											disabled th:field="*{SaturdayFrom}" type="text"
+											class="time-field-sm time open" id="SaturdayFrom"
+											placeholder="Closed" required autofocus="autofocus" /> <label
+											class="toplabel margin-top-10"> To: </label> <input
+											type="text" th:field="*{SaturdayTo}"
+											class="time-field-sm time closed" id="SaturdayTo"
+											placeholder="Closed" required disabled autofocus="autofocus" />
+									</div>
+								</div>
+								<div class="field">
+									<div class="ui checkbox">
+										<input class="days-checkbox" type="checkbox" id="checkSunday">
+										<label> Sunday</label>
+									</div>
+									<div>
+										<label class="toplabel margin-top-10"> From: </label> <input
+											disabled th:field="*{SundayFrom}" type="text"
+											class="time-field-sm time open" id="SundayFrom"
+											placeholder="Closed" required autofocus="autofocus" /> <label
+											class="toplabel margin-top-10" for="Rate"> To: </label> <input
+											type="text" th:field="*{SundayTo}" disabled
+											class="time-field-sm time closed" id="SundayTo"
+											placeholder="Closed" required autofocus="autofocus" />
+									</div>
+								</div>
+
+
+							</div>
+
+
+
+							<div class="field padding-sides-20">
+								<button class="ui button primary" type="button" id="modalButton">Submit
+									for approval</button>
+							</div>
+
+
+							<div class="ui tiny modal" id="submitcarpark">
+								<div class="header">
+									<h5>Submit Car Park</h5>
+								</div>
+								<div class="content">
+									<p>You are about to submit this car park for approval</p>
+								</div>
+								<div class="actions">
+									<button type="button" class="ui deny button">Close</button>
+									<button type="submit" form="addCarParkForm"
+										class="ui ok primary button">Submit</button>
+								</div>
+
+
+							</div>
+						</div>
+					</div>
+
+				</form>
+
+			</div>
 		</div>
 	</div>
-
 
 
 	<div layout:fragment="script">
@@ -515,8 +513,6 @@
 											}
 										});
 					});
-			
-
 
 			$('.message .close').on('click', function() {
 				$(this).parent().hide();

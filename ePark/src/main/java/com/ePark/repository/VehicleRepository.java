@@ -14,4 +14,8 @@ public interface VehicleRepository extends JpaRepository<Vehicles, Long>{
 	List<Vehicles> findByUsers(Users user);
 	
 	void deleteByVehicleId(long vehicleId);
+	
+	Vehicles findByVehicleId(long vehicleId);
+	
+	Vehicles findByUsersAndIsDefault(Users user, boolean isDefault);
 }

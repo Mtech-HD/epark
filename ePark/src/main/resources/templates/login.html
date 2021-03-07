@@ -14,17 +14,17 @@
 
 	<!--  HTML registration form  -->
 
-	<div layout:fragment="content">
-		<div class="ui container">
-			<div
-				style="width: 600px; margin-left: auto; margin-right: auto; margin-top: 40px;">
+	<div layout:fragment="content" th:remove="tag">
+	<div class="pusher">
+		<div class="ui container login">
+
 				<div class="ui segments">
 
 					<div class="ui segment secondary">Login Page</div>
 
 
 					<div class="ui segment">
-						<form th:action="@{/login}" method="post">
+						<form th:action="@{/login}" method="post" class="ui form">
 
 							<!-- Error Message -->
 						
@@ -49,17 +49,17 @@
 
 
 
-							<div class="group">
-								<label class="leftlabel" for="username"> <span>Username</span>
-									<input type="text" id="username" name="username" class="field borderless"
-									placeholder="Enter username" required autofocus="autofocus" /></label>
+							<div class="field">
+								<label class="grey">Username</label>
+									<input type="text" id="username" name="username" class="field"
+									placeholder="Enter username" required autofocus="autofocus" />
 
 							</div>
-							<div class="group">
-								<label class="leftlabel" for="password"> <span>Password</span>
+							<div class="field">
+								<label class="grey">Password</label>
 									<input type="password" id="password" name="password"
-									class="field borderless" placeholder="Enter password" required
-									autofocus="autofocus" /></label>
+									class="field" placeholder="Enter password" required
+									autofocus="autofocus" />
 							</div>
 							<div class="ui checkbox margin-10">
 
@@ -79,7 +79,7 @@
 						</form>
 					</div>
 				</div>
-			</div>
+		</div>
 		</div>
 	</div>
 

@@ -14,31 +14,31 @@
 
 
 	<!--  HTML registration form -->
-	<div layout:fragment="content">
+	<div layout:fragment="content" th:remove="tag">
+		<div class="pusher">
 
-		<div class="main">
+			<div class="ui container">
 
 
-			<div class="ui segments">
-				<div class="ui top segment secondary"><i class="check icon"></i>&nbsp;Booking Success</div>
-				<div class="ui segment">
-				
-					<p th:text="'Booking ID: '+ ${bookingFlow.booking.bookingId}"></p>
-					<p th:text="'Car Park: '+ ${bookingFlow.booking.carParks.name}"></p>
-					<a class="ui button" href="/home">Back Home</a>
-					<!-- <a class="ui primary button" th:unless="${session.bookingFlow == null}" href="/clear?page=accountdetails">View Booking</a> -->
-					<a class="ui primary button" th:if="${session.bookingFlow == null}" href="/accountdetails">View Booking</a>
-					<a class="ui primary button" th:unless="${session.bookingFlow == null}" href="/clear?page=accountdetails">View Booking</a>
+				<div class="ui segments">
+					<div class="ui top segment secondary">
+						<p class="green">
+							<i class="check icon green"></i>&nbsp;Booking Success
+						</p>
+					</div>
+					<div class="ui segment">
+
+						<p th:text="'Booking ID: '+ ${booking.bookingId}"></p>
+						<p th:text="'Car Park: '+ ${booking.carParks.name}"></p>
+						<a class="ui button" href="/home">Back Home</a> <a
+							class="ui primary button" href="/accountdetails">View Booking</a>
+					</div>
 				</div>
+
 			</div>
 
 		</div>
-
-
-
-		<br> <br>
 	</div>
-
 	<div layout:fragment="script"></div>
 
 </body>

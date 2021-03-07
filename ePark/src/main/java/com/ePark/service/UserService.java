@@ -62,5 +62,9 @@ public class UserService implements UserDetailsService {
 	public Users findByUsername(String username) {
 		return userRepo.findByUsername(username);
 	}
+	
+	public Users findByStripeId(String stripeId) {
+		return userRepo.findByStripeId(stripeId);
+	}
 
 }

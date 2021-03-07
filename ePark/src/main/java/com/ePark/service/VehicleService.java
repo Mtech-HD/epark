@@ -15,6 +15,10 @@ public class VehicleService {
 	@Autowired
 	private VehicleRepository vehicleRepo;
 	
+	public List<Vehicles> findAll() {
+		return vehicleRepo.findAll();
+	}
+	
 	public Vehicles save(Vehicles vehicle) {
 		return vehicleRepo.save(vehicle);
 	}
@@ -25,5 +29,13 @@ public class VehicleService {
 	
 	public void deleteByVehicleId(long vehicleId) {
 		vehicleRepo.deleteByVehicleId(vehicleId);
+	}
+	
+	public Vehicles findByVehicleId(long vehicleId) {
+		return vehicleRepo.findByVehicleId(vehicleId);
+	}
+	
+	public Vehicles findByUsersAndIsDefault(Users user) {
+		return vehicleRepo.findByUsersAndIsDefault(user, true);
 	}
 }

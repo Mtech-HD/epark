@@ -9,60 +9,65 @@
 </head>
 <body>
 
-	<!--  Navigation Bar -->
-
-
-
 	<!--  HTML registration form -->
-	<div layout:fragment="content">
-		<div class="main">
-			<div
-				th:replace="~{bookingfragment :: bookingFlowSteps(${bookingFlow})}"></div>
-		</div>
-		<div class="main">
+	<div layout:fragment="content" th:remove="tag">
+		<div class="pusher">
 
-			<form class="ui form" th:action="@{/booking/payment}" method="post"
-				id="paymentForm">
-				<div class="ui grid">
+			<div class="ui container">
+				<div class="padding-sides-14">
+					<div
+						th:replace="~{bookingfragment :: bookingFlowSteps(${bookingFlow})}"></div>
 
-				<div class="alert alert-danger alert-dismissible fade show"
-					id="error" role="alert">Please select a card</div>
-
-				<div class="equal width row">
-					<div class="column">
-						<div th:insert="~{bookingfragment :: cardsTable}" id="cardsTable"></div>
-					</div>
-					<div class="column">
-						<div th:insert="~{bookingfragment :: cardsAdd}" id="cardAddForm"></div>
-					</div>
 				</div>
+				<form class="ui form" id="paymentForm" method="get"
+					th:action="@{/booking/complete}">
+					<div class="ui stackable grid margin-top-20">
 
-				<br>
-				<div class="row">
-					<div class="column">
-						<button class="ui button" name="back" formnovalidate>Back</button>
-						<button class="ui button primary" id="payButton"
-							th:text="'Pay '+${#numbers.formatCurrency(bookingFlow.booking.calculatePrice())}"></button>
+
+						<div class="row">
+							<div class="eleven wide column">
+								<div class="ui tiny red message" id="error"></div>
+								<div th:insert="~{bookingfragment :: cardsTable}"
+									id="cardsTable"></div>
+								<div th:insert="~{bookingfragment :: cardsAdd}" id="cardAddForm"
+									class="margin-top-20"></div>
+
+							</div>
+							<div class="five wide column">
+								<div th:insert="~{bookingfragment :: quickSummary}"></div>
+							</div>
+						</div>
+						<div class="margin-top-10">
+							<button class="ui button" name="back" formnovalidate>Back</button>
+							<button class="ui button primary" id="payButton" type="button"
+								th:text="'Pay '+${#numbers.formatCurrency(bookingFlow.booking.calculatePrice())}"></button>
+						</div>
+
+
+
+
 					</div>
-				</div>
-</div>
-			</form>
+				</form>
 
+			</div>
 		</div>
+
+
+
 	</div>
-
-
-
-	<br>
-	<br>
-
-
 	<div layout:fragment="script">
 
 		<script>
-			$(document).ready(function() {
-				$("#error").hide();
-			});
+			$("#error").hide();
+
+			function showError(message) {
+				if (message == "") {
+					$("#error").html("An Error Occurred");
+				} else {
+					$("#error").html(message);
+				}
+				$("#error").show();
+			}
 
 			var stripe = Stripe('pk_test_51I0pttDkduQieys2MADcS5sCigV27VmPRFdPHzv2Exo7GwiHxyqEC8BUepCebyCqJZBgPiI1vkScowlNTS0MfjZd00DyUdcLiL');
 
@@ -114,7 +119,7 @@
 
 			$('#cardButton')
 					.click(
-							
+
 							function() {
 								$('#paymentForm').addClass('loading form');
 								stripe
@@ -140,8 +145,12 @@
 														$("#cardsTable")
 																.load(
 																		"/addcard?paymentMethodId="
-																				+ result.paymentMethod.id, function() {
-																					$('#paymentForm').removeClass('loading form');
+																				+ result.paymentMethod.id,
+																		function() {
+																			$(
+																					'#paymentForm')
+																					.removeClass(
+																							'loading form');
 																		});
 														$('#cardAddBody').css(
 																'display',
@@ -150,7 +159,6 @@
 																.removeClass(
 																		"minus")
 																.addClass("add");
-														
 
 													}
 
@@ -161,7 +169,8 @@
 			function removeCard(paymentMethodId) {
 				$('#paymentForm').addClass('loading form');
 				$("#cardsTable").load(
-						"/removeCard/?paymentMethodId=" + paymentMethodId, function() {
+						"/removeCard/?paymentMethodId=" + paymentMethodId,
+						function() {
 							$('#paymentForm').removeClass('loading form');
 						});
 
@@ -171,12 +180,72 @@
 				$('input[type="checkbox"]').not(this).prop('checked', false);
 			});
 
-			$('#payButton').click(function(e) {
-				if ($('input[type="checkbox"]:checked').length == 0) {
-					e.preventDefault();
-					$("#error").show();
-				}
-			});
+			var handleAction = function(clientSecret) {
+				stripe
+						.handleCardAction(clientSecret)
+						.then(
+								function(result) {
+									if (result.error) {
+										showError("Confirmation Failed");
+									} else if (result.paymentIntent.status === "requires_confirmation") {
+										console
+												.log(result.paymentIntent.status);
+										completeBooking(result.paymentIntent.id);
+									}
+								});
+			};
+
+			var completeBooking = function(paymentIntentId) {
+				$("<input />").attr("type", "hidden").attr("name",
+						"paymentIntentId").attr("value", paymentIntentId)
+						.appendTo("#paymentForm");
+				$("#paymentForm")[0].submit();
+
+			};
+
+			$('#payButton')
+					.click(
+							function(e) {
+								if ($('input[type="checkbox"]:checked').length == 0) {
+									e.preventDefault();
+									showError("Please select a card");
+								} else {
+									$('#payButton').addClass("loading");
+									$
+											.ajax({
+												type : "POST",
+												data : $("#paymentForm")
+														.serialize(),
+												url : "/booking/payment/",
+												success : function(response) {
+													$('#payButton').removeClass("loading");
+													if (response.status == "requires_payment_method") {
+														showError("Payment Failed");
+													} else if (response.status == "requires_action") {
+														// Request authentication
+														handleAction(response.clientSecret);
+													} else {
+														stripe
+																.retrievePaymentIntent(response.clientSecret)
+																.then(
+																		function(
+																				result) {
+																			completeBooking(result.paymentIntent.id);
+																		});
+													}
+												}
+											});
+								}
+							});
+
+			function setDefaultCard(paymentMethodId) {
+				$('#paymentForm').addClass('loading');
+				$("#cardsTable").load(
+						"/setdefaultcard/?paymentMethodId=" + paymentMethodId,
+						function() {
+							$('#paymentForm').removeClass('loading');
+						});
+			}
 
 			$('.ui.checkbox').checkbox();
 		</script>
