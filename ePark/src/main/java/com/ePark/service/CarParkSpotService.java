@@ -26,9 +26,13 @@ public class CarParkSpotService {
 		return carParkSpotRepo.findByCarParkSpotId(carParkSpotId);
 	}
 	
-	public CarParkSpots checkAvailable(long carParkId, LocalDate bookingDate, LocalTime startTime, LocalTime endTime, boolean isDisabled) {
+	public CarParkSpots checkAvailable(long carParkId, LocalDate bookingDate, LocalTime startTime, LocalTime endTime, boolean isDisabled, int length) {
 		
-		return carParkSpotRepo.checkAvailable(carParkId, bookingDate, startTime, endTime, isDisabled);
+		return carParkSpotRepo.checkAvailable(carParkId, bookingDate, startTime, endTime, isDisabled, length);
 	}
-
+	
+	public List<CarParkSpots> getMultipleFreeSpaces(long carParkId, LocalDate bookingDate, LocalTime startTime, LocalTime endTime, boolean isDisabled, int length) {
+		
+		return carParkSpotRepo.getMultipleFreeSpaces(carParkId, bookingDate, startTime, endTime, isDisabled, length);
+	}
 }

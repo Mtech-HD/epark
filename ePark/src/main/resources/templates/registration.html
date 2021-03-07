@@ -12,102 +12,100 @@
 
 	<!--  HTML registration form -->
 
-	<div layout:fragment="content">
-		<div class="ui container">
+	<div layout:fragment="content" th:remove="tag">
+		<div class="pusher">
+			<div class="ui container">
 
 
 
 
-			<form class="ui form" th:action="@{/registration}" method="post"
-				th:object="${user}">
-				<div class="ui segments">
+				<form class="ui form" th:action="@{/registration}" method="post"
+					th:object="${user}">
+					<div class="ui segments">
 
-					<div class="ui top attached segment secondary">Registration</div>
-					<div class="ui segment padding-20">
+						<div class="ui top attached segment secondary">Registration</div>
+						<div class="ui segment padding-20">
 
-						<div id="error" class="ui negative message">
-							<p id="errorMessage"></p>
+							<div id="error" class="ui negative message">
+								<p id="errorMessage"></p>
+							</div>
+
+
+							<div class="two fields">
+								<div id="usernameDiv" class="field">
+									<label for="username"> Username:</label> <input type="text"
+										th:field="*{username}" id="username"
+										placeholder="Enter a username" required autofocus="autofocus" />
+								</div>
+
+
+								<div id="passwordDiv" class="field">
+									<label for="password">Password:</label> <input type="password"
+										th:field="*{password}" required id="password"
+										placeholder="Enter a password" autofocus="autofocus" />
+								</div>
+							</div>
+
+							<div class="two fields">
+								<div class="field">
+									<label for="firstname"> First Name: </label><input type="text"
+										id="firstname" th:field="*{firstName}"
+										placeholder="Enter your first name" required
+										autofocus="autofocus" />
+								</div>
+								<div class="field">
+									<label for="lastname"> Last Name: </label><input type="text"
+										id="lastname" th:field="*{lastName}"
+										placeholder="Enter your surname" required
+										autofocus="autofocus" />
+								</div>
+							</div>
+
+							<div class="fields">
+								<div class="sixteen wide field">
+									<label for="email"> Email:</label> <input type="email"
+										id="email" th:field="*{email}" placeholder="email@example.com"
+										required autofocus="autofocus" />
+								</div>
+							</div>
+
+							<div class="fields">
+								<div class="sixteen wide field">
+									<label for="userrole">User Role: </label><select
+										class="ui fluid dropdown" name="userrole" id="userrole"
+										th:field="*{roleName}" required="required">
+										<option th:each="role : ${roles}" th:value="${role.name}"
+											th:text="${role.name}"
+											th:disabled="${role.name == 'ADMIN' or role.name == 'SITEADMIN'}"></option>
+									</select>
+								</div>
+							</div>
+
+
+
+
+
+							<div class="margin-top-20">
+								<a class="ui button" th:href="@{login}"> <i
+									class="fas fa-sign-in-alt"></i>&nbsp; Login
+								</a>
+
+								<button id="register" type="submit" class="ui positive button">
+									<i class="fas fa-user-plus"></i>&nbsp; Register
+								</button>
+							</div>
 						</div>
-
-
-						<div class="two fields">
-							<div id="usernameDiv" class="field">
-								<label for="username"> Username:</label> <input type="text"
-									th:field="*{username}" id="username"
-									placeholder="Enter a username" required autofocus="autofocus" />
-							</div>
-
-
-							<div id="passwordDiv" class="field">
-								<label for="password">Password:</label> <input type="password"
-									th:field="*{password}" required id="password" 
-									placeholder="Enter a password" autofocus="autofocus" />
-							</div>
-						</div>
-
-						<div class="two fields">
-							<div class="field">
-								<label for="firstname"> First Name: </label><input type="text"
-									id="firstname" th:field="*{firstName}"
-									placeholder="Enter your first name" required
-									autofocus="autofocus" />
-							</div>
-							<div class="field">
-								<label for="lastname"> Last Name: </label><input type="text"
-									id="lastname" th:field="*{lastName}"
-									placeholder="Enter your surname" required autofocus="autofocus" />
-							</div>
-						</div>
-
-						<div class="fields">
-							<div class="sixteen wide field">
-								<label for="email"> Email:</label> <input type="email"
-									id="email" th:field="*{email}" placeholder="email@example.com"
-									required autofocus="autofocus" />
-							</div>
-						</div>
-
-						<div class="fields">
-							<div class="sixteen wide field">
-								<label for="userrole">User Role: </label><select
-									class="ui fluid dropdown" name="userrole" id="userrole"
-									th:field="*{roleName}" required="required">
-									<option th:each="role : ${roles}" th:value="${role.name}"
-										th:text="${role.name}"
-										th:disabled="${role.name == 'ADMIN' or role.name == 'SITEADMIN'}"></option>
-								</select>
-							</div>
-						</div>
-
-
-
-
-
-
-
-						<a class="ui button" th:href="@{login}"> <i
-							class="fas fa-sign-in-alt"></i>&nbsp; Login
-						</a>
-
-						<button id="register" type="submit" class="ui positive button">
-							<i class="fas fa-user-plus"></i>&nbsp; Register
-						</button>
-
 					</div>
-				</div>
-			</form>
+				</form>
 
+			</div>
 		</div>
+
 	</div>
-
-
 
 
 	<div layout:fragment="script">
 		<script th:inline="javascript">
-	
-		
-		
 			$(document)
 					.ready(
 							function() {
@@ -130,7 +128,9 @@
 																				"#usernameDiv")
 																				.removeClass(
 																						"error");
-																		$("#error").hide();
+																		$(
+																				"#error")
+																				.hide();
 																		$(
 																				"#register")
 																				.prop(
@@ -141,11 +141,13 @@
 																				"#usernameDiv")
 																				.addClass(
 																						"error");
-																		$("#error").show();
 																		$(
-																		"#errorMessage")
-																		.html(
-																				"Username is taken");
+																				"#error")
+																				.show();
+																		$(
+																				"#errorMessage")
+																				.html(
+																						"Username is taken");
 																		$(
 																				"#register")
 																				.prop(
@@ -156,7 +158,9 @@
 																				"#usernameDiv")
 																				.addClass(
 																						"error");
-																		$("#error").show();
+																		$(
+																				"#error")
+																				.show();
 																		$(
 																				"#errorMessage")
 																				.html(

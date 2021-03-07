@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Registration Confirmation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- use the font -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+        }
+    </style>
+</head>
+ <body>
+    <p th:text="'Dear ' + ${name}+ ','"></p>
+
+    <p>
+      You have successfully created an account for <b>ePark</b> on
+      <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}"></span>
+    </p>
+    
+    <p th:text="${'Username: ' + username}"></p>
+
+    <p>
+      Regards, <br />
+      <em>ePark Admin Team</em>
+    </p>
+  </body>
+</html>

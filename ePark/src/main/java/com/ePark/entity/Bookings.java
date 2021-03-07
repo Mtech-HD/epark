@@ -7,6 +7,8 @@ import java.time.LocalTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,18 +18,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
+@DynamicUpdate
 @Table(name = "bookings")
 public class Bookings {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long bookingId;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "userId", nullable = false)
 	private Users users;
@@ -59,11 +63,14 @@ public class Bookings {
 	private LocalTime endTime;
 
 	private boolean isDisabled;
-	
+
 	private BigDecimal amount;
-	
+
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate bookingCreated;
+
+	@Enumerated(EnumType.STRING)
+	private BookingStatus bookingStatus;
 
 	public Bookings() {
 		super();
@@ -81,6 +88,10 @@ public class Bookings {
 		this.endDate = endDate;
 		this.startTime = startTime;
 		this.endTime = endTime;
+	}
+
+	public enum BookingStatus {
+		ACTIVE, CANCELLED
 	}
 
 	public long getBookingId() {
@@ -186,7 +197,7 @@ public class Bookings {
 	public void setIsDisabled(boolean isDisabled) {
 		this.isDisabled = isDisabled;
 	}
-	
+
 	public BigDecimal getAmount() {
 		return amount;
 	}
@@ -207,6 +218,19 @@ public class Bookings {
 		this.isDisabled = isDisabled;
 	}
 
+	public BookingStatus getBookingStatus() {
+		return bookingStatus;
+	}
+
+	public void setBookingStatus(BookingStatus bookingStatus) {
+		this.bookingStatus = bookingStatus;
+	}
+
+	public String getFullAddress() {
+		return carParks.getCarParkAddress1() + "," + carParks.getCarParkAddress2() + "," + carParks.getCarParkCity()
+				+ "," + carParks.getCarParkPostcode();
+	}
+
 	public long calculateDuration() {
 		long unitsCount;
 		long duration;
@@ -220,9 +244,9 @@ public class Bookings {
 		}
 
 		if (carParks.getParkingRate() == ParkingRate.HOUR) {
-			unitsCount = duration / hourUnit;
+			unitsCount = Math.floorDiv(duration, hourUnit);
 		} else {
-			unitsCount = duration / halfHourUnit;
+			unitsCount = Math.floorDiv(duration, halfHourUnit);
 		}
 
 		return unitsCount;

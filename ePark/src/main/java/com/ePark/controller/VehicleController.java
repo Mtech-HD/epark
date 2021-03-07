@@ -1,5 +1,7 @@
 package com.ePark.controller;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -14,6 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ePark.AppSecurityConfig;
 import com.ePark.dto.VehicleDto;
+import com.ePark.entity.CarParkStatus;
+import com.ePark.entity.CarParks;
 import com.ePark.entity.Vehicles;
 import com.ePark.service.BookingFlow;
 import com.ePark.service.VehicleService;
@@ -43,8 +47,16 @@ public class VehicleController {
 	@GetMapping("/addvehicles")
 	public String addVehicle(@RequestParam("registration") String registration, @RequestParam("make") String make,
 			@RequestParam("colour") String colour, Model model, @ModelAttribute("bookingFlow") Optional<BookingFlow> bookingFlow) {
+		
+		List<Vehicles> vehicles = vehicleService.findAll();
+		
+		boolean isDefault = false;
+		
+		if (vehicles != null) {
+			isDefault = true;
+		}
 
-		Vehicles vehicle = new Vehicles(registration, make, colour, appSecurity.getCurrentUser());
+		Vehicles vehicle = new Vehicles(registration, make, colour, appSecurity.getCurrentUser(), isDefault);
 
 		vehicleService.save(vehicle);
 
@@ -60,6 +72,27 @@ public class VehicleController {
 
 		model.addAttribute("user", appSecurity.getCurrentUser());
 
+		return "bookingfragment :: vehicles";
+	}
+	
+	@GetMapping("/setdefaultvehicle")
+	public String setDefaultCard(@RequestParam("vehicleId") long vehicleId, Model model,
+			@ModelAttribute("bookingFlow") Optional<BookingFlow> bookingFlow) {
+
+		Vehicles defaultVehicle = vehicleService.findByUsersAndIsDefault(appSecurity.getCurrentUser());
+		
+		Vehicles newDefaultVehicle = vehicleService.findByVehicleId(vehicleId);
+		
+		defaultVehicle.setIsDefault(false);
+		
+		newDefaultVehicle.setIsDefault(true);
+
+		vehicleService.save(defaultVehicle);
+		
+		vehicleService.save(newDefaultVehicle);
+
+		model.addAttribute("user", appSecurity.getCurrentUser());
+		
 		return "bookingfragment :: vehicles";
 	}
 }

@@ -1,7 +1,12 @@
 package com.ePark.controller;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,19 +27,23 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.ePark.AppSecurityConfig;
 import com.ePark.dto.CarParkDto;
 import com.ePark.entity.Bookings;
+import com.ePark.entity.Bookings.BookingStatus;
 import com.ePark.entity.CarParkSpots;
 import com.ePark.entity.CarParkTimes;
 import com.ePark.entity.CarParks;
 import com.ePark.entity.ChargeRequest;
 import com.ePark.entity.ChargeRequest.Currency;
+import com.ePark.entity.Mail;
 import com.ePark.entity.Users;
 import com.ePark.entity.Vehicles;
 import com.ePark.service.BookingFlow;
 import com.ePark.service.BookingService;
 import com.ePark.service.CarParkService;
 import com.ePark.service.CarParkSpotService;
+import com.ePark.service.EmailService;
 import com.ePark.service.StripeService;
 import com.ePark.service.VehicleService;
+import com.google.gson.Gson;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 
@@ -49,16 +58,19 @@ public class BookingController {
 	private CarParkSpotService carParkSpotService;
 
 	@Autowired
-	private VehicleService vehicleService;
-
-	@Autowired
 	private BookingService bookingService;
 
 	@Autowired
+	private VehicleService vehicleService;
+
+	@Autowired
 	private StripeService paymentsService;
-	
+
 	@Autowired
 	private AppSecurityConfig appSecurity;
+
+	@Autowired
+	private EmailService emailService;
 
 	@Value("${stripe.secret.key}")
 	private String stripePublicKey;
@@ -97,13 +109,19 @@ public class BookingController {
 
 		CarParkSpots spot = carParkSpotService.checkAvailable(bookingFlow.getBooking().getCarParks().getCarParkId(),
 				bookingFlow.getBooking().getStartDate(), bookingFlow.getBooking().getStartTime(),
-				bookingFlow.getBooking().getEndTime(), bookingFlow.getBooking().getIsDisabled());
+				bookingFlow.getBooking().getEndTime(), bookingFlow.getBooking().getIsDisabled(), 1);
 
 		if (spot == null) {
 			bindingResult.rejectValue("booking.endTime", "", "No available spaces");
 			return "bookingdates";
+		} else if (bookingFlow.getBooking().getStartTime().equals(bookingFlow.getBooking().getEndTime())) {
+			bindingResult.rejectValue("booking.endTime", "", "Start and end times are the same");
+			return "bookingdates";
+		} else if (bookingFlow.getBooking().getEndTime().isBefore(bookingFlow.getBooking().getStartTime())) {
+			bindingResult.rejectValue("booking.endTime", "", "End time is before start time");
+			return "bookingdates";
 		}
-
+		
 		bookingFlow.getBooking().setCarParkSpots(spot);
 
 		bookingFlow.completeStep(BookingFlow.Step.Dates);
@@ -131,7 +149,6 @@ public class BookingController {
 		List<CarParkTimes> openingTimes = bookingFlow.getBooking().getCarParks().orderTimes();
 		CarParkTimes carParkTime = openingTimes.stream().filter(t -> t.getDayOfWeek().toString().equals(dayOfWeek))
 				.findFirst().orElse(null);
-		;
 
 		return new ResponseEntity<>(carParkTime, HttpStatus.OK);
 	}
@@ -140,8 +157,16 @@ public class BookingController {
 	public String getDetails(@ModelAttribute("bookingFlow") BookingFlow bookingFlow, Model model) {
 		bookingFlow.enterStep(BookingFlow.Step.Vehicle);
 
+		if (bookingFlow.getBooking().getVehicles() == null) {
+			Users user = appSecurity.getCurrentUser();
+
+			Vehicles vehicle = vehicleService.findByUsersAndIsDefault(user);
+
+			bookingFlow.getBooking().setVehicles(vehicle);
+		}
+
 		model.addAttribute("user", appSecurity.getCurrentUser());
-		
+
 		return "/bookingvehicles";
 	}
 
@@ -197,33 +222,36 @@ public class BookingController {
 			throws StripeException {
 		bookingFlow.enterStep(BookingFlow.Step.Payment);
 
+		Users user = appSecurity.getCurrentUser();
+
 		model.addAttribute("amount", 50 * 100); // in cents
 		model.addAttribute("stripePublicKey", stripePublicKey);
 
+		model.addAttribute("defaultCard",
+				paymentsService.getCustomer(user.getStripeId()).getInvoiceSettings().getDefaultPaymentMethod());
 		model.addAttribute("cards", paymentsService.getCards());
 
 		return "/bookingpayment";
 	}
 
-	@PostMapping(value = "/booking/payment", params = "back")
-	public String fromPaymentToReview(@ModelAttribute("bookingFlow") BookingFlow bookingFlow,
-			RedirectAttributes redirectAttributes) {
-
-		redirectAttributes.addFlashAttribute("bookingFlow", bookingFlow);
-		return "redirect:/bookingreview";
-	}
+	
+	  @GetMapping(value = "/booking/complete", params = "back") public String
+	  fromPaymentToReview(@ModelAttribute("bookingFlow") BookingFlow bookingFlow,
+	  RedirectAttributes redirectAttributes) {
+	  
+	  redirectAttributes.addFlashAttribute("bookingFlow", bookingFlow); return
+	  "redirect:/bookingreview"; }
+	 
 
 	@PostMapping("/booking/payment")
-	public String postPayment(@ModelAttribute("bookingFlow") BookingFlow bookingFlow,
+	public ResponseEntity<Object> postPayment(@ModelAttribute("bookingFlow") BookingFlow bookingFlow,
 			// @Valid @ModelAttribute("pendingPayment") PendingPayment pendingPayment,
 			@RequestParam("paymentMethodId") String paymentMethodId, BindingResult bindingResult,
-			SessionStatus sessionStatus, ChargeRequest chargeRequest, Model model) throws StripeException {
+			ChargeRequest chargeRequest, Model model) throws StripeException {
 
 		Users user = appSecurity.getCurrentUser();
 
-		if (bindingResult.hasErrors()) {
-			return "bookingpayment";
-		}
+		PaymentIntent paymentIntent = null;
 
 		Bookings booking = bookingFlow.getBooking();
 
@@ -231,36 +259,62 @@ public class BookingController {
 		booking.setAmount(booking.calculatePrice());
 		booking.setBookingCreated(LocalDate.now());
 
-		chargeRequest.setDescription("Example charge");
+		chargeRequest.setDescription(Long.toString(booking.getBookingId()));
 		chargeRequest.setCurrency(Currency.GBP);
 		chargeRequest.setAmount(booking.calculatePrice().intValue() * 100);
 		chargeRequest.setPaymentMethodId(paymentMethodId);
 		chargeRequest.setCustomerId(user.getStripeId());
 
-		PaymentIntent paymentIntent = paymentsService.paymentIntent(chargeRequest);
+		paymentIntent = paymentsService.paymentIntent(chargeRequest);
 
-		if (paymentIntent.getStatus() == "payment_failed") {
-			return "redirect:/booking/payment";
-		} else {
-			booking.setPaymentId(paymentIntent.getId());
-			bookingService.save(booking);
-			sessionStatus.setComplete();
-		}
+		booking.setPaymentId(paymentIntent.getId());
 
-		
-		// model.addAttribute("status", paymentIntent.getStatus());
-		// model.addAttribute("chargeId", paymentIntent.getId());
-		// model.addAttribute("balance_transaction",
-		// paymentIntent.getBalanceTransaction());
+		Map<String, Object> response = new HashMap<>();
+		response.put("clientSecret", paymentIntent.getClientSecret());
+		response.put("status", paymentIntent.getStatus());
 
-		bookingFlow.completeStep(BookingFlow.Step.Payment);
-		return "redirect:/booking/complete";
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@GetMapping("/booking/complete")
-	public String getCompletePage(@ModelAttribute("bookingFlow") BookingFlow bookingFlow, Model model) {
+	public String getCompletePage(BookingFlow bookingFlow, @RequestParam("paymentIntentId") String paymentIntentId,
+			@RequestParam("paymentMethodId") String paymentMethodId, Model model, SessionStatus sessionStatus) throws StripeException, MessagingException, IOException {
+
+		PaymentIntent paymentIntent = paymentsService.getPaymentIntent(paymentIntentId);
+
+		if (paymentIntent.getStatus().equals("requires_confirmation")) {
+			paymentIntent = paymentIntent.confirm();
+		}
+
+		bookingFlow.completeStep(BookingFlow.Step.Payment);
+
+		Bookings booking = bookingFlow.getBooking();
+		booking.setBookingStatus(BookingStatus.ACTIVE);
+		bookingService.save(booking);
+
+		String address = booking.getFullAddress();
+		Users user = appSecurity.getCurrentUser();
+		
+		Mail mail = new Mail();
+		mail.setFrom("ePark Admin <official-epark@outlook.com>");
+		mail.setMailTo(user.getEmail());
+		mail.setSubject("Booking Confirmation");
+		mail.setTemplate("emails/bookingconfirmation");
+
+		Map<String, Object> prop = new HashMap<String, Object>();
+		prop.put("name", user.getFirstName());
+		prop.put("receipturl", paymentIntent.getCharges().getData().stream().findFirst().get().getReceiptUrl());
+		prop.put("directionsurl", "https://www.google.com/maps/dir/Current+Location/" + address);
+		prop.put("booking", booking);
+		mail.setProps(prop);
+		emailService.sendEmail(mail);
+
+		model.addAttribute("booking", bookingService.findByBookingId(bookingFlow.getBooking().getBookingId()));
+
+		sessionStatus.setComplete();
 
 		return "/bookingcomplete";
+
 	}
 
 	@GetMapping(value = "/clear")
@@ -272,6 +326,5 @@ public class BookingController {
 
 		return view;
 	}
-
 
 }
