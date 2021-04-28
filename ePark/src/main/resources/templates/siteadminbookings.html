@@ -20,9 +20,8 @@
 				<div class="ui stackable grid">
 					<div class="row middle aligned">
 						<div class="four wide column">
-							<div class="margin-top-40 ">
+					
 								<h1 class="padding-left-10">View Spaces</h1>
-							</div>
 						</div>
 						<div class="eight wide column">
 							<div id="chargeSuccess"
@@ -50,7 +49,7 @@
 
 					<div class="row">
 
-						<div class="four wide column">
+						<div class="four wide column display" id="selectionSegment">
 							<table id="carparkspots" class="ui unstackable celled selectable table">
 								<thead>
 									<tr style="text-align: center; vertical-align: top">
@@ -72,8 +71,8 @@
 								</tbody>
 							</table>
 						</div>
-						<div class="twelve wide column">
-							<div th:insert="~{bookingfragment :: spotBookings}"
+						<div class="twelve wide column display" id="infoSegment">
+							<div th:insert="~{fragments :: spotBookings}"
 								id="spotBookings"></div>
 
 
@@ -120,8 +119,8 @@
 
 
 						<input type="hidden" id="bookingId">
-						<div class="ui segment padding-0" id="freeSpacesSegment">
-							<div th:insert="~{bookingfragment :: reassignFreeSpots}"
+						<div class="ui segment no-border padding-0" id="freeSpacesSegment">
+							<div th:insert="~{fragments :: reassignFreeSpots}"
 								id="reassignFreeSpots"></div>
 						</div>
 						<div class="ui horizontal divider">Or</div>
@@ -170,8 +169,14 @@
 								}
 
 						);
+						
+		
+						$('.ui.pagination.menu').removeClass('stackable').addClass('unstackable');
+						
+						$('#carparkspots').removeClass('dataTable');
 						$('#carparkspots tr:first-child').addClass("active");
-
+						
+						
 						var dateSelector = $("#dateSelector").datepicker({
 							dateFormat : "dd/mm/yy",
 							startDate : '01/01/1997',
@@ -224,9 +229,42 @@
 											'active');
 									$(this).addClass('active');
 
+									//switchView();
+									
 									getSpotBookings();
-
 								});
+/* 						
+						function switchView() {
+							
+							if ($('#selectionSegment').hasClass('display-none')) {										
+								$('#selectionSegment').removeClass('display-none').addClass('display');
+							} else {
+								$('#selectionSegment').removeClass('display').addClass('display-none');
+							}
+							
+							if ($('#infoSegment').hasClass('display-none')) {										
+								$('#infoSegment').removeClass('display-none').addClass('display');
+							} else {
+								$('#infoSegment').removeClass('display').addClass('display-none');
+							}
+						}
+						
+						$(window).resize(resize());
+							
+						
+						function resize() {
+						    
+							if ($(window).width() > 800) {
+								$('#selectionSegment').removeClass('display-none').addClass('display');
+								$('#infoSegment').removeClass('display-none').addClass('display');
+							} else {
+								if ($('#selectionSegment').hasClass('display')) {
+									$('#infoSegment').removeClass('display').addClass('display-none');
+								} else {
+									$('#infoSegment').removeClass('display-none').addClass('display');
+								}
+							}	
+						} */
 
 						function getSpotBookings() {
 							var date = $("#dateSelector").val();

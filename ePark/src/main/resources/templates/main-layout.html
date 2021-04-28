@@ -151,7 +151,7 @@
 				<div class="ui large top fixed menu inverted borderless darkblue">
 					<a id="mobile_item" class="item"><i class="large bars icon"></i></a>
 
-					<div class="right item search">
+					<div th:if="${#httpServletRequest.requestURI == '/home'}" class="right item search">
 						<div class="ui icon input">
 							<input type="text" placeholder="Search..." id="mobilePlaceSearch"> <i
 								class="search link icon"></i>
@@ -175,7 +175,7 @@
 
 
 
-		<div class="ui accordion" sec:authorize="isAnonymous()">
+		<div class="ui accordion navigation" sec:authorize="isAnonymous()">
 			<div class="title">
 				<a class="item">My Account <i class="dropdown icon"></i>
 				</a>
@@ -188,7 +188,7 @@
 		</div>
 
 
-		<div class="ui accordion" sec:authorize="isAuthenticated()">
+		<div class="ui accordion navigation" sec:authorize="isAuthenticated()">
 			<div class="title">
 				<a class="item">My Account <i class="dropdown icon"></i></a>
 			</div>
@@ -201,7 +201,7 @@
 			</div>
 		</div>
 
-		<div class="ui accordion"
+		<div class="ui accordion navigation"
 			sec:authorize="isAuthenticated()&&!hasAnyAuthority('USER')">
 
 			<div class="title">
@@ -224,7 +224,7 @@
 			</div>
 		</div>
 
-		<div class="ui accordion"
+		<div class="ui accordion navigation"
 			sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')">
 			<div class="title">
 				<a class="item"> Admin Menu <i class="dropdown icon"></i></a>

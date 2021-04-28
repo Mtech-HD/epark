@@ -22,14 +22,14 @@
 					</h5>
 					<hr class="solid">
 
-					<label class="margin-bottom-10">Show Closest To:</label> <select
-						class="ui fluid dropdown">
+<!-- 					<label class="margin-bottom-10">Show Closest To:</label> <select
+						class="ui fluid dropdown" id="closestDropdown">
 
 						<option class="item" value="location">Current Location</option>
 						<option class="item" value="marker" selected>Current
 							Marker</option>
 
-					</select>
+					</select> -->
 
 				</div>
 
@@ -51,94 +51,114 @@
 					</div>
 
 
-					<table class="ui unstackable very basic table margin-top-10">
+					<table
+						class="ui unstackable very basic table margin-top-10 detailsTable compact ">
 						<tbody>
 							<tr>
 
-								<td class="align-top"><i class="far fa-address-book fa-lg"></i></td>
-								<td class="align-top">Address:</td>
-								<td id="address"></td>
+								<td class="one wide align-top"><i
+									class="far fa-address-book fa-lg"></i></td>
+								<td class="five wide align-top">Address:</td>
+								<td class="ten wide" id="address"></td>
 							</tr>
 							<tr>
-								<td><i class="far fa-clock fa-lg"></i></td>
-								<td>Rate:</td>
-								<td id="parkingrate"></td>
+								<td class="one wide"><i class="far fa-clock fa-lg"></i></td>
+								<td class="five wide">Rate:</td>
+								<td class="ten wide" id="parkingrate"></td>
 							</tr>
 							<tr>
-								<td><i class="fas fa-pound-sign fa-lg"></i></td>
-								<td>Price:</td>
-								<td id="price"></td>
+								<td class="one wide"><i class="fas fa-pound-sign fa-lg"></i></td>
+								<td class="five wide">Price:</td>
+								<td class="ten wide" id="price"></td>
 							</tr>
 							<tr>
-								<td><i class="fas fa-car-side fa-lg"></i></td>
-								<td>Spaces:</td>
-								<td id="spaces"></td>
+								<td class="one wide"><i class="fas fa-car-alt fa-lg"></i></td>
+								<td class="five wide">Spaces:</td>
+								<td class="ten wide" id="spaces"></td>
 							</tr>
 							<tr>
-								<td><i class="fas fa-wheelchair fa-lg"></i></td>
-								<td>Disabled:</td>
-								<td id="disabled"></td>
+								<td class="one wide"><i class="fas fa-wheelchair fa-lg"></i></td>
+								<td class="five wide">Disabled:</td>
+								<td class="ten wide" id="disabled"></td>
 							</tr>
 							<tr>
-								<td><i class="far fa-envelope fa-lg"></i></td>
-								<td>Email:</td>
-								<td id="email"></td>
+								<td class="one wide"><i class="far fa-envelope fa-lg"></i></td>
+								<td class="five wide">Email:</td>
+								<td class="ten wide" id="email"></td>
+							</tr>
+							<tr>
+								<td class="one wide"><i
+									class="arrows alternate vertical icon"></i></td>
+								<td class="five wide">Max Height:</td>
+								<td class="ten wide" id="heightRestriction"></td>
+							</tr>
+							<tr>
+								<td class="one wide"><i class="key icon"></i></td>
+								<td class="five wide">Access Type:</td>
+								<td class="ten wide" id="accessControl"></td>
 							</tr>
 						</tbody>
 					</table>
 
-
+					<div class="ui segments detailsDescription">
+						<div class="ui top attached secondary label">Description</div>
+						<div class="ui segment" id="description"></div>
+					</div>
 
 					<hr class="solid">
 
-					<table
-						class="ui unstackable very basic table margin-top-10 margin-bottom-30">
-						<thead>
-							<th><i class="far fa-calendar-alt fa-lg"></i></th>
-							<th><i class="fas fa-door-open fa-lg"></i>&nbsp;From</th>
-							<th><i class="fas fa-door-closed fa-lg"></i>&nbsp;To</th>
-
-						</thead>
-						<tbody>
-							<tr>
-								<td class="six wide column">Monday</td>
-								<td id="mondayfrom"></td>
-								<td id="mondayto"></td>
-							</tr>
-							<tr class="row">
-								<td>Tuesday</td>
-								<td id="tuesdayfrom">--</td>
-								<td id="tuesdayto">--</td>
-							</tr>
-							<tr>
-								<td>Wednesday</td>
-								<td id="wednesdayfrom">--</td>
-								<td id="wednesdayto">--</td>
-							</tr>
-							<tr class="row">
-								<td>Thursday</td>
-								<td id="thursdayfrom">--</td>
-								<td id="thursdayto">--</td>
-							</tr>
-							<tr class="row">
-								<td>Friday</td>
-								<td id="fridayfrom">--</td>
-								<td id="fridayto">--</td>
-							</tr>
-							<tr>
-								<td>Saturday</td>
-								<td id="saturdayfrom">--</td>
-								<td id="saturdayto">--</td>
-							</tr>
-							<tr>
-								<td>Sunday</td>
-								<td id="sundayfrom"></td>
-								<td id="sundayto"></td>
-							</tr>
-						</tbody>
-					</table>
+					<div class="ui segments accordion margin-bottom-50">
+						<div class="ui segment secondary title">
+							<i class="dropdown icon"></i>Opening Hours
+						</div>
+						<div class="ui segment content" style="padding: 1em 1em;">
+							<table class="ui unstackable very basic table">
+								<thead>
+									<th><i class="far fa-calendar-alt fa-lg"></i></th>
+									<th><i class="fas fa-door-open fa-lg"></i>&nbsp;From</th>
+									<th><i class="fas fa-door-closed fa-lg"></i>&nbsp;To</th>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="six wide column">Monday</td>
+										<td id="mondayfrom"></td>
+										<td id="mondayto"></td>
+									</tr>
+									<tr class="row">
+										<td>Tuesday</td>
+										<td id="tuesdayfrom">--</td>
+										<td id="tuesdayto">--</td>
+									</tr>
+									<tr>
+										<td>Wednesday</td>
+										<td id="wednesdayfrom">--</td>
+										<td id="wednesdayto">--</td>
+									</tr>
+									<tr class="row">
+										<td>Thursday</td>
+										<td id="thursdayfrom">--</td>
+										<td id="thursdayto">--</td>
+									</tr>
+									<tr class="row">
+										<td>Friday</td>
+										<td id="fridayfrom">--</td>
+										<td id="fridayto">--</td>
+									</tr>
+									<tr>
+										<td>Saturday</td>
+										<td id="saturdayfrom">--</td>
+										<td id="saturdayto">--</td>
+									</tr>
+									<tr>
+										<td>Sunday</td>
+										<td id="sundayfrom"></td>
+										<td id="sundayto"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
 				</div>
-
 
 			</div>
 
@@ -170,12 +190,15 @@
 			var weekValues = [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY",
 					"FRIDAY", "SATURDAY", "SUNDAY" ];
 
+
 			var markers = [];
 			var isclosed = "Closed";
 			var allday = "All day";
 			var geocoder;
 			var map;
 			var mainMarker;
+			var useCurrentLocation;
+			var geoloccontrol;
 
 			$(document).ready(function() {
 				$("#homeSidebar").sidebar({
@@ -203,12 +226,13 @@
 					center : defaultCoord,
 					minZoom : 14,
 					streetViewControl : false,
-					controlSize : 33,
+					controlSize : 32,
 					gestureHandling : 'greedy',
 					mapTypeControlOptions : {
 						mapTypeIds : []
 					},
-					styles : [ {
+					mapId: 'b58ae7bb78881906'
+/* 					styles : [ {
 						"featureType" : "all",
 						"elementType" : "all",
 						"stylers" : [ {
@@ -238,7 +262,7 @@
 						}, {
 							"lightness" : "-20"
 						} ]
-					} ]
+					} ] */
 
 				});
 
@@ -270,10 +294,12 @@
 									+ carParks[i].carParkPostcode;
 							geocoder.geocode({
 								'address' : address
-							}, geocodeEncapsulation(carParks[i]));
+							}, geocodeEncapsulation(carParks[i]))
 						}
+						
 					}
 				});
+
 
 				const search = document.getElementById("placeSearch");
 				const mobileSearch = document
@@ -311,15 +337,19 @@
 									//marker.setVisible(true);
 
 								});
-				var geoloccontrol = new klokantech.GeolocationControl(map, 17);
+				geoloccontrol = new klokantech.GeolocationControl(map, 17);
 				
-				google.maps.event.addListenerOnce(map, 'tilesloaded',
-						find_closest_markers);
+
+				
+
 				google.maps.event.addListener(mainMarker, 'dragend',
 						find_closest_markers);
-		
+				
+ 				google.maps.event.addListenerOnce(map, 'tilesloaded',
+						find_closest_markers);  
+				
 			}
-
+			
 
 			function geocodeEncapsulation(i) {
 
@@ -383,10 +413,18 @@
 								+ carpark.carParkAddress2 + "<br>"
 								+ carpark.carParkCity + "<br>"
 								+ carpark.carParkPostcode);
-				$('#parkingrate').html(carpark.parkingRate);
+				$('#parkingrate').html('per/'+carpark.parkingRate);
 				$('#price').html('£' + carpark.price.toFixed(2));
 				$('#spaces').html(carpark.carParkSpots.length);
 				$('#email').html(carpark.email);
+				$('#description').html(carpark.description);
+				
+				if (carpark.heightRestriction == null) {
+					$('#heightRestriction').html("None");
+				} else {
+					$('#heightRestriction').html(carpark.heightRestriction);
+				}
+				$('#accessControl').html(carpark.accessControl);
 
 				$('#disabled').html(carpark.disabledSpots.length);
 
@@ -403,7 +441,7 @@
 						$('#' + timesList.dayOfWeek.toLowerCase() + 'to').html(
 								isclosed);
 					} else if (timesList.openTime == "00:00:00"
-							&& timesList.closeTime == "00:00:00") {
+							&& timesList.closeTime == "23:59:00") {
 						$('#' + timesList.dayOfWeek.toLowerCase() + 'from')
 								.html(allday);
 						$('#' + timesList.dayOfWeek.toLowerCase() + 'to').html(
@@ -417,7 +455,7 @@
 				}
 			}
 
-			function compare(a, b) {
+ 			function compare(a, b) {
 				var distancea = a.get("distance");
 				var distanceb = b.get("distance");
 
@@ -428,8 +466,14 @@
 
 				return 0;
 			}
+					
+
+ 			
 
 			function find_closest_markers() {
+				
+				
+
 				if ($('#nearest').css("display") == "block") {
 					for (i = 0; i < markers.length; i++) {
 						var d = google.maps.geometry.spherical
@@ -437,10 +481,12 @@
 										mainMarker.getPosition());
 
 						markers[i].set("distance", d);
+						
 
-						markers.sort(compare);
-						display_closest_markers();
+
 					}
+					markers.sort(compare);
+					display_closest_markers();
 				}
 			}
 
@@ -507,13 +553,14 @@
 					car_park_details(markers[4]);
 				});
 
-				$("#backbutton").click(function() {
-					$('#backbar').css("display", "none");
-					$('#details').css("display", "none");
-					$('#nearest').css("display", "block");
-				});
 
 			}
+			
+			$("#backbutton").click(function() {
+				$('#backbar').css("display", "none");
+				$('#details').css("display", "none");
+				$('#nearest').css("display", "block");
+			});
 
 			function openCloseNav(stayOpen) {
 
@@ -531,10 +578,11 @@
 				}
 
 			}
+			
 		</script>
 
 		<script
-			src="https://maps.googleapis.com/maps/api/js?libraries=geometry,places&key=AIzaSyAqmLfX-y8ALh9UU0d48ddAKL3WNpK7ti4&map_ids=b871c84433656771&callback=initMap"
+			src="https://maps.googleapis.com/maps/api/js?libraries=geometry,places&key=AIzaSyAqmLfX-y8ALh9UU0d48ddAKL3WNpK7ti4&map_ids=b58ae7bb78881906&callback=initMap"
 			defer></script>
 
 

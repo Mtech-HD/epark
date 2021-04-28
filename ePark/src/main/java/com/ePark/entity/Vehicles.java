@@ -1,13 +1,18 @@
 package com.ePark.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -33,14 +38,14 @@ public class Vehicles {
 
 	private String colour;
 
-	@ManyToOne(cascade = CascadeType.DETACH)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId", nullable = false)
 	private Users users;
 
 	private boolean isDefault;
 
-	@OneToOne(mappedBy = "vehicles")
-	private Bookings bookings;
+	@OneToMany(mappedBy = "vehicles", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Bookings> bookings = new HashSet<Bookings>();
 
 	public Vehicles() {
 		super();
@@ -103,11 +108,11 @@ public class Vehicles {
 		this.isDefault = isDefault;
 	}
 
-	public Bookings getBookings() {
+	public Set<Bookings>  getBookings() {
 		return bookings;
 	}
 
-	public void setBookings(Bookings bookings) {
+	public void setBookings(Set<Bookings>  bookings) {
 		this.bookings = bookings;
 	}
 

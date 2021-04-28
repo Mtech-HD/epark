@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -21,7 +22,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ePark.entity.CarParks.ParkingRate;
 
 @Entity
 @DynamicUpdate
@@ -32,11 +33,11 @@ public class Bookings {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long bookingId;
 
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "userId", nullable = false)
 	private Users users;
 
-	@OneToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "vehicleId", referencedColumnName = "vehicleId")
 	private Vehicles vehicles;
 
@@ -44,7 +45,7 @@ public class Bookings {
 	@JoinColumn(name = "carParkId", nullable = false)
 	private CarParks carParks;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "carParkSpotId", referencedColumnName = "carParkSpotId")
 	private CarParkSpots carParkSpots;
 
@@ -64,10 +65,11 @@ public class Bookings {
 
 	private boolean isDisabled;
 
+	private BigDecimal unitPrice;
+
 	private BigDecimal amount;
 
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-	private LocalDate bookingCreated;
+	private Date bookingCreated;
 
 	@Enumerated(EnumType.STRING)
 	private BookingStatus bookingStatus;
@@ -91,7 +93,7 @@ public class Bookings {
 	}
 
 	public enum BookingStatus {
-		ACTIVE, CANCELLED
+		ACTIVE, CANCELLED, INPROGRESS
 	}
 
 	public long getBookingId() {
@@ -198,6 +200,14 @@ public class Bookings {
 		this.isDisabled = isDisabled;
 	}
 
+	public BigDecimal getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(BigDecimal unitPrice) {
+		this.unitPrice = unitPrice;
+	}
+
 	public BigDecimal getAmount() {
 		return amount;
 	}
@@ -206,11 +216,11 @@ public class Bookings {
 		this.amount = amount;
 	}
 
-	public LocalDate getBookingCreated() {
+	public Date getBookingCreated() {
 		return bookingCreated;
 	}
 
-	public void setBookingCreated(LocalDate bookingCreated) {
+	public void setBookingCreated(Date bookingCreated) {
 		this.bookingCreated = bookingCreated;
 	}
 
@@ -254,7 +264,7 @@ public class Bookings {
 
 	public BigDecimal calculatePrice() {
 
-		return carParks.getPrice().multiply(BigDecimal.valueOf(calculateDuration()));
+		return unitPrice.multiply(BigDecimal.valueOf(calculateDuration()));
 	}
 
 }

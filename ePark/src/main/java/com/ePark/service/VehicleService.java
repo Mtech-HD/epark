@@ -35,7 +35,7 @@ public class VehicleService {
 		return vehicleRepo.findByVehicleId(vehicleId);
 	}
 	
-	public Vehicles findByUsersAndIsDefault(Users user) {
-		return vehicleRepo.findByUsersAndIsDefault(user, true);
+	public Vehicles findByUsersAndIsDefault(long userId) {
+		return vehicleRepo.findByUsersAndIsDefault(userId, true);
 	}
 }

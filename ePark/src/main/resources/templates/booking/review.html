@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate=~{/booking/booking-layout}>
+
+<head>
+
+</head>
+<body>
+
+	<div layout:fragment="booking" th:remove="tag">
+		<form method="post" th:action="@{/booking/review}">
+			<div class="ui stackable grid margin-top-20">
+				<div class="row">
+					<div class="eleven wide column">
+						<div class="ui segments">
+							<div class="ui top attached label inverted blue">Booking
+								Summary</div>
+
+							<div class="ui segment">
+								<div th:insert="~{fragments :: bookingReview}"></div>
+
+							</div>
+						</div>
+
+						<div th:insert="~{fragments :: bookingt&c}"></div>
+					</div>
+
+					<div class="five wide column">
+
+						<div th:insert="~{fragments :: bookingQuickSummary}"></div>
+
+					</div>
+
+				</div>
+
+
+				<div class="margin-top-10">
+					<button class="ui button" type="submit" name="back" formnovalidate>Back</button>
+					<button class="ui button" type="submit" name="cancel"
+						formnovalidate>Cancel</button>
+					<button type="submit" class="ui button primary">Continue</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+</body>
+</html>

@@ -43,17 +43,19 @@ public class Users {
 
 	private String stripeId;
 
+	private String resetPasswordToken;
+
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "roleId"))
 	private Set<Roles> roles;
 
-	@OneToMany(mappedBy = "users", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<CarParkComments> carParkComments = new HashSet<CarParkComments>();
 
-	@OneToMany(mappedBy = "users", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Bookings> bookings = new HashSet<Bookings>();
 
-	@OneToMany(mappedBy = "users", cascade = CascadeType.REFRESH)
+	@OneToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	private Set<Vehicles> vehicles = new HashSet<Vehicles>();
 
 	public Users() {
@@ -160,10 +162,48 @@ public class Users {
 		this.vehicles = vehicles;
 	}
 
+	public String getResetPasswordToken() {
+		return resetPasswordToken;
+	}
+
+	public void setResetPasswordToken(String resetPasswordToken) {
+		this.resetPasswordToken = resetPasswordToken;
+	}
+
 	@Override
 	public String toString() {
 
 		return username;
+	}
+
+	public Boolean isSiteAdmin() {
+
+		for (Roles r : roles) {
+			if (r.getName().equals("SITEADMIN")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Boolean isCarParkOwner() {
+
+		for (Roles r : roles) {
+			if (r.getName().equals("CARPARKOWNER")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Boolean isAdmin() {
+
+		for (Roles r : roles) {
+			if (r.getName().equals("ADMIN")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

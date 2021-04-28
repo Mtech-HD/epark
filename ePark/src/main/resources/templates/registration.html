@@ -6,11 +6,6 @@
 
 <body>
 
-	<!--  Navigation Bar -->
-
-
-
-	<!--  HTML registration form -->
 
 	<div layout:fragment="content" th:remove="tag">
 		<div class="pusher">
@@ -75,19 +70,28 @@
 										class="ui fluid dropdown" name="userrole" id="userrole"
 										th:field="*{roleName}" required="required">
 										<option th:each="role : ${roles}" th:value="${role.name}"
-											th:text="${role.name}"
-											th:disabled="${role.name == 'ADMIN' or role.name == 'SITEADMIN'}"></option>
+											th:text="${role.name}"></option>
 									</select>
 								</div>
 							</div>
+							<div class="fields" th:if="${user.carParkId != 0}">
+								<div class="eight wide field">
+									<label for="carpark">Add to car park: </label> <input
+										type="number" id="addtocarpark" th:field="*{carParkId}"
+										autofocus="autofocus" readonly />
+								</div>
+							</div>
 
+							<input type="hidden" th:field="*{returnPage}">
+							<input type="hidden" th:field="*{adminCreated}">
 
 
 
 
 							<div class="margin-top-20">
-								<a class="ui button" th:href="@{login}"> <i
-									class="fas fa-sign-in-alt"></i>&nbsp; Login
+								<a sec:authorize="!isAuthenticated()" class="ui button"
+									th:href="@{login}"> <i class="fas fa-sign-in-alt"></i>&nbsp;
+									Login
 								</a>
 
 								<button id="register" type="submit" class="ui positive button">
@@ -106,111 +110,52 @@
 
 	<div layout:fragment="script">
 		<script th:inline="javascript">
-			$(document)
-					.ready(
-							function() {
-								$("#error").hide();
-								$("#username")
-										.keyup(
-												function() {
+			$(document).ready(function() {
+				$("#error").hide();
 
-													$
-															.ajax({
-																type : "GET",
-																url : "registration/"
-																		+ $(
-																				this)
-																				.val(),
-																success : function(
-																		result) {
-																	if (result == "1") {
-																		$(
-																				"#usernameDiv")
-																				.removeClass(
-																						"error");
-																		$(
-																				"#error")
-																				.hide();
-																		$(
-																				"#register")
-																				.prop(
-																						"disabled",
-																						false);
-																	} else if (result == "2") {
-																		$(
-																				"#usernameDiv")
-																				.addClass(
-																						"error");
-																		$(
-																				"#error")
-																				.show();
-																		$(
-																				"#errorMessage")
-																				.html(
-																						"Username is taken");
-																		$(
-																				"#register")
-																				.prop(
-																						"disabled",
-																						true);
-																	} else {
-																		$(
-																				"#usernameDiv")
-																				.addClass(
-																						"error");
-																		$(
-																				"#error")
-																				.show();
-																		$(
-																				"#errorMessage")
-																				.html(
-																						"Username is required");
-																		$(
-																				"#register")
-																				.prop(
-																						"disabled",
-																						true);
-																	}
-																}
+				$("#username").on('blur', function() {
+					if ($(this).val() != '') {
 
-															});
+						$.ajax({
+							type : "GET",
+							url : "/registration/checkUsername/" + $(this).val(),
+							success : function(result) {
+								if (result == "1") {
+									$("#usernameDiv").removeClass("error");
+									$("#error").hide();
+									$("#register").prop("disabled", false);
+								} else if (result == "2") {
+									$("#usernameDiv").addClass("error");
+									$("#error").show();
+									$("#errorMessage").html("Username is taken");
+									$("#register").prop("disabled", true);
+								}
+							}
+						});
+					} else {
+						$("#usernameDiv").addClass("error");
+						$("#error").show();
+						$("#errorMessage").html("Username is required");
+						$("#register").prop("disabled", true);
+					}
+				});
 
-												});
+				$("#password").keyup(function() {
+					if ($("#password").val().length >= 8) {
+						$("#passwordDiv").removeClass("error");
+						$("#error").hide();
+						$("#register").prop("disabled", false);
+					} else if ($("#password").val().length < 8 && $("#password").val().length > 0) {
+						$("#passwordDiv").addClass("error");
+						$("#register").prop("disabled", true);
+					} else if ($("#password").val().length == 0) {
+						$("#passwordDiv").addClass("error");
+						$("#register").prop("disabled", true);
+					}
 
-								$("#password")
-										.keyup(
-												function() {
-													if ($("#password").val().length >= 8) {
-														$("#passwordDiv")
-																.removeClass(
-																		"error");
-														$("#error").hide();
-														$("#register").prop(
-																"disabled",
-																false);
-													} else if ($("#password")
-															.val().length < 8
-															&& $("#password")
-																	.val().length > 0) {
-														$("#passwordDiv")
-																.addClass(
-																		"error");
-														$("#register").prop(
-																"disabled",
-																true);
-													} else if ($("#password")
-															.val().length == 0) {
-														$("#passwordDiv")
-																.addClass(
-																		"error");
-														$("#register").prop(
-																"disabled",
-																true);
-													}
+				});
 
-												});
-
-							});
+			});
 
 			$('select.dropdown').dropdown();
 		</script>

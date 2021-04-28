@@ -1,5 +1,7 @@
 package com.ePark;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -69,18 +71,26 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		}
 		return authentication.isAuthenticated();
 	}
+	
+	public String getSiteUrl(HttpServletRequest request) {
+		String siteUrl = request.getRequestURL().toString();
+		return siteUrl.replace(request.getServletPath(), "");
+	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.requiresChannel().anyRequest().requiresSecure();
 
 		http.csrf().disable().authorizeRequests()
-				.antMatchers("/login", "/home", "/getapproved", "/registration/**", "/css/**", "/js/**", "/pin.png", "/mainmarker.png")
+				.antMatchers("/login", "/forgotpassword", "/resetpassword", "/home", "/","/getapproved", "/registration/**", "/css/**", "/js/**", "/pin.png", "/mainmarker.png")
 				.permitAll().anyRequest().authenticated().and().formLogin().loginPage("/login").permitAll()
 				.defaultSuccessUrl("/home").and().logout().invalidateHttpSession(true).clearAuthentication(true)
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login?logout")
-				.deleteCookies("JSESSIONID").permitAll().and().rememberMe().userDetailsService(userService)
-				.tokenValiditySeconds(2592000);
+				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login?logout");
+				
+		/*
+		 * .deleteCookies("JSESSIONID").permitAll().and().rememberMe().
+		 * userDetailsService(userService) .tokenValiditySeconds(2592000);
+		 */
 
 	}
 

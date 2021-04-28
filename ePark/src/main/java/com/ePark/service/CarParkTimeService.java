@@ -1,13 +1,17 @@
 package com.ePark.service;
 
+import java.lang.reflect.Method;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ePark.dto.CarParkDto;
 import com.ePark.entity.CarParkTimes;
 import com.ePark.entity.CarParks;
 import com.ePark.repository.CarParkTimeRepository;
+
 
 @Service
 public class CarParkTimeService {
@@ -24,4 +28,38 @@ public class CarParkTimeService {
 		
 		return carParkTimeRepo.getCarParkTimes(carParkId);
 	}
+	
+	public CarParkTimes findByCarParkTimeId(long carParkTimeId) {
+		
+		return carParkTimeRepo.findByCarParkTimeId(carParkTimeId);
+	}
+	
+	public void updateTimes(CarParks carParks, CarParkDto carParkDto) {
+		
+		List<CarParkTimes> existingTimes = findByCarParks(carParks);
+		
+		for (CarParkTimes carParkTime : existingTimes) {
+			
+			String day = carParkTime.getDayOfWeek().toString().substring(0, 1).toUpperCase()
+					+ carParkTime.getDayOfWeek().toString().substring(1).toLowerCase();
+			
+			String getFrom = "get" + day + "From";
+			String getTo = "get" + day + "To";
+			Method getFromMethod;
+			Method getToMethod;
+			
+			try {
+				getFromMethod = carParkDto.getClass().getMethod(getFrom);
+				getToMethod = CarParkDto.class.getMethod(getTo);
+				carParkTime.setOpenTime((LocalTime) getFromMethod.invoke(carParkDto));
+				carParkTime.setCloseTime((LocalTime) getToMethod.invoke(carParkDto));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			carParkTimeRepo.save(carParkTime);
+		}
+
+	}
+
 }

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Car Park Approved</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- use the font -->
+<style>
+body {
+	font-family: 'Roboto', sans-serif;
+	font-size: 14px;
+}
+
+</style>
+</head>
+<body>
+	<p th:text="'Dear ' +${name}+ ','"></p>
+
+	<p>Your car park submission has been approved.</p>
+
+	<p>A member of the ePark admin team has reviewed the details and approved the car park.</p>
+	
+	<p>It is now live on our site and is available for bookings.</p>
+
+	<p th:text="'Car Park: ' +${carparkname}"></p>
+
+	<p>
+		Regards, <br /> <em>ePark Admin Team</em>
+	</p>
+</body>
+</html>

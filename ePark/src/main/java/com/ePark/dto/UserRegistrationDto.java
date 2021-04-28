@@ -20,6 +20,12 @@ public class UserRegistrationDto {
 
 	private Roles roles;
 
+	private long carParkId;
+
+	private String returnPage;
+
+	private Boolean adminCreated;
+
 	public UserRegistrationDto() {
 	}
 
@@ -97,6 +103,30 @@ public class UserRegistrationDto {
 
 	public void setCustomerId(String customerId) {
 		this.customerId = customerId;
+	}
+
+	public long getCarParkId() {
+		return carParkId;
+	}
+
+	public void setCarParkId(long carParkId) {
+		this.carParkId = carParkId;
+	}
+
+	public String getReturnPage() {
+		return returnPage;
+	}
+
+	public void setReturnPage(String returnPage) {
+		this.returnPage = returnPage;
+	}
+
+	public Boolean getAdminCreated() {
+		return adminCreated;
+	}
+
+	public void setAdminCreated(Boolean adminCreated) {
+		this.adminCreated = adminCreated;
 	}
 
 }
