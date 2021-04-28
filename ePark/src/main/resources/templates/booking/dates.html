@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{/booking/booking-layout}">
+
+
+<body>
+
+
+	<div layout:fragment="booking" th:remove="tag">
+		<form class="" method="post" th:action="@{/booking/dates}" id="form"
+			th:object="${bookingFlow.booking}">
+			<div class="ui stackable grid margin-top-20">
+
+				<div class="row">
+					<div class="eleven wide column">
+
+
+						<th:block th:if="${#fields.hasErrors('endTime')}">
+							<div class="ui tiny red message">
+								<div th:errors="*{endTime}"></div>
+							</div>
+						</th:block>
+
+						<div class="ui segments">
+
+							<div class="ui top attached label secondary">Select Dates</div>
+
+
+							<div class="ui segment segment-padding-5"
+								style="padding-top: 1.5em;">
+
+
+
+								<div class="ui grid">
+									<div class="row"
+										th:if="${bookingFlow.booking.carParks.getDisabledSpots().size() > 0}">
+										<div class="column">
+											<div class="ui toggle checkbox">
+												<input type="checkbox" th:field="*{isDisabled}"
+													id="checkSunday"> <label for="Rate">
+													Disabled space </label>
+											</div>
+										</div>
+									</div>
+
+									<div class="equal width row">
+										<div class="column">
+
+											<label class="toplabel" for="Rate"> From: </label>
+
+											<div class="ui labeled fluid input">
+												<label class="ui label padding-right-0"><i
+													class="calendar outline icon hidden-mobile"></i> </label><input
+													type="text" class="datepicker field open" name="start"
+													required autofocus="autofocus" id="startDatePicker"
+													placeholder="dd/mm/yy"
+													th:value="${#temporals.format(bookingFlow.booking.startDate, 'dd/MM/yyyy')}"
+													readonly> <input type="hidden"
+													id="altStartDatePicker" th:field="*{startDate}">
+											</div>
+
+											<div class="ui labeled fluid input time-fields margin-top-10">
+												<label class="ui label padding-right-0"><i
+													class="clock icon hidden-mobile"></i> </label><input type="text"
+													class="field time" id="startTimePicker" placeholder="--:--"
+													autofocus="autofocus" th:field="*{startTime}" readonly>
+											</div>
+
+										</div>
+										<div class="column">
+											<label class="toplabel" for="Rate">To:</label>
+											<div class="ui labeled fluid input">
+												<label class="ui label padding-right-0"><i
+													class="calendar outline icon hidden-mobile"></i> </label><input
+													type="text" class="field" required autofocus="autofocus"
+													id="endDatePicker" placeholder="dd/mm/yy"
+													th:value="${#temporals.format(bookingFlow.booking.endDate, 'dd/MM/yyyy')}"
+													readonly> <input type="hidden"
+													id="altEndDatePicker" th:field="*{endDate}">
+											</div>
+
+											<div class="ui labeled fluid input time-fields margin-top-10">
+												<label class="ui label padding-right-0"><i
+													class="time icon hidden-mobile"></i> </label><input type="text"
+													class="field time" id="endTimePicker" placeholder="--:--"
+													autofocus="autofocus" th:field="*{endTime}" readonly>
+											</div>
+
+
+										</div>
+										<input type="hidden"
+											th:value="${bookingFlow.booking.carParks.parkingRate}"
+											id="rate"> <input type="hidden"
+											th:value="${bookingFlow.booking.carParks.enableFutureWeeks}"
+											id="weeks">
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+
+
+					</div>
+					<div class="five wide column">
+						<div th:insert="~{fragments :: bookingQuickSummary}"></div>
+					</div>
+				</div>
+
+				<div>
+
+					<button class="ui button" type="submit" name="cancel"
+						formnovalidate>Cancel</button>
+					<button type="submit" class="ui primary button" id="next">&nbsp;
+						Next &nbsp;</button>
+				</div>
+			</div>
+		</form>
+
+	</div>
+
+	<div layout:fragment="script">
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				var interval;
+
+				if ($('#rate').val() == "HOUR") {
+					interval = 60;
+				} else {
+					interval = 30;
+				}
+
+				var weeks = $('#weeks').val()
+
+				const startDatePicker = $("#startDatePicker").datepicker({
+					// beforeShowDay: function(date) {
+
+					//     return [date.getDay() == 6 || date.getDay() == 0,""];
+					//},
+					dateFormat : "dd/mm/yy",
+					altFormat : 'yy-mm-dd',
+					altField : "#altStartDatePicker",
+					minDate : 0,
+					maxDate : '+' + weeks + 'W',
+					onSelect : function() {
+						endDatePicker.datepicker("option", "minDate", getDate(this))
+						endDatePicker.datepicker("option", "maxDate", getDate(this))
+						endDatePicker.datepicker("setDate", getDate(this))
+
+						getOpeningTimes($('#startDatePicker').val());
+
+						resetDates();
+
+						$('.time-fields').slideDown();
+					}
+
+				})
+
+				startDatePicker.blur(); //to avoid bug
+
+				const endDatePicker = $("#endDatePicker").datepicker({
+					dateFormat : "dd/mm/yy",
+					altFormat : 'yy-mm-dd',
+					altField : "#altEndDatePicker",
+					minDate : 0,
+					maxDate : '+' + weeks + 'W',
+				})
+
+				if ($("#startDatePicker").val() == "") {
+					$('.time-fields').hide();
+				} else {
+					getOpeningTimes($('#startDatePicker').val());
+					endDatePicker.datepicker("option", "minDate", $("#startDatePicker").datepicker('getDate'))
+					endDatePicker.datepicker("option", "maxDate", $("#startDatePicker").datepicker('getDate'))
+				}
+
+				const startTimePicker = $("#startTimePicker").timepicker({
+					scrollbar : true,
+					interval : 15,
+					dynamic : false,
+					disableTextInput : true,
+					listWidth : 1,
+					timeFormat : 'HH:mm',
+					change : function() {
+
+						endTimePicker.timepicker('option', 'startTime', $(this).timepicker('getTime'));
+
+						endTimePicker.timepicker('option', 'interval', interval);
+
+						endTimePicker.timepicker('option', 'minTime', moment($(this).val(), 'HH:mm:ss').add(interval, 'minutes').format('HH:mm:ss'));
+
+						if ($('#endTimePicker').val() != "") {
+
+							if (startTimePicker.val() >= endTimePicker.val()) {
+								endTimePicker.val(moment(startTimePicker.val(), 'HH:mm:ss').add(interval, 'minutes').format('HH:mm'));
+							}
+
+							var duration = moment.duration(moment(endTimePicker.val(), 'HH:mm:ss').diff(moment(startTimePicker.val(), 'HH:mm:ss')))
+							var units = duration.asMinutes() / interval
+
+							if (!Number.isInteger(units)) {
+
+								var roundedUpMinutes = Math.ceil(units) * interval
+								var roundedDownMinutes = Math.floor(units) * interval
+
+								if (moment(endTimePicker.val(), 'HH:mm').format('HH:mm') === moment(endTimePicker.timepicker('option', 'maxTime'), 'HH:mm').format('HH:mm')) {
+
+									endTimePicker.val(moment(startTimePicker.val(), 'HH:mm').add(roundedDownMinutes, 'minutes').format('HH:mm'));
+								} else {
+
+									endTimePicker.val(moment(startTimePicker.val(), 'HH:mm').add(roundedUpMinutes, 'minutes').format('HH:mm'));
+								}
+
+							}
+							updateTotal();
+						}
+					}
+				})
+
+				const endTimePicker = $("#endTimePicker").timepicker({
+					scrollbar : true,
+					dynamic : false,
+					disableTextInput : true,
+					listWidth : 1,
+					timeFormat : 'HH:mm',
+					change : function() {
+						updateTotal();
+					}
+				});
+
+				function getOpeningTimes(date) {
+					$.ajax({
+						type : "POST",
+						data : {
+							"date" : date
+						},
+						url : '/booking/dates?openingTimes',
+						success : function(carParkTime) {
+
+							if (carParkTime.openTime == null && carParkTime.closeTime == null) {
+								disableTimes(true);
+							} else {
+								disableTimes(false);
+								setTimes(carParkTime.openTime, carParkTime.closeTime);
+							}
+
+						}
+					});
+				}
+
+				function disableTimes(disable) {
+					startTimePicker.prop('disabled', disable);
+					endTimePicker.prop('disabled', disable);
+
+					$('#next').prop('disabled', disable);
+
+					if (disable) {
+						startTimePicker.attr('placeholder', 'Closed');
+						endTimePicker.prop('placeholder', 'Closed');
+					} else {
+						startTimePicker.attr('placeholder', '--:--');
+						endTimePicker.prop('placeholder', '--:--');
+					}
+
+				}
+
+				function setTimes(open, close) {
+
+					var endTimeMinimum;
+					var startTimeMinimum;
+
+					if (startTimePicker.val() != "") {
+						//minimum time is the value of the start time field
+						endTimeMinimum = startTimePicker.val();
+					} else if (startDatePicker.val() === new Date().toLocaleDateString()) {
+						//minimum time is current time
+						startTimeMinimum = new Date().toLocaleTimeString()
+						endTimeMinimum = startTimeMinimum;
+					} else {
+						//minimum time is the times in the database
+						startTimeMinimum = open
+						endTimeMinimum = open;
+					}
+
+					/* 					if (startDatePicker.val() === new Date().toLocaleDateString()) {
+
+					 if (new Date().toLocaleTimeString() >= open) {
+					 startTimePicker.timepicker('option', 'minTime', new Date().toLocaleTimeString())
+					 endTimePicker.timepicker('option', 'minTime', moment(new Date().toLocaleTimeString(), 'HH:mm:ss').add(interval, 'minutes').format('HH:mm:ss'))
+					 }
+					 } else {
+					 startTimePicker.timepicker('option', 'minTime', open)
+
+					 endTimePicker.timepicker('option', 'minTime', moment(open, 'HH:mm:ss').add(interval, 'minutes').format('HH:mm:ss'))
+					 }
+
+					 if (startTimeEmpty) {
+					 endTimePicker.timepicker('option', 'minTime', moment(startTimePicker.val(), 'HH:mm:ss').add(interval, 'minutes').format('HH:mm:ss'))
+					 } */
+
+					//MinimumTimes
+					startTimePicker.timepicker('option', 'minTime', startTimeMinimum)
+					endTimePicker.timepicker('option', 'minTime', moment(endTimeMinimum, 'HH:mm:ss').add(interval, 'minutes').format('HH:mm:ss'))
+
+					//MaximumTimes
+					startTimePicker.timepicker('option', 'maxTime', moment(close, 'HH:mm:ss').subtract(interval, 'minutes').format('HH:mm:ss'))
+					endTimePicker.timepicker('option', 'maxTime', close)
+
+				}
+
+				function resetDates() {
+					if (startTimePicker.val() == '' && endTimePicker.val() == '' && $('.time-fields').css('display') != 'none') {
+						updateTotal();
+					} else {
+						startTimePicker.val('');
+						endTimePicker.val('');
+					}
+
+				}
+
+				function getDate(element) {
+					var date;
+					try {
+						date = $.datepicker.parseDate("dd/mm/yy", element.value);
+					} catch (error) {
+						date = null;
+					}
+					return date;
+				}
+
+/* 				function getDayOfWeek(seldate) {
+					seldate = seldate.toDateString();
+					seldate = seldate.split(' ');
+					var weekday = new Array();
+					weekday['Mon'] = "MONDAY";
+					weekday['Tue'] = "TUESDAY";
+					weekday['Wed'] = "WEDNESDAY";
+					weekday['Thu'] = "THURSDAY";
+					weekday['Fri'] = "FRIDAY";
+					weekday['Sat'] = "SATURDAY";
+					weekday['Sun'] = "SUNDAY";
+					return weekday[seldate[0]];
+				} */
+
+				function updateTotal() {
+					const data = $("#form").serialize();
+					$('#loader').css('display', 'block');
+
+					$.ajax({
+						type : "POST",
+						data : $("#form").serialize(),
+						url : '/booking/dates?prices',
+						success : function(result) {
+							$("#quickSummary").replaceWith(result);
+							$('#loader').css('display', 'none');
+						}
+					});
+				}
+
+			});
+		</script>
+
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+			integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+			crossorigin="anonymous"></script>
+	</div>
+
+</body>
+</html>

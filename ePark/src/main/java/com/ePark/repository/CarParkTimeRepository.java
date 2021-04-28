@@ -20,4 +20,6 @@ public interface CarParkTimeRepository extends JpaRepository<CarParkTimes, Long>
 	
 	@Query(value = "CALL getCarParkTimes(:carParkId);", nativeQuery = true)
 	List<CarParkTimes> getCarParkTimes(@Param("carParkId") long carParkId);
+	
+	CarParkTimes findByCarParkTimeId(long carParkTimeId); 
 }

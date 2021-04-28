@@ -21,7 +21,7 @@ import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
 
 @Controller
-public class AccountDetails {
+public class AccountController {
 
 	@Autowired
 	private StripeService paymentsService;
@@ -39,52 +39,62 @@ public class AccountDetails {
 
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("accountdetails");
-		mv.addObject("cards", paymentsService.getCards());
-		mv.addObject("defaultCard", paymentsService.getCustomer(user.getStripeId()).getInvoiceSettings().getDefaultPaymentMethod());
+		mv.addObject("cards", paymentsService.getCards(user.getStripeId()));
+		
+		System.out.println(paymentsService.getCards(user.getStripeId()));
+		
+		mv.addObject("defaultCard", paymentsService.getCustomer(user.getStripeId()).getDefaultSource());
+		
 		mv.addObject("user", user);
-		mv.addObject("paymentsService", paymentsService);
+
 		return mv;
 	}
 
-	@GetMapping(value = "/removeCard", params = "paymentMethodId")
-	public String removeCardFromCustomer(@RequestParam("paymentMethodId") String paymentMethodId, Model model,
+	@GetMapping(value = "/removeCard")
+	public String removeCardFromCustomer(@RequestParam("cardId") String cardId, Model model,
 			@ModelAttribute("bookingFlow") Optional<BookingFlow> bookingFlow) throws StripeException {
 		
-		paymentsService.removeCard(paymentMethodId);
+		Users user = appSecurity.getCurrentUser();
 		
-		model.addAttribute("cards", paymentsService.getCards());
+		paymentsService.removeCard(cardId, user.getStripeId());
+		
+		model.addAttribute("cards", paymentsService.getCards(user.getStripeId()));
+		
+		model.addAttribute("defaultCard", paymentsService.getCustomer(user.getStripeId()).getDefaultSource());
 
-		return "bookingfragment :: cardsTable";
+		return "fragments :: cardsTable";
 	}
 	
-	@GetMapping(value = "/addcard", params = "paymentMethodId")
-	public String addCardToCustomer(@RequestParam("paymentMethodId") String paymentMethodId, Model model,
+	@GetMapping(value = "/addcard")
+	public String addCardToCustomer(@RequestParam("tokenId") String tokenId, Model model,
 			@ModelAttribute("bookingFlow") Optional<BookingFlow> bookingFlow)
 			throws StripeException {
 
-		paymentsService.createCard(paymentMethodId);
+		Users user = appSecurity.getCurrentUser();
+		
+		paymentsService.createCard(tokenId, user.getStripeId());
 
-		model.addAttribute("cards", paymentsService.getCards());
+		model.addAttribute("cards", paymentsService.getCards(user.getStripeId()));
+		
+		model.addAttribute("defaultCard", paymentsService.getCustomer(user.getStripeId()).getDefaultSource());
 
-		return "bookingfragment :: cardsTable";
+		return "fragments :: cardsTable";
 	}
 	
-	@GetMapping(value = "/setdefaultcard", params = "paymentMethodId")
-	public String setDefaultCard(@RequestParam("paymentMethodId") String paymentMethodId, Model model,
+	@GetMapping(value = "/setdefaultcard")
+	public String setDefaultCard(@RequestParam("cardId") String cardId, Model model,
 			@ModelAttribute("bookingFlow") Optional<BookingFlow> bookingFlow)
 			throws StripeException {
 		
 		Users user = appSecurity.getCurrentUser();
-		
-		Customer customer = paymentsService.getCustomer(user.getStripeId());
 
-		paymentsService.setDefaultCard(paymentMethodId, customer);
+		paymentsService.setDefaultCard(cardId, user.getStripeId());
 
-		model.addAttribute("cards", paymentsService.getCards());
+		model.addAttribute("cards", paymentsService.getCards(user.getStripeId()));
 		
-		model.addAttribute("defaultCard", paymentsService.getCustomer(user.getStripeId()).getInvoiceSettings().getDefaultPaymentMethod());
+		model.addAttribute("defaultCard", paymentsService.getCustomer(user.getStripeId()).getDefaultSource());
 		
-		return "bookingfragment :: cardsTable";
+		return "fragments :: cardsTable";
 	}
 	
 	@GetMapping(value = "/getBooking")
@@ -98,7 +108,7 @@ public class AccountDetails {
 		
 		model.addAttribute("payment", payment);
 
-		return "bookingfragment :: bookingsInfo";
+		return "fragments :: bookingsInfo";
 	}
 
 	

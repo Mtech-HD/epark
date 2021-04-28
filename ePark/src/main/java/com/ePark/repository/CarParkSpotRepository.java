@@ -23,20 +23,38 @@ public interface CarParkSpotRepository extends JpaRepository<CarParkSpots, Long>
 	CarParkSpots findByCarParkSpotId(long carParkSpotId);
 	
 	
+	/*
+	 * @Query(value =
+	 * "CALL checkAvailable(:carParkId, :bookingDate, :startTime, :endTime, :isDisabled, :length)"
+	 * , nativeQuery = true) List<CarParkSpots> checkAvailable(@Param("carParkId")
+	 * long carParkId,
+	 * 
+	 * @Param("bookingDate") LocalDate bookingDate,
+	 * 
+	 * @Param("startTime") LocalTime startTime,
+	 * 
+	 * @Param("endTime") LocalTime endTime,
+	 * 
+	 * @Param("isDisabled") boolean isDisabled,
+	 * 
+	 * @Param("length") int length);
+	 */
+	
 	@Query(value = "CALL checkAvailable(:carParkId, :bookingDate, :startTime, :endTime, :isDisabled, :length)", nativeQuery = true)
-	CarParkSpots checkAvailable(@Param("carParkId") long carParkId, 
+	List<CarParkSpots> getFreeSpaces(@Param("carParkId") long carParkId, 
 			@Param("bookingDate") LocalDate bookingDate,
 			@Param("startTime") LocalTime startTime,
 			@Param("endTime") LocalTime endTime,
 			@Param("isDisabled") boolean isDisabled,
 			@Param("length") int length);
 	
-	@Query(value = "CALL checkAvailable(:carParkId, :bookingDate, :startTime, :endTime, :isDisabled, :length)", nativeQuery = true)
-	List<CarParkSpots> getMultipleFreeSpaces(@Param("carParkId") long carParkId, 
-			@Param("bookingDate") LocalDate bookingDate,
-			@Param("startTime") LocalTime startTime,
-			@Param("endTime") LocalTime endTime,
-			@Param("isDisabled") boolean isDisabled,
-			@Param("length") int length);
 	
+	@Query(value = "SELECT MAX(spaceNumber) FROM carParkSpots where carParkId = :carParkId", nativeQuery = true)
+	public int findLargestSpaceNumber(long carParkId);
+	
+	CarParkSpots findByCarParksAndSpaceNumber(CarParks carPark, int highestSpaceNumber);
+	
+	void deleteByCarParkSpotId(long carParkSpotId);
+	
+	List<CarParkSpots> findByCarParksAndIsDisabledOrderBySpaceNumberAsc(CarParks carPark, boolean isDisabled);
 }

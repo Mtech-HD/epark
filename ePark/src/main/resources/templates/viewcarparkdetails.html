@@ -6,18 +6,16 @@
 
 <body>
 
-	<!--  Navigation Bar -->
-
-
 	<div layout:fragment="content" th:remove="tag">
 
 		<div class="pusher" style="min-height: 1000px;">
 			<div class="ui container">
 
 				<div class="ui tabular menu margin-bottom-30">
-					<a class="item" data-tab="carparkdetails"> Car Park Details </a> <a
+					<a class="item" data-tab="carparkdetails"> Details </a> <a
 						class="item" data-tab="bookings"> Bookings </a> <a class="item"
-						data-tab="comments"> Comments </a>
+						data-tab="payments"> Payments </a> <a class="item"
+						data-tab="siteadmin"> Site Admin's </a>
 				</div>
 
 
@@ -29,11 +27,30 @@
 
 
 							<div class="nine wide column">
+								<div class="ui segments" sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')">
+									<div class="ui top segment secondary">Actions</div>
+									<div class="ui segment">
+										<th:block
+											th:if="${carpark.carParkStatus.toString()} == 'SUBMITTED'">
+											<div class="tiny ui buttons fluid">
+												<button class="ui button primary" th:onclick="approve()">Approve</button>
+
+												<button class="ui button" th:onclick="reject()">Reject</button>
+											</div>
+										</th:block>
+										<th:block
+											th:if="${carpark.carParkStatus.toString()} == 'REJECTED'">
+											<a class="ui tiny primary button fluid"
+												th:href="'/addcarpark/edit/' + ${carpark.carParkId}">Edit</a>
+										</th:block>
+									</div>
+								</div>
 								<div class="ui segments">
 
 									<div class="ui top segment secondary">
 										Car Park Information &nbsp; <a class="ui label"
-											th:each="owner : ${carpark.users}"><i class="user icon"></i><span
+											th:each="owner : ${carpark.users}"
+											th:if="${owner.isCarParkOwner()}"><i class="user icon"></i><span
 											th:text="${owner.username}"></span></a> <a
 											th:class="(${carpark.carParkStatus.toString() == 'APPROVED'} ? 'ui green label float-right' : (${carpark.carParkStatus.toString() == 'SUBMITTED'} ? 'ui blue label float-right' : 'ui red label float-right'))"><i
 											th:class="(${carpark.carParkStatus.toString() == 'APPROVED'} ? 'check icon' : (${carpark.carParkStatus.toString() == 'SUBMITTED'} ? 'sync alternate icon' : 'x icon'))"></i><span
@@ -47,11 +64,15 @@
 											<tbody>
 												<tr>
 													<td>Car Park ID:</td>
-													<td th:text="${carpark.carParkId}"></td>
+													<td id="detailsCarParkId" th:text="${carpark.carParkId}"></td>
 												</tr>
 												<tr>
 													<td>Car Park Name:</td>
 													<td th:text="${carpark.name}"></td>
+												</tr>
+												<tr>
+													<td>Serial Number:</td>
+													<td th:text="${carpark.serialNumber}"></td>
 												</tr>
 												<tr>
 													<td>Address:</td>
@@ -71,9 +92,37 @@
 													<td th:text="'£'+${carpark.price}"></td>
 												</tr>
 												<tr>
-													<td>Date Modified:</td>
-													<td th:text="${carpark.dateModified}"></td>
+													<td>Dynamic Pricing:</td>
+													<td
+														th:text="${carpark.dynamicPricing == true} ? 'On' : 'Off'"></td>
 												</tr>
+												<tr th:if="${carpark.dynamicPricing}">
+													<td>Target Revenue/Week:</td>
+													<td th:text="'£' +${carpark.targetRevenue}"></td>
+												</tr>
+												<tr>
+													<td>Max Height Restriction:</td>
+													<td
+														th:text="${carpark.heightRestriction == null} ? 'None' : ${carpark.heightRestriction} + ' metres'"></td>
+												</tr>
+												<tr>
+													<td>Access Type:</td>
+													<td th:text="${carpark.accessControl.toString()}"></td>
+												</tr>
+												<tr>
+													<td>Date Modified:</td>
+													<td
+														th:text="${#dates.format(carpark.dateModified, 'dd/MM/yy HH:mm')}"></td>
+												</tr>
+											</tbody>
+										</table>
+										<table class="ui table">
+											<tbody>
+												<tr>
+													<td>Description:</td>
+													<td th:text="${carpark.description}"></td>
+												</tr>
+
 											</tbody>
 										</table>
 										<table class="ui table">
@@ -88,27 +137,12 @@
 												</tr>
 											</tbody>
 										</table>
+
+										<button id="commentsButton" class="ui fluid primary button">Comments</button>
 									</div>
 								</div>
 							</div>
 							<div class="seven wide column">
-
-								<th:block
-									th:if="${carpark.carParkStatus.toString()} == 'SUBMITTED'">
-
-									<div class="ui segments"
-										sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')">
-										<div class="ui top segment secondary">Actions</div>
-										<div class="ui segment">
-											<div class="tiny ui buttons">
-												<button class="ui button primary" th:onclick="approve()">Approve</button>
-												<div class="or"></div>
-												<button class="ui button" th:onclick="reject()">Reject</button>
-											</div>
-										</div>
-									</div>
-								</th:block>
-
 								<div class="ui segments">
 
 									<div class="ui top segment secondary">Opening Times</div>
@@ -136,6 +170,23 @@
 
 											</tbody>
 										</table>
+										<br>
+										<table class="ui very basic table">
+											<thead>
+												<tr>
+													<th>Closure Dates</th>
+													<th class="right aligned"><button
+															class="ui tiny primary button" id="closureDateAdd">Add</button></th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr th:each="closuredate : ${carpark.closureDates}">
+													<td colspan="2"
+														th:text="${#temporals.format(closuredate.date, 'dd/MM/yy')}"></td>
+												</tr>
+
+											</tbody>
+										</table>
 									</div>
 								</div>
 
@@ -147,13 +198,14 @@
 
 
 				<div data-tab="bookings" class="ui tab">
-					<div class="ui grid">
+					<div class="ui stackable grid">
 						<div class="row">
 
 
 							<div class="four wide column">
 
-								<table id="bookingTable" class="ui celled selectable table">
+								<table id="bookingTable"
+									class="ui unstackable celled selectable table">
 									<thead>
 										<tr style="text-align: center; vertical-align: top">
 
@@ -165,6 +217,7 @@
 
 										<tr th:each="booking: ${carpark.bookings}"
 											class='clickable-row pointer'
+											th:if="${booking.bookingStatus.toString() == 'ACTIVE' || booking.bookingStatus.toString() == 'CANCELLED'}"
 											th:bookingId="${booking.bookingId}"
 											style="text-align: center; vertical-align: top">
 
@@ -180,16 +233,8 @@
 							</div>
 
 							<div class="twelve wide column">
-								<div th:insert="~{bookingfragment :: bookingsInfo}"
-									id="bookingsInfo"></div>
-
-
+								<div th:insert="~{fragments :: bookingsInfo}" id="bookingsInfo"></div>
 							</div>
-
-
-
-
-
 						</div>
 					</div>
 				</div>
@@ -198,55 +243,110 @@
 
 
 
-				<div data-tab="comments" class="ui tab">
+				<div data-tab="payments" class="ui tab">
+
+					<div class="ui segments">
+						<div class="ui top segment secondary">Stripe Express Account</div>
+						<div class="ui segment">
 
 
-					<form id="addcommentform" method="post"
-						th:action="'/viewcarparkdetails/addcomment/' + ${carpark.carParkId}"
-						th:object="${carParkDto}">
 
 
-						<div class="ui comments">
-							<div class="comment"
-								th:each="carparkcomment : ${carpark.carParkComments}">
-								<a class="avatar"> <i class="user large icon"></i>
-								</a>
-								<div class="content">
-									<a class="author" th:text="${carparkcomment.users}"></a>
-									<div class="metadata">
-										<div class="date"
-											th:text="${#dates.format(carparkcomment.dateCreated, 'dd/MM/yy HH:mm')}"></div>
+							<div class="ui grid">
+
+								<div class="row">
+									<div class="column">
+										<div th:text="'Account ID: ' +${carpark.stripeId}"></div>
 									</div>
-									<div class="text" th:text="${carparkcomment.comment}"></div>
-									<div class="actions">
-										<a class="reply active">Reply</a>
-									</div>
-
 								</div>
+
+								<div class="equal width row">
+									<div class="column">Available</div>
+									<div class="column">Pending</div>
+								</div>
+
+								<div class="equal width row" style="padding-top: 0;">
+
+									<div class="column">
+										<span style="font-weight: 1000; font-size: large;"
+											th:text="${#numbers.formatCurrency(balanceAvailable/ 100.00)}"></span><span>&nbsp;GBP</span>
+									</div>
+
+									<div class="column">
+										<span style="font-weight: 1000; font-size: large;"
+											th:text="${#numbers.formatCurrency(balancePending/ 100.00)}"></span><span>&nbsp;GBP</span>
+									</div>
+								</div>
+
 							</div>
+
+							<div class="margin-top-30">
+								<a id="stripeAccount" class="ui primary button"
+									th:href="${stripeUrl}">Configure Stripe Account</a>
+							</div>
+
 						</div>
 
+					</div>
 
-
-
-						<div class="ui form">
-							<div class="ui fluid action input">
-								<input name="comment" required autofocus="autofocus"></input>
-								<div class="ui primary submit labeled icon button">
-									<i class="icon edit"></i> Add Reply
-								</div>
+					<div class="ui segments">
+						<div class="ui top segment secondary">Payment Information</div>
+						<div class="ui segment">
+							<div>
+								Revenue for current month: &nbsp;&nbsp;<span
+									style="font-weight: 1000;" th:text="'£'+${revenueForMonth}"></span>
 							</div>
 						</div>
+					</div>
+					<table class="ui unstackable table" id="paymentTable">
+						<thead class="ui top segment secondary">
+							<tr>
+								<td>Year-Month</td>
+								<td>Amount</td>
+								<td>Bookings</td>
+								<td>Paid</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="payment : ${carpark.carParkPayments}">
+								<td th:text="${payment.yearMonth}"></td>
+								<td th:text="'£' +${payment.amount}"></td>
+								<td th:text="${payment.bookings}"></td>
+								<td><a
+									th:class="${payment.paid} ? 'ui green label' : 'ui red label'"><i
+										th:class="${payment.paid} ? 'check icon' :  'x icon'"></i><span
+										th:text="${payment.paid} ? 'Paid' : 'Not Paid'"></span></a></td>
+							</tr>
+						</tbody>
+					</table>
 
 
-
-
-					</form>
 
 				</div>
 
 
 
+				<div data-tab="siteadmin" class="ui tab">
+					<table class="ui unstackable table">
+						<thead class="ui top segment secondary">
+							<tr>
+								<td>Name</td>
+								<td>Email</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="siteadmin : ${carpark.users}"
+								th:if="${siteadmin.isSiteAdmin()}">
+								<td th:text="${siteadmin.firstName}"></td>
+								<td th:text="${siteadmin.email}"></td>
+							</tr>
+						</tbody>
+					</table>
+					<a class="ui positive button"
+						sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')"
+						th:href="@{'/registration/?carParkId='+${carpark.carParkId} +'&returnPage=viewcarparkdetails/' + ${carpark.carParkId} + '&adminCreated=true'}">Add
+						site admin</a>
+				</div>
 
 
 
@@ -288,15 +388,114 @@
 
 
 
+				<form id="comments" method="post"
+					th:action="'/viewcarparkdetails/addcomment/' + ${carpark.carParkId}"
+					th:object="${carParkDto}" class="ui modal">
+
+					<i class="close icon"></i>
+
+					<div class="header">Comments</div>
+
+					<div class="ui comments content">
+						<div class="comment"
+							th:each="carparkcomment : ${carpark.carParkComments}">
+							<a class="avatar"> <i class="user large icon"></i>
+							</a>
+							<div class="content">
+								<a class="author" th:text="${carparkcomment.users}"></a>
+								<div class="metadata">
+									<div class="date"
+										th:text="${#dates.format(carparkcomment.dateCreated, 'dd/MM/yy HH:mm')}"></div>
+								</div>
+								<div class="text" th:text="${carparkcomment.comment}"></div>
+
+							</div>
+						</div>
+					</div>
+
+					<div class="ui form actions">
+						<div class="ui fluid action input">
+							<input name="comment" required autofocus="autofocus"></input>
+							<button class="ui primary submit labeled icon button">
+								<i class="icon edit"></i> Add Reply
+							</button>
+						</div>
+					</div>
+				</form>
 
 
+				<form action="/addClosureDate" class="ui form modal"
+					style="max-width: 500px;" id="closureDateForm" method="post">
+					<i class="close icon"></i>
+					<div class="header">Add a closure date</div>
+
+					<div class="cotent margin-20">
+						<input type="hidden" name="carParkId" id="carParkId" />
+
+						<div class="fields">
+							<div class="sixteen wide field">Please select a date. If
+								there are active bookings for the date selected, you will be
+								given the option to cancel these bookings.</div>
+						</div>
+						<div class="fields">
+							<div class="sixteen wide field">
+								<label>Date:</label> <input type="text" id="closureDatePicker"
+									required placeholder="dd/mm/yy" name="date" readonly>
+							</div>
+						</div>
+
+						<div class="ui positive message" id="noBookings">There are
+							currently no bookings for this date</div>
+
+						<div class="ui negative message" id="bookingsFound">
+							<div id="bookingsFoundMessage"></div>
+						</div>
+
+					</div>
+					<div class="actions">
+						<button class="ui positive button" type=submit>Confirm</button>
+					</div>
+				</form>
+
+
+				<form id="addBankAccount" method="post" action="/addBankAccount"
+					class="ui form modal">
+
+					<i class="close icon"></i>
+
+					<div class="header">Add bank account</div>
+
+					<div class="ui  content">
+						<div class="fields">
+							<div class="field">
+								<label>Account Holder Name:</label> <input type="text"
+									id="accountName" required />
+							</div>
+						</div>
+
+						<div class="fields margin-bottom-20">
+							<div class="field">
+								<label>Email:</label> <input type="text" id="email" required />
+							</div>
+						</div>
+
+
+						<div id="iban-element"></div>
+
+
+						<div id="error-message" class="margin-top-20" role="alert"></div>
+
+					</div>
+
+					<div class="actions">
+						<button id="confirm" class="ui positive button">Confirm</button>
+					</div>
+				</form>
 
 
 
 
 			</div>
-
-
 		</div>
 	</div>
 
@@ -311,54 +510,90 @@
 			src="https://cdnjs.cloudflare.com/ajax/libs/jquery.address/1.6/jquery.address.js"></script>
 
 		<script th:inline="javascript">
-			$(document).ready(
-					function() {
+			$(document).ready(function() {
 
-						$('#bookingTable').DataTable(
-								{
-									lengthMenu : [ 5, 10 ],
-									lengthChange : false,
-									searching : false,
-									info : false,
-									dom : "<'ui grid margin-top-0'"
-											+ "<'row dt-table'"
-											+ "<'sixteen wide column'tr>" + ">"
-											+ "<'row'"
-											+ "<'sixteen wide column'p>" + ">"
-											+ ">"
-								}
+				$('#bookingTable').DataTable({
+					lengthMenu : 10,
+					lengthChange : false,
+					searching : false,
+					info : false,
+					dom : "<'ui grid margin-top-0'" + "<'row dt-table'" + "<'sixteen wide column'tr>" + ">" + "<'row'" + "<'sixteen wide column' p>" + ">" + ">",
+				});
 
-						);
-						$('#bookingTable tr:first-child').addClass("active");
-						getBooking();
+				$('#paymentTable').DataTable({
+					lengthMenu : 10,
+					lengthChange : false,
+					bAutoWidth : false,
+					info : false,
+					dom : "<'ui grid margin-top-0'" + "<'row'" + "<'sixteen wide column padding-0' f>" + ">" + "<'row dt-table'" + "<'sixteen wide column padding-0'tr>" + ">" + "<'row'" + "<'sixteen wide column padding-0' p>" + ">" + ">",
 
-						function getBooking() {
-							var bookingParam = "bookingId="
-									+ $('#bookingTable .clickable-row.active')
-											.attr("bookingid");
-							var url = "/getBooking/?" + bookingParam;
+				});
 
-							$('#bookingsInfoSegment').addClass('loading');
-							$("#bookingsInfo").load(
-									url,
-									function() {
-										$('#bookingsInfoSegment').removeClass(
-												'loading');
-									});
-						}
+				$('.ui.pagination.menu').removeClass('stackable').addClass('unstackable');
 
-						$("#bookingTable").on(
-								'click',
-								'.clickable-row',
-								function() {
-									$('.clickable-row').not(this).removeClass(
-											'active');
-									$(this).addClass('active');
+				$('#bookingTable').removeClass('dataTable');
+				$('#bookingTable tr:first-child').addClass("active");
 
-									getBooking();
+				if ($('#bookingTable .clickable-row.active').attr("bookingid") !== undefined) {
+					getBooking();
+				}
 
-								});
+				function getBooking() {
+					var bookingParam = "bookingId=" + $('#bookingTable .clickable-row.active').attr("bookingid");
+					var url = "/getBooking/?" + bookingParam;
+
+					$('#bookingsInfoSegment').addClass('loading');
+					$("#bookingsInfo").load(url, function() {
+						$('#bookingsInfoSegment').removeClass('loading');
 					});
+				}
+
+				$("#bookingTable").on('click', '.clickable-row', function() {
+					$('.clickable-row').not(this).removeClass('active');
+					$(this).addClass('active');
+
+					getBooking();
+
+				});
+
+				$('#closureDateAdd').click(function() {
+					$('#noBookings').hide();
+					$('#bookingsFound').hide();
+					$('#carParkId').val($('#detailsCarParkId').text());
+					$('#closureDateForm').modal('show')
+				})
+
+				var dateSelector = $("#closureDatePicker").datepicker({
+					dateFormat : "dd/mm/yy",
+					startDate : '01/01/1997',
+					//minDate : 0,
+					onSelect : function() {
+						checkForBookings();
+					}
+				});
+			});
+
+			function checkForBookings() {
+
+				var date = $("#closureDatePicker").val();
+				var carParkId = $("#carParkId").val();
+				var url = "/findByCarParksAndStartDate/?carParkId=" + carParkId + "&date=" + date;
+
+				$.ajax({
+					type : "GET",
+					url : url,
+					success : function(bookings) {
+						if (bookings > 0) {
+							$('#noBookings').hide();
+							$('#bookingsFound').show();
+							$('#bookingsFoundMessage').html(bookings + ' booking(s) found for the selected date. Click confirm to cancel and refund them.');
+						} else {
+							$('#bookingsFound').hide();
+							$('#noBookings').show();
+						}
+					}
+				})
+			}
 
 			function reject() {
 				$('#reject').modal('show');
@@ -368,10 +603,15 @@
 				$('#approve').modal('show');
 			}
 
+			$('#commentsButton').click(function() {
+				$('#comments').modal('show');
+			});
+
 			$('.ui.tabular.menu .item').tab({
 				history : true,
 				historyType : 'hash'
 			});
+
 		</script>
 	</div>
 </body>

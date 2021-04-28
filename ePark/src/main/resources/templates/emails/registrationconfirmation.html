@@ -16,9 +16,11 @@
     <p th:text="'Dear ' + ${name}+ ','"></p>
 
     <p>
-      You have successfully created an account for <b>ePark</b> on
+      Your account has successfully been created for <b>ePark</b> on
       <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}"></span>
     </p>
+    
+    <p th:if="${resetpasswordprompt != null}" th:text="${resetpasswordprompt}"></p>
     
     <p th:text="${'Username: ' + username}"></p>
 

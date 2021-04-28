@@ -9,17 +9,10 @@
 </head>
 <body>
 
-	<!--  Navigation Bar -->
-
-
-
-	<!--  HTML registration form -->
 	<div layout:fragment="content" th:remove="tag">
 		<div class="pusher">
 
 			<div class="ui container">
-
-
 				<div class="ui segments">
 					<div class="ui top segment secondary">
 						<p class="green">
@@ -27,14 +20,17 @@
 						</p>
 					</div>
 					<div class="ui segment">
+						<p>Your booking is confirmed</p>
+						<p>You’ll receive a confirmation email with your order number
+							shortly.</p>
 
-						<p th:text="'Booking ID: '+ ${booking.bookingId}"></p>
-						<p th:text="'Car Park: '+ ${booking.carParks.name}"></p>
 						<a class="ui button" href="/home">Back Home</a> <a
 							class="ui primary button" href="/accountdetails">View Booking</a>
+						<a class="ui primary button" th:attr="href=${directionsurl}">Get
+								Directions</a>
 					</div>
 				</div>
-
+				<div th:insert="~{fragments :: bookingsInfo}" id="bookingsInfo"></div>
 			</div>
 
 		</div>

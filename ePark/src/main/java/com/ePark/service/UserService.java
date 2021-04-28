@@ -33,7 +33,7 @@ public class UserService implements UserDetailsService {
 		roles.add(registrationDto.getRoles());
 
 		Users user = new Users(registrationDto.getUsername(), passwordEncoder.encode(registrationDto.getPassword()),
-				registrationDto.getFirstName(), registrationDto.getLastName(), registrationDto.getEmail(), 
+				registrationDto.getFirstName(), registrationDto.getLastName(), registrationDto.getEmail(),
 				registrationDto.getCustomerId(), roles);
 
 		return userRepo.save(user);
@@ -52,19 +52,41 @@ public class UserService implements UserDetailsService {
 	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Roles> roles) {
 		return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
 	}
-	
 
 	public Users findByUserId(long userId) {
 		return userRepo.findByUserId(userId);
 	}
-	
 
 	public Users findByUsername(String username) {
 		return userRepo.findByUsername(username);
 	}
-	
+
 	public Users findByStripeId(String stripeId) {
 		return userRepo.findByStripeId(stripeId);
+	}
+
+	public Users findByEmail(String email) {
+		return userRepo.findByEmail(email);
+	}
+	
+	public Users findByResetPasswordToken(String token) {
+		return userRepo.findByResetPasswordToken(token);
+	}
+
+	public void updateResetPasswordToken(String token, Users user) {
+
+		user.setResetPasswordToken(token);
+		userRepo.save(user);
+	}
+	
+	public void updatePassword(String newPassword, Users user) {
+		BCryptPasswordEncoder passwordEncoder =  new BCryptPasswordEncoder();
+		
+		String encodedPassword = passwordEncoder.encode(newPassword);
+		
+		user.setPassword(encodedPassword);
+		user.setResetPasswordToken(null);
+		userRepo.save(user);
 	}
 
 }

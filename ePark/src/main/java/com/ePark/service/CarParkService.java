@@ -16,10 +16,9 @@ import org.springframework.stereotype.Service;
 
 import com.ePark.dto.CarParkDto;
 import com.ePark.entity.CarParkSpots;
-import com.ePark.entity.CarParkStatus;
 import com.ePark.entity.CarParkTimes;
 import com.ePark.entity.CarParks;
-import com.ePark.entity.ParkingRate;
+import com.ePark.entity.CarParks.CarParkStatus;
 import com.ePark.entity.Users;
 import com.ePark.entity.Week;
 import com.ePark.repository.CarParkRepository;
@@ -40,21 +39,16 @@ public class CarParkService {
 
 	public void save(CarParkDto carParkDto) {
 
-		ParkingRate rate = ParkingRate.HOUR;
-
-		if (carParkDto.getRate() == new BigDecimal(0.5)) {
-			rate = ParkingRate.HALFHOUR;
-		}
-
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
 		Set<Users> users = new HashSet<Users>();
 		Users user = userRepo.findByUsername(auth.getName());
 		users.add(user);
 
-		CarParks carPark = new CarParks(carParkDto.getName(), carParkDto.getEmail(), carParkDto.getCarParkAddress1(),
+		CarParks carPark = new CarParks(carParkDto.getName(), carParkDto.getSerialNumber(), carParkDto.getEmail(), carParkDto.getCarParkAddress1(),
 				carParkDto.getCarParkAddress2(), carParkDto.getCarParkCity(), carParkDto.getCarParkPostcode(),
-				carParkDto.getPrice(), carParkDto.getCarParkStatus(), new Date(), rate, users);
+				carParkDto.getPrice(), CarParkStatus.SUBMITTED, carParkDto.getEnableFutureWeeks(), carParkDto.getDescription(), carParkDto.getHeightRestriction(),
+				carParkDto.getAccessControl(), new Date(), carParkDto.getRate(), carParkDto.getDynamicPricing(), carParkDto.getTargetRevenue(), users, carParkDto.getStripeId());
 
 		List<Week> weekValues = Arrays.asList(Week.values());
 		Set<CarParkTimes> carParkTimes = new HashSet<CarParkTimes>();
@@ -98,6 +92,32 @@ public class CarParkService {
 
 		carParkRepo.save(carPark);
 	}
+	
+	public void update(CarParkDto carParkDto) {
+
+		CarParks carPark = carParkRepo.findByCarParkId(carParkDto.getCarParkId());
+		
+		carPark.setName(carParkDto.getName());
+		carPark.setEmail(carParkDto.getEmail());
+		carPark.setSerialNumber(carParkDto.getSerialNumber());
+		carPark.setCarParkAddress1(carParkDto.getCarParkAddress1());
+		carPark.setCarParkAddress2(carParkDto.getCarParkAddress2());
+		carPark.setCarParkCity(carParkDto.getCarParkCity());
+		carPark.setCarParkPostcode(carParkDto.getCarParkPostcode());
+		carPark.setPrice(carParkDto.getPrice());
+		carPark.setParkingRate(carParkDto.getRate());
+		carPark.setCarParkStatus(CarParkStatus.SUBMITTED);
+		carPark.setDescription(carParkDto.getDescription());
+		carPark.setEnableFutureWeeks(carParkDto.getEnableFutureWeeks());
+		carPark.setDynamicPricing(carParkDto.getDynamicPricing());
+		carPark.setTargetRevenue(carParkDto.getTargetRevenue());		
+		carPark.setHeightRestriction(carParkDto.getHeightRestriction());
+		carPark.setAccessControl(carParkDto.getAccessControl());
+		carPark.setDateModified(new Date());
+		
+		carParkRepo.save(carPark);
+		
+	}
 
 	public CarParks save(CarParks carPark) {
 
@@ -117,6 +137,23 @@ public class CarParkService {
 	public List<CarParks> findByUsers(Users user) {
 
 		return carParkRepo.findByUsers(user);
+	}
+	
+
+	public List<CarParks> findByDynamicPricing(boolean dynamicPricing) {
+
+		return carParkRepo.findByDynamicPricing(dynamicPricing);
+	}
+	
+	public void addUserToCarPark(long carParkId, Users user) {
+		CarParks carPark = carParkRepo.findByCarParkId(carParkId);
+		
+		Set<Users> carParkUsers = carPark.getUsers();
+		carParkUsers.add(user);
+		carPark.setUsers(carParkUsers);
+		
+		carParkRepo.save(carPark);
+		
 	}
 
 }

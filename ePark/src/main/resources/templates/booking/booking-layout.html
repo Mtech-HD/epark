@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{main-layout}">
+
+<body>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="pusher">
+
+			<div class="ui container">
+				<th:block th:unless="${bookingFlow.booking.carParks == null}">
+					<div class="padding-sides-14">
+						<div th:replace="~{fragments :: bookingFlowSteps(${bookingFlow})}"></div>
+					</div>
+
+
+					<div layout:fragment="booking"></div>
+				</th:block>
+				<th:block th:if="${bookingFlow.booking.carParks == null}">
+					<div class="text-align-center">
+						<h1>Booking Session Expired</h1>
+					</div>
+				</th:block>
+			</div>
+
+		</div>
+</body>
+</html>

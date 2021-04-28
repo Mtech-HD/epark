@@ -10,13 +10,9 @@
 	<!--  Navigation Bar -->
 
 
-
-
-	<!--  HTML registration form  -->
-
 	<div layout:fragment="content" th:remove="tag">
-	<div class="pusher">
-		<div class="ui container login">
+		<div class="pusher">
+			<div class="ui container login">
 
 				<div class="ui segments">
 
@@ -25,53 +21,72 @@
 
 					<div class="ui segment">
 						<form th:action="@{/login}" method="post" class="ui form">
-
-							<!-- Error Message -->
 						
-								<div class="ui negative message margin-10" id="error">
-									<i class="close icon"></i> Invalid username or password
-								</div>
-		
+						
+							<div class="ui negative message margin-10" id="error" th:if="${error != null}">
+								<i class="close icon"></i> <div th:text="${error}"></div>
+							</div>
+							
+							<div class="ui positive message margin-10" id="resetlinksent" th:if="${resetlinksent != null}">
+								<i class="close icon"></i> <div th:text="${resetlinksent}"></div>
+							</div>
+
+
+							<div class="ui positive message margin-10" id="resetsuccessful" th:if="${resetsuccessful != null}">
+								<i class="close icon"></i> <div th:text="${resetsuccessful}"></div>
+							</div>
+							
+							<!-- Error Message -->
+
+							<div class="ui negative message margin-10" id="invalid">
+								<i class="close icon"></i> Invalid username or password
+							</div>
+
 							<!-- Logout Message -->
 
-						
-								<div class="ui info message margin-10" id="logout">
-									<i class="close icon"></i> You have been logged out
-								</div>
-						
+
+							<div class="ui info message margin-10" id="logout">
+								<i class="close icon"></i> You have been logged out
+							</div>
+
 
 
 							<!-- Registration success message -->
-							
-								<div class="ui info message margin-10" id="registrationSuccess">
-									<i class="close icon"></i> You have registered successfully
-								</div>
+
+							<div class="ui info message margin-10" id="registrationSuccess">
+								<i class="close icon"></i> You have registered successfully
+							</div>
 
 
 
 							<div class="field">
-								<label class="grey">Username</label>
-									<input type="text" id="username" name="username" class="field"
+								<label class="grey">Username</label> <input type="text"
+									id="username" name="username" class="field"
 									placeholder="Enter username" required autofocus="autofocus" />
 
 							</div>
 							<div class="field">
-								<label class="grey">Password</label>
-									<input type="password" id="password" name="password"
-									class="field" placeholder="Enter password" required
-									autofocus="autofocus" />
+								<label class="grey">Password</label> <input type="password"
+									id="password" name="password" class="field"
+									placeholder="Enter password" required autofocus="autofocus" />
 							</div>
-							<div class="ui checkbox margin-10">
+
+							<div class="field">
+								<a class="pointer underline" id="forgottenPassword">Forgotten
+									Password?</a>
+
+							</div>
+
+							<!-- 							<div class="ui checkbox margin-10">
 
 								<input type="checkbox" class="form-check-input" id="remember-me"
 									name="remember-me"> <label class="form-check-label"
 									for="remember-me">Remember me?</label>
-							</div>
+							</div> -->
 
 							<div class="margin-10">
 								<button type="submit" class="ui fluid positive button">
-									Login
-								</button>
+									Login</button>
 								<a class="ui fluid button margin-top-10"
 									th:href="@{registration}">Sign Up</a>
 							</div>
@@ -79,77 +94,71 @@
 						</form>
 					</div>
 				</div>
-		</div>
+
+
+				<form action="/forgotpassword" class="ui form modal" id="forgottenPasswordForm" method="post">
+					<i class="close icon"></i>
+					<div class="header">Forgotten Password</div>
+		
+						<div class="cotent margin-20">
+							<div class="fields"><div class="one field">
+							We will send a reset password link to your email address </div></div>
+							<input type="email" name="email" placeholder="Enter your email" required/>
+						</div>
+						<div class="actions">
+							<button id="resetPasswordButton" class="ui positive button" type=submit>Send</button>
+						</div>
+				</form>
+
+			</div>
 		</div>
 	</div>
 
 	<div layout:fragment="script">
 		<script>
-			$(document)
-					.ready(
-							function() {
-								$('#logout').hide();
-								$('#error').hide();
-								$('#registrationSuccess').hide();
-								var urlParams = new URLSearchParams(
-										window.location.search);
-								if (urlParams.has('logout')) {
-									$('#logout').show();
-									setTimeout(
-											function() {
-												$('#logout')
-														.slideUp(
-																350,
-																function() {
-																	if ($(
-																			'#logout')
-																			.css(
-																					'display') == 'none') {
-																		window.location.href = window.location.href
-																				.split("?")[0]
-																	}
-																});
-											}, 5000);
-								} else if (urlParams.has('error')) {
-									$('#error').show();
-									setTimeout(
-											function() {
-												$('#error')
-														.slideUp(
-																350,
-																function() {
-																	if ($(
-																			'#error')
-																			.css(
-																					'display') == 'none') {
-																		window.location.href = window.location.href
-																				.split("?")[0]
-																	}
-																});
-											}, 5000);
-								} else if (urlParams.has('registrationSuccess')) {
-									$('#registrationSuccess').show();
-									setTimeout(
-											function() {
-												$('#registrationSuccess')
-														.slideUp(
-																350,
-																function() {
-																	if ($(
-																			'#registrationSuccess')
-																			.css(
-																					'display') == 'none') {
-																		window.location.href = window.location.href
-																				.split("?")[0]
-																	}
-																});
-											}, 5000);
-								}
-							});
-			
+			$(document).ready(function() {
+				$('#logout').hide();
+				$('#invalid').hide();
+				$('#registrationSuccess').hide();
+				var urlParams = new URLSearchParams(window.location.search);
+				if (urlParams.has('logout')) {
+					$('#logout').show();
+					setTimeout(function() {
+						$('#logout').slideUp(350, function() {
+							if ($('#logout').css('display') == 'none') {
+								window.location.href = window.location.href.split("?")[0]
+							}
+						});
+					}, 5000);
+				} else if (urlParams.has('invalid')) {
+					$('#invalid').show();
+					setTimeout(function() {
+						$('#invalid').slideUp(350, function() {
+							if ($('#invalid').css('display') == 'none') {
+								window.location.href = window.location.href.split("?")[0]
+							}
+						});
+					}, 5000);
+				} else if (urlParams.has('registrationSuccess')) {
+					$('#registrationSuccess').show();
+					setTimeout(function() {
+						$('#registrationSuccess').slideUp(350, function() {
+							if ($('#registrationSuccess').css('display') == 'none') {
+								window.location.href = window.location.href.split("?")[0]
+							}
+						});
+					}, 5000);
+				}
+			});
+
 			$('.message .close').on('click', function() {
 				$(this).parent().hide();
 			});
+
+			$('#forgottenPassword').click(function() {
+				$('#forgottenPasswordForm').modal('show');
+			});
+
 		</script>
 	</div>
 </body>

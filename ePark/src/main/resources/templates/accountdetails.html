@@ -14,35 +14,35 @@
 			<div class="ui container">
 
 				<div class="ui tabular menu topMenu margin-bottom-30">
-					<a class="item" data-tab="details"> Account </a> <a
-						class="item" data-tab="bookings"> Bookings </a> <a class="item"
-						data-tab="cards"> Cards </a> <a class="item"
-						data-tab="vehicles">Vehicles </a>
+					<a class="item" data-tab="details"> Account </a> <a class="item"
+						data-tab="bookings"> Bookings </a> <a class="item"
+						data-tab="cards"> Cards </a> <a class="item" data-tab="vehicles">Vehicles
+					</a>
 				</div>
 
 
 				<div data-tab="details" class="ui active tab">
 					<div class="group">
-						<label class="leftlabel"><span>Username:</span> <input
+						<label class="leftlabel"><span class="custom-label">Username:</span> <input
 							disabled class="field borderless"
 							th:value="${user.getUsername()}"></label>
 					</div>
 					<div class="group">
-						<label class="leftlabel"><span>Email:</span> <input
+						<label class="leftlabel"><span class="custom-label">Email:</span> <input
 							disabled class="field borderless" th:value="${user.getEmail()}"></label>
 					</div>
 					<div class="group">
-						<label class="leftlabel"><span>First Name:</span> <input
+						<label class="leftlabel"><span class="custom-label">First Name:</span> <input
 							disabled class="field borderless"
 							th:value="${user.getFirstName()}"></label>
 					</div>
 					<div class="group">
-						<label class="leftlabel"><span>Last Name:</span> <input
+						<label class="leftlabel"><span class="custom-label">Last Name:</span> <input
 							disabled class="field borderless"
 							th:value="${user.getLastName()}"></label>
 					</div>
 					<div class="group">
-						<label class="leftlabel"><span>Stripe ID:</span> <input
+						<label class="leftlabel"><span class="custom-label">Stripe ID:</span> <input
 							disabled class="field borderless"
 							th:value="${user.getStripeId()}"></label>
 					</div>
@@ -57,7 +57,8 @@
 
 							<div class="four wide column">
 
-								<table id="bookingTable" class="ui unstackable celled selectable table">
+								<table id="bookingTable"
+									class="ui unstackable celled selectable table">
 									<thead>
 										<tr style="text-align: center; vertical-align: top">
 
@@ -68,6 +69,7 @@
 									<tbody>
 
 										<tr th:each="booking: ${user.bookings}"
+											th:if="${booking.bookingStatus.toString() == 'ACTIVE' || booking.bookingStatus.toString() == 'CANCELLED'}"
 											class='clickable-row pointer'
 											th:bookingId="${booking.bookingId}"
 											style="text-align: center; vertical-align: top">
@@ -84,8 +86,7 @@
 							</div>
 
 							<div class="twelve wide column">
-								<div th:insert="~{bookingfragment :: bookingsInfo}"
-									id="bookingsInfo"></div>
+								<div th:insert="~{fragments :: bookingsInfo}" id="bookingsInfo"></div>
 
 
 							</div>
@@ -100,13 +101,12 @@
 						<div class="ui stackable grid">
 							<div class="equal width row">
 								<div class="column">
-									<div th:insert="~{bookingfragment :: vehicles}"
-										id="vehiclesTable"></div>
+									<div th:insert="~{fragments :: vehicles}" id="vehiclesTable"></div>
 								</div>
 								<div class="column">
 
 
-									<div th:insert="~{bookingfragment :: vehiclesAdd}"
+									<div th:insert="~{fragments :: vehiclesAdd}"
 										id="vehicleAddForm"></div>
 
 								</div>
@@ -120,13 +120,11 @@
 						<div class="ui stackable grid">
 							<div class="equal width row">
 								<div class="column">
-									<div th:insert="~{bookingfragment :: cardsTable}"
-										id="cardsTable"></div>
+									<div th:insert="~{fragments :: cardsTable}" id="cardsTable"></div>
 								</div>
 								<div class="column">
 
-									<div th:insert="~{bookingfragment :: cardsAdd}"
-										id="cardAddForm"></div>
+									<div th:insert="~{fragments :: cardsAdd}" id="cardAddForm"></div>
 
 								</div>
 							</div>
@@ -149,54 +147,42 @@
 			src="https://cdnjs.cloudflare.com/ajax/libs/jquery.address/1.6/jquery.address.js"></script>
 
 		<script th:inline="javascript">
-			$(document).ready(
-					function() {
-						$('#bookingTable').DataTable(
-								{
-									pageLength : 8,
-									lengthChange : false,
-									searching : false,
-									info : false,
-									dom : "<'ui grid margin-top-0'"
-											+ "<'row dt-table'"
-											+ "<'column'tr>" + ">"
-											+ "<'row'"
-											+ "<'column'p>" + ">"
-											+ ">"
-								}
+			$(document).ready(function() {
+				$('#bookingTable').DataTable({
+					pageLength : 10,
+					lengthChange : false,
+					searching : false,
+					info : false,
+					aaSorting : [ [ 0, 'desc' ] ],
+					dom : "<'ui grid margin-top-0'" + "<'row dt-table'" + "<'column'tr>" + ">" + "<'row'" + "<'column'p>" + ">" + ">"
+				}
 
-						);
-						$('#bookingTable tr:first-child').addClass("active");
-						getBooking();
+				);
+				$('.ui.pagination.menu').removeClass('stackable').addClass('unstackable');
 
-						function getBooking() {
-							var bookingParam = "bookingId="
-									+ $('#bookingTable .clickable-row.active')
-											.attr("bookingid");
-							var url = "/getBooking/?" + bookingParam;
+				$('#bookingTable').removeClass('dataTable');
+				$('#bookingTable tr:first-child').addClass("active");
+				getBooking();
 
-							$('#bookingsInfoSegment').addClass('loading');
-							$("#bookingsInfo").load(
-									url,
-									function() {
-										$('#bookingsInfoSegment').removeClass(
-												'loading');
-									});
-						}
+				function getBooking() {
+					var bookingParam = "bookingId=" + $('#bookingTable .clickable-row.active').attr("bookingid");
+					var url = "/getBooking/?" + bookingParam;
 
-						$("#bookingTable").on(
-								'click',
-								'.clickable-row',
-								function() {
-									$('.clickable-row').not(this).removeClass(
-											'active');
-									$(this).addClass('active');
-
-									getBooking();
-
-								});
-
+					$('#bookingsInfoSegment').addClass('loading');
+					$("#bookingsInfo").load(url, function() {
+						$('#bookingsInfoSegment').removeClass('loading');
 					});
+				}
+
+				$("#bookingTable").on('click', '.clickable-row', function() {
+					$('.clickable-row').not(this).removeClass('active');
+					$(this).addClass('active');
+
+					getBooking();
+
+				});
+
+			});
 
 			$('.topMenu.ui.tabular.menu .item').tab({
 				history : true,
@@ -204,24 +190,21 @@
 
 			});
 
-			$('#expandVehicleAdd').click(
-					function() {
-						if ($('#vehicleAddBody').css("display") == "block") {
-							$('#vehicleAddBody').slideUp(function() {
-								$('#vehicleAddBody').css('display', 'none');
-							});
-							$('#vehicleExpandSymbol').removeClass("minus")
-									.addClass("add");
-						} else {
-
-							$('#vehicleAddBody').slideDown(function() {
-
-								$('#vehicleAddBody').css('display', 'block');
-							});
-							$('#vehicleExpandSymbol').removeClass("add")
-									.addClass("minus");
-						}
+			$('#expandVehicleAdd').click(function() {
+				if ($('#vehicleAddBody').css("display") == "block") {
+					$('#vehicleAddBody').slideUp(function() {
+						$('#vehicleAddBody').css('display', 'none');
 					});
+					$('#vehicleExpandSymbol').removeClass("minus").addClass("add");
+				} else {
+
+					$('#vehicleAddBody').slideDown(function() {
+
+						$('#vehicleAddBody').css('display', 'block');
+					});
+					$('#vehicleExpandSymbol').removeClass("add").addClass("minus");
+				}
+			});
 
 			$('#addVehicleButton').click(function() {
 				$('#vehicleData').addClass('loading');
@@ -273,103 +256,71 @@
 				}
 			});
 
-			$('#expandCardAdd').click(
-					function() {
-						if (cardAddBody.style.display === 'block') {
-							$('#cardAddBody').slideUp(function() {
-								$('#cardAddBody').css('display', 'none');
-							});
-							$('#cardExpandSymbol').removeClass("minus")
-									.addClass("add");
-						} else {
-
-							$('#cardAddBody').slideDown(function() {
-
-								$('#cardAddBody').css('display', 'block');
-							});
-							$('#cardExpandSymbol').removeClass("add").addClass(
-									"minus");
-						}
+			$('#expandCardAdd').click(function() {
+				if (cardAddBody.style.display === 'block') {
+					$('#cardAddBody').slideUp(function() {
+						$('#cardAddBody').css('display', 'none');
 					});
+					$('#cardExpandSymbol').removeClass("minus").addClass("add");
+				} else {
 
-			$('#cardButton')
-					.click(
-							function() {
-								$('#paymentForm').addClass('loading');
-								stripe
-										.createPaymentMethod(
-												{
-													type : 'card',
-													card : card,
-													billing_details : {
-														name : $(
-																'#cardHolderName')
-																.val(),
-													},
-												})
-										.then(
-												function(result) {
-													if (result.error) {
+					$('#cardAddBody').slideDown(function() {
 
-														// Display error.message in your UI
-														//resultContainer.textContent = result.error.message;
-													} else {
-														// You have successfully created a new PaymentMethod
-														$("#cardsTable")
-																.load(
-																		"/addcard?paymentMethodId="
-																				+ result.paymentMethod.id,
-																		function() {
-																			$(
-																					'#paymentForm')
-																					.removeClass(
-																							'loading');
-																		});
-														$('#cardAddBody').css(
-																'display',
-																'none');
-														$('#cardExpandSymbol')
-																.removeClass(
-																		"minus")
-																.addClass("add");
+						$('#cardAddBody').css('display', 'block');
+					});
+					$('#cardExpandSymbol').removeClass("add").addClass("minus");
+				}
+			});
 
-													}
-												});
-							});
+			$('#cardButton').click(function() {
+				$('#paymentForm').addClass('loading');
+				stripe.createToken(card, {
+					owner : {
+						name : $('#cardHolderName').val()
+					}
+				}).then(function(result) {
+					if (result.error) {
+
+						// Display error.message in your UI
+						//resultContainer.textContent = result.error.message;
+					} else {
+						// You have successfully created a new PaymentMethod
+						$("#cardsTable").load("/addcard?tokenId=" + result.token.id, function() {
+							$('#paymentForm').removeClass('loading');
+						});
+						$('#cardAddBody').css('display', 'none');
+						$('#cardExpandSymbol').removeClass("minus").addClass("add");
+
+					}
+				});
+			});
 
 			function removeVehicle(vehicleId) {
 				$('#vehicleData').addClass('loading');
-				$("#vehiclesTable").load(
-						"/removeVehicle/?vehicleId=" + vehicleId, function() {
-							$('#vehicleData').removeClass('loading');
-						});
+				$("#vehiclesTable").load("/removeVehicle/?vehicleId=" + vehicleId, function() {
+					$('#vehicleData').removeClass('loading');
+				});
 			}
 
 			function setDefaultVehicle(vehicleId) {
 				$('#vehicleData').addClass('loading');
-				$("#vehiclesTable").load(
-						"/setdefaultvehicle/?vehicleId=" + vehicleId,
-						function() {
-							$('#vehicleData').removeClass('loading');
-						});
+				$("#vehiclesTable").load("/setdefaultvehicle/?vehicleId=" + vehicleId, function() {
+					$('#vehicleData').removeClass('loading');
+				});
 			}
 
-			function removeCard(paymentMethodId) {
+			function removeCard(cardId) {
 				$('#paymentForm').addClass('loading');
-				$("#cardsTable").load(
-						"/removeCard/?paymentMethodId=" + paymentMethodId,
-						function() {
-							$('#paymentForm').removeClass('loading');
-						});
+				$("#cardsTable").load("/removeCard/?cardId=" + cardId, function() {
+					$('#paymentForm').removeClass('loading');
+				});
 			}
 
-			function setDefaultCard(paymentMethodId) {
+			function setDefaultCard(cardId) {
 				$('#paymentForm').addClass('loading');
-				$("#cardsTable").load(
-						"/setdefaultcard/?paymentMethodId=" + paymentMethodId,
-						function() {
-							$('#paymentForm').removeClass('loading');
-						});
+				$("#cardsTable").load("/setdefaultcard/?cardId=" + cardId, function() {
+					$('#paymentForm').removeClass('loading');
+				});
 			}
 		</script>
 	</div>

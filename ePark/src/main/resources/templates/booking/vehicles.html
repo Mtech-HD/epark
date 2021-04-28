@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{/booking/booking-layout}">
+
+<body>
+
+	<div layout:fragment="booking" th:remove="tag">
+		<form method="post" th:action="@{/booking/vehicles}" id="vehicleData">
+			<div class="ui stackable grid margin-top-20">
+				<div class="row">
+					<div class="eleven wide column">
+
+
+						<div class="alert alert-danger alert-dismissible fade show"
+							id="error" role="alert">Please select a vehicle</div>
+
+
+						<div th:insert="~{fragments :: vehicles}" id="vehiclesTable"></div>
+
+
+						<div th:insert="~{fragments :: vehiclesAdd}"
+							id="vehicleAddForm" class="margin-top-20"></div>
+
+
+
+
+					</div>
+					<div class="five wide column">
+						<div th:insert="~{fragments :: bookingQuickSummary}"></div>
+					</div>
+				</div>
+
+				<div>
+					<button class="ui button" type="submit" name="back" formnovalidate>Back</button>
+					<button class="ui button" type="submit" name="cancel"
+						formnovalidate>Cancel</button>
+					<button type="submit" id="nextButton" class="ui primary button">&nbsp;
+						Next &nbsp;</button>
+				</div>
+
+			</div>
+		</form>
+
+	</div>
+
+
+	<div layout:fragment="script">
+
+		<script>
+			$(document).ready(function() {
+				$("#error").hide();
+				$('.ui.checkbox').checkbox();
+			});
+
+			$('#expandVehicleAdd').click(function() {
+				if ($('#vehicleAddBody').css("display") == "block") {
+					$('#vehicleAddBody').slideUp(function() {
+						$('#vehicleAddBody').css('display', 'none');
+					});
+					$('#vehicleExpandSymbol').removeClass("minus").addClass("add");
+				} else {
+
+					$('#vehicleAddBody').slideDown(function() {
+
+						$('#vehicleAddBody').css('display', 'block');
+					});
+					$('#vehicleExpandSymbol').removeClass("add").addClass("minus");
+				}
+			});
+
+			$('#addVehicleButton').click(function() {
+				$('#vehicleData').addClass('loading');
+				var data = $('#vehicleData').serialize();
+				$("#vehiclesTable").load("/addvehicles?" + data, function() {
+					$('#vehicleData').removeClass('loading');
+				});
+				$('#vehicleAddBody').css('display', 'none');
+				$('#vehicleExpandSymbol').removeClass("minus").addClass("add");
+				$('#vehicleData').form('clear');
+			});
+
+			function removeVehicle(vehicleId) {
+				$('#vehicleData').addClass('loading');
+				$("#vehiclesTable").load("/removeVehicle?vehicleId=" + vehicleId, function() {
+					$('#vehicleData').removeClass('loading');
+				});
+			}
+
+			function setDefaultVehicle(vehicleId) {
+				$('#vehicleData').addClass('loading');
+				$("#vehiclesTable").load("/setdefaultvehicle/?vehicleId=" + vehicleId, function() {
+					$('#vehicleData').removeClass('loading');
+				});
+			}
+
+			$('body').on('change', 'input[type="checkbox"]', function() {
+				$('input[type="checkbox"]').not(this).prop('checked', false);
+			});
+
+			$('#nextButton').click(function(e) {
+				if ($('input[type="checkbox"]:checked').length == 0) {
+					e.preventDefault();
+					$("#error").show();
+				}
+			});
+		</script>
+	</div>
+
+</body>
+</html>

@@ -10,6 +10,8 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,7 +20,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicUpdate;
@@ -41,6 +42,8 @@ public class CarParks {
 
 	private String email;
 
+	private String serialNumber;
+
 	private String carParkAddress1;
 
 	private String carParkAddress2;
@@ -51,14 +54,31 @@ public class CarParks {
 
 	private BigDecimal price;
 
+	@Enumerated(EnumType.STRING)
 	private CarParkStatus carParkStatus;
 
 	private Date dateModified;
 
+	@Enumerated(EnumType.STRING)
 	private ParkingRate parkingRate;
 
+	private int enableFutureWeeks;
+
+	private boolean dynamicPricing;
+
+	private BigDecimal targetRevenue;
+
+	private String description;
+
+	private Integer heightRestriction;
+
+	private String stripeId;
+
+	@Enumerated(EnumType.STRING)
+	private AccessControlTypes accessControl;
+
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "carParkOwners", joinColumns = @JoinColumn(name = "carParkId", referencedColumnName = "carParkId"), inverseJoinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"))
 	private Set<Users> users;
 
@@ -66,25 +86,35 @@ public class CarParks {
 	private Set<CarParkSpots> carParkSpots = new HashSet<CarParkSpots>();
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "carParks", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "carParks", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<CarParkComments> carParkComments;
 
 	@OneToMany(mappedBy = "carParks", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<CarParkTimes> carParkTimes;
 
-	@JsonIgnore
 	@OneToMany(mappedBy = "carParks", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<ClosureDates> closureDates;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "carParks", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<CarParkPayments> carParkPayments;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "carParks", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Bookings> bookings;
 
 	public CarParks() {
 
 	}
 
-	public CarParks(String name, String email, String carParkAddress1, String carParkAddress2, String carParkCity,
-			String carParkPostcode, BigDecimal price, CarParkStatus carParkStatus, Date dateModified,
-			ParkingRate parkingRate, Set<Users> users) {
+	public CarParks(String name, String serialNumber, String email, String carParkAddress1, String carParkAddress2,
+			String carParkCity, String carParkPostcode, BigDecimal price, CarParkStatus carParkStatus,
+			int enableFutureWeeks, String description, Integer heightRestriction, AccessControlTypes accessControl,
+			Date dateModified, ParkingRate parkingRate, boolean dynamicPricing, BigDecimal targetRevenue,
+			Set<Users> users, String stripeId) {
 		super();
 		this.name = name;
+		this.serialNumber = serialNumber;
 		this.email = email;
 		this.carParkAddress1 = carParkAddress1;
 		this.carParkAddress2 = carParkAddress2;
@@ -92,9 +122,31 @@ public class CarParks {
 		this.carParkPostcode = carParkPostcode;
 		this.price = price;
 		this.carParkStatus = carParkStatus;
+		this.enableFutureWeeks = enableFutureWeeks;
+		this.description = description;
+		this.heightRestriction = heightRestriction;
+		this.accessControl = accessControl;
 		this.dateModified = dateModified;
 		this.parkingRate = parkingRate;
+		this.dynamicPricing = dynamicPricing;
+		this.targetRevenue = targetRevenue;
 		this.users = users;
+		this.stripeId = stripeId;
+	}
+
+	public enum AccessControlTypes {
+		NOBARRIER, KEYCODE, ANPR, TICKET, STAFF
+	}
+
+	public enum CarParkStatus {
+
+		APPROVED, REJECTED, SUBMITTED;
+
+	}
+
+	public enum ParkingRate {
+
+		HOUR, HALFHOUR
 	}
 
 	public long getCarParkId() {
@@ -217,12 +269,103 @@ public class CarParks {
 		this.carParkComments = carParkComments;
 	}
 
+	public String getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(String serialNumber) {
+		this.serialNumber = serialNumber;
+	}
+
+	public boolean getDynamicPricing() {
+		return dynamicPricing;
+	}
+
+	public void setDynamicPricing(boolean dynamicPricing) {
+		this.dynamicPricing = dynamicPricing;
+	}
+
+	public BigDecimal getTargetRevenue() {
+		return targetRevenue;
+	}
+
+	public void setTargetRevenue(BigDecimal targetRevenue) {
+		this.targetRevenue = targetRevenue;
+	}
+
+	public int getEnableFutureWeeks() {
+		return enableFutureWeeks;
+	}
+
+	public void setEnableFutureWeeks(int enableFutureWeeks) {
+		this.enableFutureWeeks = enableFutureWeeks;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Integer getHeightRestriction() {
+		return heightRestriction;
+	}
+
+	public void setHeightRestriction(Integer heightRestriction) {
+		this.heightRestriction = heightRestriction;
+	}
+
+	public AccessControlTypes getAccessControl() {
+		return accessControl;
+	}
+
+	public void setAccessControl(AccessControlTypes accessControl) {
+		this.accessControl = accessControl;
+	}
+
+	public String getStripeId() {
+		return stripeId;
+	}
+
+	public void setStripeId(String stripeId) {
+		this.stripeId = stripeId;
+	}
+
 	public Set<Bookings> getBookings() {
 		return bookings;
 	}
 
 	public void setBookings(Set<Bookings> bookings) {
 		this.bookings = bookings;
+	}
+
+	public Set<ClosureDates> getClosureDates() {
+		return closureDates;
+	}
+
+	public void setClosureDates(Set<ClosureDates> closureDates) {
+		this.closureDates = closureDates;
+	}
+
+	public Set<CarParkPayments> getCarParkPayments() {
+		return carParkPayments;
+	}
+
+	public void setCarParkPayments(Set<CarParkPayments> carParkPayments) {
+		this.carParkPayments = carParkPayments;
+	}
+
+	public Set<CarParkSpots> getNormalSpots() {
+		Set<CarParkSpots> normalSpots = new HashSet<CarParkSpots>();
+
+		for (CarParkSpots carParkSpot : carParkSpots) {
+			if (carParkSpot.getIsDisabled() == false) {
+				normalSpots.add(carParkSpot);
+			}
+		}
+		return normalSpots;
 	}
 
 	public Set<CarParkSpots> getDisabledSpots() {
@@ -232,8 +375,15 @@ public class CarParks {
 				disabledSpots.add(carParkSpot);
 			}
 		}
-
 		return disabledSpots;
+	}
+
+	public BigDecimal getParkingRateValue() {
+		if (parkingRate == ParkingRate.HALFHOUR) {
+			return new BigDecimal(0.5);
+		}
+
+		return new BigDecimal(1.0);
 	}
 
 	public List<CarParkTimes> orderTimes() {

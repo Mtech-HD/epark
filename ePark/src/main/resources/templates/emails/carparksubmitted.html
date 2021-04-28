@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Car Park Submission</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- use the font -->
+<style>
+body {
+	font-family: 'Roboto', sans-serif;
+	font-size: 14px;
+}
+
+</style>
+</head>
+<body>
+	<p th:text="'Dear ' +${name}+ ','"></p>
+
+	<p>We have received your car park submission.</p>
+
+	<p>A member of the ePark admin team will review the details and let you know shortly.</p>
+
+	<p th:text="'Car Park: ' +${carparkname}"></p>
+
+	<p>
+		Regards, <br /> <em>ePark Admin Team</em>
+	</p>
+</body>
+</html>
