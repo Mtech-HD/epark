@@ -1,4 +1,4 @@
-package com.ePark.entity;
+package com.ePark.model;
 
 import java.math.BigDecimal;
 

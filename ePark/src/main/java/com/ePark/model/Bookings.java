@@ -1,4 +1,4 @@
-package com.ePark.entity;
+package com.ePark.model;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -22,7 +22,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.ePark.entity.CarParks.ParkingRate;
+import com.ePark.model.CarParks.ParkingRate;
 
 @Entity
 @DynamicUpdate
@@ -77,9 +77,13 @@ public class Bookings {
 	public Bookings() {
 		super();
 	}
+	
+	public Bookings(long bookingId) {
+		this.bookingId = bookingId;
+	}
 
 	public Bookings(Users users, Vehicles vehicles, CarParks carParks, CarParkSpots carParkSpots, String paymentId,
-			LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+			LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, BookingStatus bookingStatus) {
 		super();
 		this.users = users;
 		this.vehicles = vehicles;
@@ -90,6 +94,7 @@ public class Bookings {
 		this.endDate = endDate;
 		this.startTime = startTime;
 		this.endTime = endTime;
+		this.bookingStatus = bookingStatus;
 	}
 
 	public enum BookingStatus {

@@ -1,4 +1,4 @@
-package com.ePark.entity;
+package com.ePark.model;
 
 import java.util.Date;
 
@@ -34,6 +34,10 @@ public class CarParkComments {
 
 	public CarParkComments() {
 
+	}
+	
+	public CarParkComments(long carParkCommentId) {
+		this.carParkCommentId = carParkCommentId;
 	}
 	
 	public CarParkComments(String comment, Date dateCreated, Users users, CarParks carParks) {

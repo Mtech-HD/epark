@@ -27,7 +27,8 @@
 
 
 							<div class="nine wide column">
-								<div class="ui segments" sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')">
+								<div class="ui segments"
+									sec:authorize="isAuthenticated()&&hasAnyAuthority('ADMIN')">
 									<div class="ui top segment secondary">Actions</div>
 									<div class="ui segment">
 										<th:block
@@ -58,7 +59,7 @@
 									</div>
 
 									<div class="ui segment">
-
+										<h4 class="ui horizontal divider header">Details</h4>
 										<table class="ui very basic table">
 
 											<tbody>
@@ -84,6 +85,37 @@
 													<td th:text="${carpark.email}"></td>
 												</tr>
 												<tr>
+													<td>Max Height Restriction:</td>
+													<td
+														th:text="${carpark.heightRestriction == null} ? 'None' : ${carpark.heightRestriction} + ' metres'"></td>
+												</tr>
+												<tr>
+													<td>Access Type:</td>
+													<td th:text="${carpark.accessControl.toString()}"></td>
+												</tr>
+												<tr>
+													<td>Date Modified:</td>
+													<td
+														th:text="${#dates.format(carpark.dateModified, 'dd/MM/yy HH:mm')}"></td>
+												</tr>
+											</tbody>
+										</table>
+
+										<table class="ui table">
+											<tbody>
+												<tr>
+													<td>Description:</td>
+													<td th:text="${carpark.description}"></td>
+												</tr>
+
+											</tbody>
+										</table>
+										<h4 class="ui horizontal divider header">Pricing</h4>
+
+										<table class="ui very basic table">
+											<tbody>
+
+												<tr>
 													<td>Parking Rate:</td>
 													<td th:text="'per/'+${carpark.parkingRate}"></td>
 												</tr>
@@ -100,31 +132,12 @@
 													<td>Target Revenue/Week:</td>
 													<td th:text="'£' +${carpark.targetRevenue}"></td>
 												</tr>
-												<tr>
-													<td>Max Height Restriction:</td>
-													<td
-														th:text="${carpark.heightRestriction == null} ? 'None' : ${carpark.heightRestriction} + ' metres'"></td>
-												</tr>
-												<tr>
-													<td>Access Type:</td>
-													<td th:text="${carpark.accessControl.toString()}"></td>
-												</tr>
-												<tr>
-													<td>Date Modified:</td>
-													<td
-														th:text="${#dates.format(carpark.dateModified, 'dd/MM/yy HH:mm')}"></td>
-												</tr>
-											</tbody>
-										</table>
-										<table class="ui table">
-											<tbody>
-												<tr>
-													<td>Description:</td>
-													<td th:text="${carpark.description}"></td>
-												</tr>
 
 											</tbody>
 										</table>
+										<h4 class="ui horizontal divider header">Spaces</h4>
+										<a class="pointer underline" id="spaceBreakdownButton">View
+											space breakdown</a>
 										<table class="ui table">
 											<tbody>
 												<tr>
@@ -199,10 +212,12 @@
 
 				<div data-tab="bookings" class="ui tab">
 					<div class="ui stackable grid">
+									<a id="back" class="pointer underline"><i class="chevron left icon fitted"></i>&nbsp;Back</a>
+					
 						<div class="row">
 
 
-							<div class="four wide column">
+							<div class="four wide column sideView">
 
 								<table id="bookingTable"
 									class="ui unstackable celled selectable table">
@@ -232,7 +247,7 @@
 
 							</div>
 
-							<div class="twelve wide column">
+							<div class="twelve wide column mainView">
 								<div th:insert="~{fragments :: bookingsInfo}" id="bookingsInfo"></div>
 							</div>
 						</div>
@@ -458,40 +473,34 @@
 				</form>
 
 
-				<form id="addBankAccount" method="post" action="/addBankAccount"
-					class="ui form modal">
 
-					<i class="close icon"></i>
-
-					<div class="header">Add bank account</div>
-
-					<div class="ui  content">
-						<div class="fields">
-							<div class="field">
-								<label>Account Holder Name:</label> <input type="text"
-									id="accountName" required />
-							</div>
-						</div>
-
-						<div class="fields margin-bottom-20">
-							<div class="field">
-								<label>Email:</label> <input type="text" id="email" required />
-							</div>
-						</div>
+				<div class="ui tiny modal" id="spaceBreakdown">
 
 
-						<div id="iban-element"></div>
-
-
-						<div id="error-message" class="margin-top-20" role="alert"></div>
+					<div class="header">Space BreakDown</div>
+					<div class="cotent padding-sides-20">
+						<table class="ui table" id="spaceBreakdownTable">
+							<thead>
+								<tr class="center aligned">
+									<th>Space Number</th>
+									<th>Disabled</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="space : ${carpark.carParkSpots}" class="center aligned">
+									<td th:text="${space.spaceNumber}"></td>
+									<td th:text="${space.isDisabled} ? 'Yes' : 'No'"></td>
+								</tr>
+							</tbody>
+						</table>
 
 					</div>
 
-					<div class="actions">
-						<button id="confirm" class="ui positive button">Confirm</button>
-					</div>
-				</form>
+					<div class="actions margin-top-10">
 
+						<button class="ui cancel button">Close</button>
+					</div>
+				</div>
 
 
 
@@ -510,68 +519,128 @@
 			src="https://cdnjs.cloudflare.com/ajax/libs/jquery.address/1.6/jquery.address.js"></script>
 
 		<script th:inline="javascript">
-			$(document).ready(function() {
+		
+		
+		$( window ).resize(function() {
+			showViews();
+		});
+		
+		function showViews() {
+			if ($(window).width() < 767) {
 
-				$('#bookingTable').DataTable({
-					lengthMenu : 10,
-					lengthChange : false,
-					searching : false,
-					info : false,
-					dom : "<'ui grid margin-top-0'" + "<'row dt-table'" + "<'sixteen wide column'tr>" + ">" + "<'row'" + "<'sixteen wide column' p>" + ">" + ">",
-				});
+		        $(".mainView").hide();
+		        $("#back").hide();
+		        
+		    } else {
+		    	$("#back").hide();
+				$(".mainView").show();
+				$(".sideView").show();
+		    }
+		}
+		
+			$(document).ready(
+					function() {
+						
+						showViews();
 
-				$('#paymentTable').DataTable({
-					lengthMenu : 10,
-					lengthChange : false,
-					bAutoWidth : false,
-					info : false,
-					dom : "<'ui grid margin-top-0'" + "<'row'" + "<'sixteen wide column padding-0' f>" + ">" + "<'row dt-table'" + "<'sixteen wide column padding-0'tr>" + ">" + "<'row'" + "<'sixteen wide column padding-0' p>" + ">" + ">",
+						$('#bookingTable').DataTable({
+							lengthMenu : 10,
+							lengthChange : false,
+							searching : false,
+							info : false,
+							aaSorting : [ [ 0, 'desc' ] ],
+							dom : "<'ui grid margin-top-0'" + "<'row dt-table'" + "<'sixteen wide column'tr>" + ">" + "<'row'" + "<'sixteen wide column' p>" + ">" + ">",
+						});
 
-				});
+						$('#paymentTable').DataTable(
+								{
+									lengthMenu : 10,
+									lengthChange : false,
+									bAutoWidth : false,
+									info : false,
+									aaSorting : [ [ 0, 'desc' ] ],
+									dom : "<'ui grid'" + "<'row'" + "<'sixteen wide column padding-0' f>" + ">" + "<'row dt-table'" + "<'sixteen wide column padding-0'tr>" + ">"
+											+ "<'row'" + "<'sixteen wide column padding-0' p>" + ">" + ">",
 
-				$('.ui.pagination.menu').removeClass('stackable').addClass('unstackable');
+								});
+						
+						$('#spaceBreakdownTable').DataTable(
+								{
+									lengthMenu : 10,
+									lengthChange : false,
+									bAutoWidth : false,
+									info : false,
+									dom : "<'ui grid margin-top-0'" + "<'row'" + "<'sixteen wide column right aligned padding-0' f>" + ">" + "<'row dt-table'" + "<'sixteen wide column padding-0'tr>" + ">"
+											+ "<'row'" + "<'sixteen wide column padding-0' p>" + ">" + ">",
 
-				$('#bookingTable').removeClass('dataTable');
-				$('#bookingTable tr:first-child').addClass("active");
+								});
 
-				if ($('#bookingTable .clickable-row.active').attr("bookingid") !== undefined) {
-					getBooking();
-				}
+						removeStacked();
+						
+						function removeStacked() {
+							$('.ui.pagination.menu').removeClass('stackable').addClass('unstackable');
+						}
 
-				function getBooking() {
-					var bookingParam = "bookingId=" + $('#bookingTable .clickable-row.active').attr("bookingid");
-					var url = "/getBooking/?" + bookingParam;
+						
+						$('#bookingTable_paginate').click(function() {
+							removeStacked();
+						}) 
 
-					$('#bookingsInfoSegment').addClass('loading');
-					$("#bookingsInfo").load(url, function() {
-						$('#bookingsInfoSegment').removeClass('loading');
+						$('#bookingTable').removeClass('dataTable');
+						$('#bookingTable tr:first-child').addClass("active");
+
+						if ($('#bookingTable .clickable-row.active').attr("bookingid") !== undefined) {
+							getBooking();
+							
+						}
+						
+						$('#back').click(function() {
+							$(".sideView").show();
+					        $(".mainView").hide();
+					        $("#back").hide();
+						})
+
+						function getBooking() {
+							var bookingParam = "bookingId=" + $('#bookingTable .clickable-row.active').attr("bookingid");
+							var url = "/getBooking/?" + bookingParam;
+
+							$('#bookingsInfoSegment').addClass('loading');
+							$("#bookingsInfo").load(url, function() {
+								$('#bookingsInfoSegment').removeClass('loading');
+							});
+						}
+
+						$("#bookingTable").on('click', '.clickable-row', function() {
+							$('.clickable-row').not(this).removeClass('active');
+							$(this).addClass('active');
+
+							getBooking();
+							
+							if ($(window).width() < 800) {
+								$(".sideView").hide();
+						        $(".mainView").show();
+						        $("#back").show();
+						 
+						    }
+
+						});
+
+						$('#closureDateAdd').click(function() {
+							$('#noBookings').hide();
+							$('#bookingsFound').hide();
+							$('#carParkId').val($('#detailsCarParkId').text());
+							$('#closureDateForm').modal('show')
+						})
+
+						var dateSelector = $("#closureDatePicker").datepicker({
+							dateFormat : "dd/mm/yy",
+							startDate : '01/01/1997',
+							//minDate : 0,
+							onSelect : function() {
+								checkForBookings();
+							}
+						});
 					});
-				}
-
-				$("#bookingTable").on('click', '.clickable-row', function() {
-					$('.clickable-row').not(this).removeClass('active');
-					$(this).addClass('active');
-
-					getBooking();
-
-				});
-
-				$('#closureDateAdd').click(function() {
-					$('#noBookings').hide();
-					$('#bookingsFound').hide();
-					$('#carParkId').val($('#detailsCarParkId').text());
-					$('#closureDateForm').modal('show')
-				})
-
-				var dateSelector = $("#closureDatePicker").datepicker({
-					dateFormat : "dd/mm/yy",
-					startDate : '01/01/1997',
-					//minDate : 0,
-					onSelect : function() {
-						checkForBookings();
-					}
-				});
-			});
 
 			function checkForBookings() {
 
@@ -612,6 +681,9 @@
 				historyType : 'hash'
 			});
 
+			$('#spaceBreakdownButton').click(function() {
+				$('#spaceBreakdown').modal('show');
+			});
 		</script>
 	</div>
 </body>

@@ -34,8 +34,6 @@
 									th:field="*{name}" placeholder="Enter a name" required
 									autofocus="autofocus" />
 							</div>
-
-
 						</div>
 
 						<div class="two fields">
@@ -45,9 +43,7 @@
 									th:field="*{email}" placeholder="email@example.com" required
 									autofocus="autofocus" />
 							</div>
-
 							<div class="field">
-
 								<label> Serial Number: </label><input type="text" id="name"
 									th:field="*{serialNumber}" placeholder="Enter a name" required
 									autofocus="autofocus" />
@@ -57,7 +53,6 @@
 
 						<div class="two fields">
 							<div class="field">
-
 								<label for="address1"> Address 1:</label> <input type="text"
 									id="address1" th:field="*{carParkAddress1}" required
 									placeholder="Address line 1" autofocus="autofocus" />
@@ -89,8 +84,6 @@
 					<div class="ui segment">
 						<div class="ui top attached label secondary">Spaces &
 							Pricing</div>
-
-
 						<div class="two fields">
 							<div class="field">
 								<label for="noofspaces">Total spaces:</label><input
@@ -105,10 +98,7 @@
 									placeholder="Number of disabled spaces" required
 									autofocus="autofocus">
 							</div>
-
 						</div>
-
-
 
 						<div class="two fields">
 							<div class="field">
@@ -119,10 +109,7 @@
 										th:field="*{price}" placeholder="0.00" required
 										autofocus="autofocus">
 								</div>
-
 							</div>
-
-
 							<div class="field">
 								<label for="Rate">Parking Rate:</label>
 								<div class="ui radio">
@@ -144,7 +131,6 @@
 										min="1" max="52" step="1" id="Amount" placeholder="1" required
 										th:field="*{enableFutureWeeks}" autofocus="autofocus">
 								</div>
-
 							</div>
 							<div class="two wide field">
 								<div class="ui checkbox">
@@ -169,12 +155,7 @@
 					<div class="ui segment">
 						<div class="ui top attached label secondary">Additional
 							Information</div>
-
-
 						<div class="two fields">
-
-
-
 							<div class="field">
 
 								<label>Access Control:</label> <select class="ui fluid dropdown"
@@ -182,7 +163,6 @@
 									<option th:each="accessType : ${accessTypes}"
 										th:value="${accessType}" th:text="${accessType}"></option>
 								</select>
-
 								<div class="ui checkbox margin-top-10">
 									<input id="heightCheckbox" type="checkbox" value=""
 										th:checked="*{heightRestriction != null}"> <label
@@ -195,22 +175,17 @@
 										th:disabled="*{heightRestriction == null}" /> <label
 										class="ui label">Metres</label>
 								</div>
-
 							</div>
 
 							<div class="field">
 								<label>Description</label>
 								<textarea th:field="*{description}" rows="5"></textarea>
-
 							</div>
-
 						</div>
 					</div>
 
 					<div class="ui segment">
 						<div class="ui top attached label secondary">Opening hours</div>
-
-
 						<div class="fields">
 							<div class="field">
 								<div class="ui checkbox">
@@ -218,7 +193,6 @@
 										24/7 </label>
 								</div>
 							</div>
-
 							<div class="three wide field">
 								<div class="ui checkbox">
 									<input type="checkbox" value="" id="7to6"> <label>
@@ -227,7 +201,6 @@
 							</div>
 						</div>
 						<div class="fields timerow">
-
 							<div class="field">
 								<div class="ui checkbox">
 									<input class="days-checkbox" type="checkbox" value=""
@@ -367,11 +340,7 @@
 										placeholder="Closed" required autofocus="autofocus" />
 								</div>
 							</div>
-
-
 						</div>
-
-
 					</div>
 					<div class="field">
 						<th:block th:if="${carpark.carParkId == 0}">
@@ -398,11 +367,7 @@
 								class="ui ok primary button">Submit</button>
 						</div>
 					</div>
-
-
-
 				</form>
-
 			</div>
 		</div>
 	</div>

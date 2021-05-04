@@ -1,4 +1,4 @@
-package com.ePark.entity;
+package com.ePark.model;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -43,6 +43,10 @@ public class CarParkSpots {
 
 	public CarParkSpots() {
 
+	}
+	
+	public CarParkSpots(long carParkSpotId) {
+		this.carParkSpotId = carParkSpotId;
 	}
 
 	public CarParkSpots(CarParks carParks, boolean isDisabled, int spaceNumber) {

@@ -5,44 +5,27 @@ import static java.time.DayOfWeek.SUNDAY;
 import static java.time.temporal.TemporalAdjusters.nextOrSame;
 import static java.time.temporal.TemporalAdjusters.previousOrSame;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ePark.entity.Bookings;
-import com.ePark.entity.Bookings.BookingStatus;
-import com.ePark.entity.CarParkSpots;
-import com.ePark.entity.CarParks;
-import com.ePark.entity.EarningsAndBookings;
-import com.ePark.entity.Mail;
+import com.ePark.model.Bookings;
+import com.ePark.model.CarParkSpots;
+import com.ePark.model.CarParks;
+import com.ePark.model.EarningsAndBookings;
+import com.ePark.model.Bookings.BookingStatus;
 import com.ePark.repository.BookingRepository;
-import com.stripe.exception.StripeException;
-import com.stripe.model.PaymentIntent;
 
 @Service
 public class BookingService {
 
 	@Autowired
 	private BookingRepository bookingRepo;
-
-	@Autowired
-	private StripeService paymentsService;
 	
-	@Autowired
-	private EmailService emailService;
-	
-
 	private static final BigDecimal maxChangeRateWeek = new BigDecimal(0.1);
 
 	private static final BigDecimal maxChangeRateDay = new BigDecimal(0.2);
@@ -57,8 +40,8 @@ public class BookingService {
 		return bookingRepo.findByBookingId(bookingId);
 	}
 
-	public List<Bookings> findByCarParkSpotsAndStartDate(CarParkSpots carParkSpotId, LocalDate startDate) {
-		return bookingRepo.findByCarParkSpotsAndStartDate(carParkSpotId, startDate);
+	public List<Bookings> findByCarParkSpotsAndStartDateAndBookingStatusNot(CarParkSpots carParkSpot, LocalDate startDate, BookingStatus bookingStatus) {
+		return bookingRepo.findByCarParkSpotsAndStartDateAndBookingStatusNot(carParkSpot, startDate, bookingStatus);
 	}
 
 	public List<Bookings> findByCarParksAndStartDate(CarParks carPark, LocalDate startDate) {
@@ -123,9 +106,9 @@ public class BookingService {
 			revenueDifference = target.subtract(revenue);
 		}
 
-		revenueDifferencePercent = revenueDifference.divide(target, 8, RoundingMode.HALF_UP);
+		revenueDifferencePercent = revenueDifference.divide(target, 2, RoundingMode.HALF_UP);
 
-		return revenueDifferencePercent.multiply(maxChangeAmount);
+		return revenueDifferencePercent.multiply(maxChangeAmount).setScale(2, RoundingMode.HALF_UP);
 	}
 
 	public BigDecimal getPriceForDay(CarParks carPark, LocalDate date, BigDecimal weekPrice, int available,
@@ -159,14 +142,14 @@ public class BookingService {
 			percentageChange = percentageSpacesTaken.subtract(rangeForDecrease).divide(rangeForIncrease, 2,
 					RoundingMode.HALF_UP);
 
-			finalPrice = finalPrice.add(maxChangeAmount.multiply(percentageChange));
+			finalPrice = finalPrice.add(maxChangeAmount.multiply(percentageChange)).setScale(2, RoundingMode.HALF_UP);;
 
 		} else {
 
 			percentageChange = rangeForDecrease.subtract(percentageSpacesTaken).divide(rangeForDecrease, 2,
 					RoundingMode.HALF_UP);
 
-			finalPrice = finalPrice.subtract(maxChangeAmount.multiply(percentageChange));
+			finalPrice = finalPrice.subtract(maxChangeAmount.multiply(percentageChange)).setScale(2, RoundingMode.HALF_UP);;
 		}
 
 		if (finalPrice.compareTo(minimumPrice) <= 0) {
@@ -175,79 +158,24 @@ public class BookingService {
 
 		return finalPrice;
 	}
-
-	public void cancelBookingsAtDate(CarParks carPark, LocalDate date) throws StripeException, MessagingException, IOException {
-		List<Bookings> bookings = bookingRepo.findByCarParksAndStartDate(carPark, date);
-
-		if (bookings != null) {
-			for (Bookings b : bookings) {
-				paymentsService.refundPaymentIntent(b.getPaymentId());
-				PaymentIntent paymentIntent = paymentsService.getPaymentIntent(b.getPaymentId());
-				b.setBookingStatus(BookingStatus.CANCELLED);
-				
-				Mail mail = new Mail();
-				mail.setFrom("ePark Admin <official-epark@outlook.com>");
-				mail.setMailTo(b.getUsers().getEmail());
-				mail.setSubject("Refund Confirmation");
-				mail.setTemplate("emails/refundconfirmation");
-
-				Map<String, Object> prop = new HashMap<String, Object>();
-				prop.put("name", b.getUsers().getFirstName());
-				prop.put("bookingId", b.getBookingId());
-				prop.put("refundAmount", b.getAmount());
-				prop.put("receipturl", paymentIntent.getCharges().getData().stream().findFirst().get().getReceiptUrl());
-				mail.setProps(prop);
-				emailService.sendEmail(mail);
-			}
-		}
-	}
 	
-	public void cancelBooking(long bookingId) throws StripeException, MessagingException, IOException {
+	public Bookings cancelBooking(long bookingId) {
 		
 		Bookings booking = bookingRepo.findByBookingId(bookingId);
-		
-		paymentsService.refundPaymentIntent(booking.getPaymentId());
-		PaymentIntent paymentIntent = paymentsService.getPaymentIntent(booking.getPaymentId());
 
 		booking.setBookingStatus(BookingStatus.CANCELLED);
 
-		bookingRepo.save(booking);
-
-		Mail mail = new Mail();
-		mail.setFrom("ePark Admin <official-epark@outlook.com>");
-		mail.setMailTo(booking.getUsers().getEmail());
-		mail.setSubject("Refund Confirmation");
-		mail.setTemplate("emails/refundconfirmation");
-
-		Map<String, Object> prop = new HashMap<String, Object>();
-		prop.put("name", booking.getUsers().getFirstName());
-		prop.put("bookingId", booking.getBookingId());
-		prop.put("refundAmount", booking.getAmount());
-		prop.put("receipturl", paymentIntent.getCharges().getData().stream().findFirst().get().getReceiptUrl());
-		mail.setProps(prop);
-		emailService.sendEmail(mail);
+		return bookingRepo.save(booking);
 	}
+
 	
-	public void reassign(long bookingId, CarParkSpots newCarParkSpot) throws MessagingException, IOException {
+	public Bookings reassign(long bookingId, CarParkSpots newCarParkSpot) {
 		
 		Bookings booking = bookingRepo.findByBookingId(bookingId);
 
 		booking.setCarParkSpots(newCarParkSpot);
 
-		bookingRepo.save(booking);
-
-		Mail mail = new Mail();
-		mail.setFrom("ePark Admin <official-epark@outlook.com>");
-		mail.setMailTo(booking.getUsers().getEmail());
-		mail.setSubject("Booking Reassigned Confirmation");
-		mail.setTemplate("emails/reassignconfirmation");
-
-		Map<String, Object> prop = new HashMap<String, Object>();
-		prop.put("name", booking.getUsers().getFirstName());
-		prop.put("bookingId", booking.getBookingId());
-		prop.put("spaceNumber", booking.getCarParkSpots().getSpaceNumber());
-		mail.setProps(prop);
-		emailService.sendEmail(mail);
+		return bookingRepo.save(booking);
 	}
 	
 	public BigDecimal getRevenueForMonth(CarParks carPark) {
@@ -257,6 +185,11 @@ public class BookingService {
 		LocalDate endDate =  today.withDayOfMonth(today.lengthOfMonth());
 		
 		return bookingRepo.revenueBetween(carPark.getCarParkId(), BookingStatus.ACTIVE.toString(), startDate, endDate);
+	}
+	
+	
+	public void removeInvalidBookings() {
+		bookingRepo.removeInvalidBookings();
 	}
 
 }

@@ -22,7 +22,7 @@
 					</h5>
 					<hr class="solid">
 
-<!-- 					<label class="margin-bottom-10">Show Closest To:</label> <select
+					<!-- 					<label class="margin-bottom-10">Show Closest To:</label> <select
 						class="ui fluid dropdown" id="closestDropdown">
 
 						<option class="item" value="location">Current Location</option>
@@ -231,7 +231,7 @@
 					mapTypeControlOptions : {
 						mapTypeIds : []
 					},
-					mapId: 'b58ae7bb78881906'
+					mapId: 'fa22bcb7daac078f'
 /* 					styles : [ {
 						"featureType" : "all",
 						"elementType" : "all",
@@ -265,6 +265,24 @@
 					} ] */
 
 				});
+				
+				var markerButton = document.createElement("div");
+				markerButton.setAttribute("style", "margin-top:60px; margin-right:15px; border-radius:3px; box-shadow: 0 2px 6px rgba(0,0,0,.3); border: 1px solid #fff; padding: 3px 6px; font: bold 12px Roboto, Arial, sans-serif; color: #686868; background-color: #FFFFFF; cursor: pointer;");
+				markerButton.innerHTML = "Go to marker";
+				map.controls[google.maps.ControlPosition.TOP_RIGHT].push(markerButton);
+				google.maps.event.addDomListener(markerButton, "click", function () {
+					map.setCenter(mainMarker.getPosition());
+					map.setZoom(15);
+				});
+				
+				var markerCenterButton = document.createElement("div");
+				markerCenterButton.setAttribute("style", "margin-top:60px; margin-right:10px; border-radius:3px; box-shadow: 0 2px 6px rgba(0,0,0,.3); border: 1px solid #fff; padding: 3px 6px; font: bold 12px Roboto, Arial, sans-serif; color: #686868; background-color: #FFFFFF; cursor: pointer;");
+				markerCenterButton.innerHTML = "Move marker to centre";
+				map.controls[google.maps.ControlPosition.TOP_RIGHT].push(markerCenterButton);
+				google.maps.event.addDomListener(markerCenterButton, "click", function () {
+					mainMarker.setPosition(map.getCenter());
+					find_closest_markers();
+				});
 
 				mainMarker = new google.maps.Marker({
 						map,
@@ -294,9 +312,9 @@
 									+ carParks[i].carParkPostcode;
 							geocoder.geocode({
 								'address' : address
-							}, geocodeEncapsulation(carParks[i]))
+							}, geocodeEncapsulation(carParks[i]))	
 						}
-						
+					
 					}
 				});
 
@@ -325,15 +343,18 @@
 									}
 
 									// If the place has a geometry, then present it on a map.
-									if (place.geometry.viewport) {
+/* 									if (place.geometry.viewport) {
 										map.fitBounds(place.geometry.viewport);
 									} else {
 										map.setCenter(place.geometry.location);
 										map.setZoom(17);
-									}
+									} */
 
 									mainMarker.setPosition(place.geometry.location);
+									map.setCenter(place.geometry.location);
 									map.setZoom(16);
+									
+									find_closest_markers();
 									//marker.setVisible(true);
 
 								});
@@ -345,8 +366,8 @@
 				google.maps.event.addListener(mainMarker, 'dragend',
 						find_closest_markers);
 				
- 				google.maps.event.addListenerOnce(map, 'tilesloaded',
-						find_closest_markers);  
+  				google.maps.event.addListenerOnce(map, 'tilesloaded',
+						find_closest_markers);   
 				
 			}
 			
@@ -582,7 +603,7 @@
 		</script>
 
 		<script
-			src="https://maps.googleapis.com/maps/api/js?libraries=geometry,places&key=AIzaSyAqmLfX-y8ALh9UU0d48ddAKL3WNpK7ti4&map_ids=b58ae7bb78881906&callback=initMap"
+			src="https://maps.googleapis.com/maps/api/js?libraries=geometry,places&key=AIzaSyAqmLfX-y8ALh9UU0d48ddAKL3WNpK7ti4&map_ids=fa22bcb7daac078f&callback=initMap"
 			defer></script>
 
 

@@ -136,10 +136,6 @@
 				var weeks = $('#weeks').val()
 
 				const startDatePicker = $("#startDatePicker").datepicker({
-					// beforeShowDay: function(date) {
-
-					//     return [date.getDay() == 6 || date.getDay() == 0,""];
-					//},
 					dateFormat : "dd/mm/yy",
 					altFormat : 'yy-mm-dd',
 					altField : "#altStartDatePicker",
@@ -246,7 +242,6 @@
 								disableTimes(false);
 								setTimes(carParkTime.openTime, carParkTime.closeTime);
 							}
-
 						}
 					});
 				}
@@ -285,22 +280,6 @@
 						endTimeMinimum = open;
 					}
 
-					/* 					if (startDatePicker.val() === new Date().toLocaleDateString()) {
-
-					 if (new Date().toLocaleTimeString() >= open) {
-					 startTimePicker.timepicker('option', 'minTime', new Date().toLocaleTimeString())
-					 endTimePicker.timepicker('option', 'minTime', moment(new Date().toLocaleTimeString(), 'HH:mm:ss').add(interval, 'minutes').format('HH:mm:ss'))
-					 }
-					 } else {
-					 startTimePicker.timepicker('option', 'minTime', open)
-
-					 endTimePicker.timepicker('option', 'minTime', moment(open, 'HH:mm:ss').add(interval, 'minutes').format('HH:mm:ss'))
-					 }
-
-					 if (startTimeEmpty) {
-					 endTimePicker.timepicker('option', 'minTime', moment(startTimePicker.val(), 'HH:mm:ss').add(interval, 'minutes').format('HH:mm:ss'))
-					 } */
-
 					//MinimumTimes
 					startTimePicker.timepicker('option', 'minTime', startTimeMinimum)
 					endTimePicker.timepicker('option', 'minTime', moment(endTimeMinimum, 'HH:mm:ss').add(interval, 'minutes').format('HH:mm:ss'))
@@ -330,20 +309,6 @@
 					}
 					return date;
 				}
-
-/* 				function getDayOfWeek(seldate) {
-					seldate = seldate.toDateString();
-					seldate = seldate.split(' ');
-					var weekday = new Array();
-					weekday['Mon'] = "MONDAY";
-					weekday['Tue'] = "TUESDAY";
-					weekday['Wed'] = "WEDNESDAY";
-					weekday['Thu'] = "THURSDAY";
-					weekday['Fri'] = "FRIDAY";
-					weekday['Sat'] = "SATURDAY";
-					weekday['Sun'] = "SUNDAY";
-					return weekday[seldate[0]];
-				} */
 
 				function updateTotal() {
 					const data = $("#form").serialize();

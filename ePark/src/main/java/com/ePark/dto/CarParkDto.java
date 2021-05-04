@@ -6,11 +6,11 @@ import java.util.Set;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.ePark.entity.CarParks;
-import com.ePark.entity.CarParks.AccessControlTypes;
-import com.ePark.entity.CarParks.CarParkStatus;
-import com.ePark.entity.CarParks.ParkingRate;
-import com.ePark.entity.Users;
+import com.ePark.model.CarParks;
+import com.ePark.model.Users;
+import com.ePark.model.CarParks.AccessControlTypes;
+import com.ePark.model.CarParks.CarParkStatus;
+import com.ePark.model.CarParks.ParkingRate;
 
 public class CarParkDto {
 
@@ -136,6 +136,7 @@ public class CarParkDto {
 	public CarParkDto(CarParks carPark) {
 		this.carParkId = carPark.getCarParkId();
 		this.name = carPark.getName();
+		this.serialNumber = carPark.getSerialNumber();
 		this.email = carPark.getEmail();
 		this.carParkAddress1 = carPark.getCarParkAddress1();
 		this.carParkAddress2 = carPark.getCarParkAddress2();
@@ -143,6 +144,7 @@ public class CarParkDto {
 		this.carParkPostcode = carPark.getCarParkPostcode();
 		this.spaces = carPark.getCarParkSpots().size();
 		this.isDisabled = carPark.getDisabledSpots().size();
+		this.enableFutureWeeks = carPark.getEnableFutureWeeks();
 		this.price = carPark.getPrice();
 		this.rate = carPark.getParkingRate();
 		this.carParkStatus = carPark.getCarParkStatus();

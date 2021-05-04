@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ePark.AppSecurityConfig;
-import com.ePark.entity.ChargeRequest;
-import com.ePark.entity.Users;
+import com.ePark.model.ChargeRequest;
+import com.ePark.model.Users;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
@@ -37,6 +37,7 @@ import com.stripe.param.AccountCreateParams.BusinessType;
 import com.stripe.param.AccountLinkCreateParams;
 import com.stripe.param.AccountLinkCreateParams.Type;
 import com.stripe.param.CustomerUpdateParams;
+import com.stripe.param.LoginLinkCreateOnAccountParams;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.RefundCreateParams;
 import com.stripe.param.SetupIntentCreateParams;
@@ -61,18 +62,6 @@ public class StripeService {
 		customerParams.put("email", email);
 		return Customer.create(customerParams);
 	}
-
-	/*
-	 * public PaymentMethod createCard(String paymentMethodId, String customerId)
-	 * throws StripeException {
-	 * 
-	 * PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentMethodId);
-	 * 
-	 * PaymentMethodAttachParams params =
-	 * PaymentMethodAttachParams.builder().setCustomer(customerId).build();
-	 * 
-	 * return paymentMethod.attach(params); }
-	 */
 
 	public Card createCard(String sourceId, String customerId) throws StripeException {
 
@@ -109,7 +98,6 @@ public class StripeService {
 				.setConfirm(true).setConfirmationMethod(PaymentIntentCreateParams.ConfirmationMethod.MANUAL).build();
 
 		return PaymentIntent.create(params);
-
 	}
 
 	public PaymentSourceCollection getCards(String customerId) throws StripeException {
@@ -182,8 +170,6 @@ public class StripeService {
 			return null;
 		}
 
-		System.out.println(bankId);
-
 		Map<String, Object> params = new HashMap<>();
 
 		params.put("amount", amount.multiply(new BigDecimal(100)).intValue());
@@ -192,7 +178,6 @@ public class StripeService {
 		params.put("destination", bankId);
 
 		return Payout.create(params);
-
 	}
 
 	public Transfer createTransfer(String accountId, BigDecimal amount, String decscription) throws StripeException {
@@ -205,7 +190,7 @@ public class StripeService {
 		params.put("amount", amount.multiply(new BigDecimal(100)).intValue());
 		params.put("currency", "gbp");
 		params.put("destination", accountId);
-		params.put("source_type", "bank_account");
+		params.put("source_type", "card");
 		params.put("description", decscription);
 
 		return Transfer.create(params);
@@ -242,8 +227,11 @@ public class StripeService {
 	}
 
 	public LoginLink getLoginLink(String accountId) throws StripeException {
+		
+		LoginLinkCreateOnAccountParams params = 
+				LoginLinkCreateOnAccountParams.builder().setRedirectUrl("https://localhost:8443/home").build();
 
-		return LoginLink.createOnAccount(accountId, (Map<String, Object>) null, (RequestOptions) null);
+		return LoginLink.createOnAccount(accountId, params, (RequestOptions) null);
 	}
 
 	public String getStripeAccountLink(String accountId, long carParkId) throws StripeException {
@@ -258,8 +246,7 @@ public class StripeService {
 			return getLoginLink(accountId).getUrl();
 		} else {
 			return createAccountLink(accountId, carParkId).getUrl(); 
-		}
-		
+		}	
 	}
 	
 	public Balance getAccountBalance(String accountId) throws StripeException {

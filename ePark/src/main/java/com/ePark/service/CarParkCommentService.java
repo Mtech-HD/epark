@@ -3,7 +3,7 @@ package com.ePark.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ePark.entity.CarParkComments;
+import com.ePark.model.CarParkComments;
 import com.ePark.repository.CarParkCommentRepository;
 
 @Service

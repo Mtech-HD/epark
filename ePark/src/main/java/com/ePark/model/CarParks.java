@@ -1,4 +1,4 @@
-package com.ePark.entity;
+package com.ePark.model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicUpdate;
@@ -87,6 +88,7 @@ public class CarParks {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "carParks", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("dateCreated ASC")
 	private Set<CarParkComments> carParkComments;
 
 	@OneToMany(mappedBy = "carParks", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -105,6 +107,10 @@ public class CarParks {
 
 	public CarParks() {
 
+	}
+	
+	public CarParks(long carParkId) {
+		this.carParkId = carParkId;
 	}
 
 	public CarParks(String name, String serialNumber, String email, String carParkAddress1, String carParkAddress2,

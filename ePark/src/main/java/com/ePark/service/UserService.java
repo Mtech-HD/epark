@@ -15,27 +15,25 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ePark.dto.UserRegistrationDto;
-import com.ePark.entity.Roles;
-import com.ePark.entity.Users;
+import com.ePark.model.Roles;
+import com.ePark.model.Users;
 import com.ePark.repository.UserRepository;
 
 @Service
 public class UserService implements UserDetailsService {
 
 	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
-
-	@Autowired
 	private UserRepository userRepo;
 
-	public Users save(UserRegistrationDto registrationDto) {
-		Set<Roles> roles = new HashSet<Roles>();
-		roles.add(registrationDto.getRoles());
+	public Users save(UserRegistrationDto userDto) {
+		
+		BCryptPasswordEncoder passwordEncoder =  new BCryptPasswordEncoder();
+		String encodedPassword = passwordEncoder.encode(userDto.getPassword());
 
-		Users user = new Users(registrationDto.getUsername(), passwordEncoder.encode(registrationDto.getPassword()),
-				registrationDto.getFirstName(), registrationDto.getLastName(), registrationDto.getEmail(),
-				registrationDto.getCustomerId(), roles);
-
+		Users user = new Users(userDto.getUsername(), encodedPassword,
+				userDto.getFirstName(), userDto.getLastName(), userDto.getEmail(),
+				userDto.getCustomerId(), userDto.getRoles());
+		
 		return userRepo.save(user);
 	}
 
@@ -45,8 +43,11 @@ public class UserService implements UserDetailsService {
 		if (user == null) {
 			throw new UsernameNotFoundException("Invalid username or password");
 		}
+		Set<Roles> roles = new HashSet<Roles>();
+		roles.add(user.getRoles());
+		
 		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-				mapRolesToAuthorities(user.getRoles()));
+				mapRolesToAuthorities(roles));
 	}
 
 	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Roles> roles) {
@@ -73,10 +74,10 @@ public class UserService implements UserDetailsService {
 		return userRepo.findByResetPasswordToken(token);
 	}
 
-	public void updateResetPasswordToken(String token, Users user) {
+	public Users updateResetPasswordToken(String token, Users user) {
 
 		user.setResetPasswordToken(token);
-		userRepo.save(user);
+		return userRepo.save(user);
 	}
 	
 	public void updatePassword(String newPassword, Users user) {

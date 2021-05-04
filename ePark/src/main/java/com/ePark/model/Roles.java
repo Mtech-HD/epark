@@ -1,4 +1,4 @@
-package com.ePark.entity;
+package com.ePark.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +18,10 @@ public class Roles {
 
 	public Roles() {
 
+	}
+	
+	public Roles(long roleId) {
+		this.roleId = roleId;
 	}
 
 	public Roles(String name) {

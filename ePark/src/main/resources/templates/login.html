@@ -13,6 +13,14 @@
 	<div layout:fragment="content" th:remove="tag">
 		<div class="pusher">
 			<div class="ui container login">
+			
+			
+<!-- 						<div style="background: #273a61; height: 300px; width: 500px
+						;line-height: 300px; font-size: 40px; text-align:center">
+							<a class="item"><span style="color: #FFFFFF">e&nbsp;</span><i class="fas fa-parking fa-2x"
+								style="color: #FFFFFF;"></i>&nbsp;<span style="color: #FFFFFF">ark</span>
+							</a>
+						</div> -->
 
 				<div class="ui segments">
 
@@ -21,21 +29,27 @@
 
 					<div class="ui segment">
 						<form th:action="@{/login}" method="post" class="ui form">
-						
-						
-							<div class="ui negative message margin-10" id="error" th:if="${error != null}">
-								<i class="close icon"></i> <div th:text="${error}"></div>
+
+
+							<div class="ui negative message margin-10" id="error"
+								th:if="${error != null}">
+								<i class="close icon"></i>
+								<div th:text="${error}"></div>
 							</div>
-							
-							<div class="ui positive message margin-10" id="resetlinksent" th:if="${resetlinksent != null}">
-								<i class="close icon"></i> <div th:text="${resetlinksent}"></div>
+
+							<div class="ui positive message margin-10" id="resetlinksent"
+								th:if="${resetlinksent != null}">
+								<i class="close icon"></i>
+								<div th:text="${resetlinksent}"></div>
 							</div>
 
 
-							<div class="ui positive message margin-10" id="resetsuccessful" th:if="${resetsuccessful != null}">
-								<i class="close icon"></i> <div th:text="${resetsuccessful}"></div>
+							<div class="ui positive message margin-10" id="resetsuccessful"
+								th:if="${resetsuccessful != null}">
+								<i class="close icon"></i>
+								<div th:text="${resetsuccessful}"></div>
 							</div>
-							
+
 							<!-- Error Message -->
 
 							<div class="ui negative message margin-10" id="invalid">
@@ -96,18 +110,23 @@
 				</div>
 
 
-				<form action="/forgotpassword" class="ui form modal" id="forgottenPasswordForm" method="post">
+				<form action="/forgotpassword" class="ui form modal"
+					id="forgottenPasswordForm" method="post">
 					<i class="close icon"></i>
 					<div class="header">Forgotten Password</div>
-		
-						<div class="cotent margin-20">
-							<div class="fields"><div class="one field">
-							We will send a reset password link to your email address </div></div>
-							<input type="email" name="email" placeholder="Enter your email" required/>
+
+					<div class="cotent margin-20">
+						<div class="fields">
+							<div class="one field">We will send a reset password link
+								to your email address</div>
 						</div>
-						<div class="actions">
-							<button id="resetPasswordButton" class="ui positive button" type=submit>Send</button>
-						</div>
+						<input type="email" name="email" placeholder="Enter your email"
+							required />
+					</div>
+					<div class="actions">
+						<button id="resetPasswordButton" class="ui positive button"
+							type=submit>Send</button>
+					</div>
 				</form>
 
 			</div>
@@ -123,31 +142,11 @@
 				var urlParams = new URLSearchParams(window.location.search);
 				if (urlParams.has('logout')) {
 					$('#logout').show();
-					setTimeout(function() {
-						$('#logout').slideUp(350, function() {
-							if ($('#logout').css('display') == 'none') {
-								window.location.href = window.location.href.split("?")[0]
-							}
-						});
-					}, 5000);
-				} else if (urlParams.has('invalid')) {
+				} else if (urlParams.has('error')) {
 					$('#invalid').show();
-					setTimeout(function() {
-						$('#invalid').slideUp(350, function() {
-							if ($('#invalid').css('display') == 'none') {
-								window.location.href = window.location.href.split("?")[0]
-							}
-						});
-					}, 5000);
 				} else if (urlParams.has('registrationSuccess')) {
 					$('#registrationSuccess').show();
-					setTimeout(function() {
-						$('#registrationSuccess').slideUp(350, function() {
-							if ($('#registrationSuccess').css('display') == 'none') {
-								window.location.href = window.location.href.split("?")[0]
-							}
-						});
-					}, 5000);
+
 				}
 			});
 
@@ -158,7 +157,6 @@
 			$('#forgottenPassword').click(function() {
 				$('#forgottenPasswordForm').modal('show');
 			});
-
 		</script>
 	</div>
 </body>

@@ -67,9 +67,9 @@
 							<div class="fields">
 								<div class="sixteen wide field">
 									<label for="userrole">User Role: </label><select
-										class="ui fluid dropdown" name="userrole" id="userrole"
-										th:field="*{roleName}" required="required">
-										<option th:each="role : ${roles}" th:value="${role.name}"
+										class="ui fluid dropdown" id="userrole"
+										th:field="*{roleId}" required="required">
+										<option th:each="role : ${roleList}" th:value="${role.roleId}"
 											th:text="${role.name}"></option>
 									</select>
 								</div>

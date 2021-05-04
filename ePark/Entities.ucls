@@ -3,7 +3,7 @@
   associations="true" dependencies="false" nesting-relationships="false" router="FAN">  
   <class id="1" language="java" name="com.ePark.service.UserService" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/UserService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="299" width="471" x="641" y="37"/>    
+    <position height="281" width="471" x="661" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -12,7 +12,7 @@
   </class>  
   <class id="2" language="java" name="com.ePark.service.BookingFlow.StepDescription" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/BookingFlow.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1958" y="1320"/>    
+    <position height="263" width="220" x="3666" y="574"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -21,7 +21,7 @@
   </class>  
   <class id="3" language="java" name="com.ePark.service.BookingFlow" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/BookingFlow.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1804" y="900"/>    
+    <position height="353" width="263" x="3491" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -30,7 +30,7 @@
   </class>  
   <class id="4" language="java" name="com.ePark.service.CarParkTimeService" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/CarParkTimeService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="173" width="280" x="321" y="37"/>    
+    <position height="155" width="332" x="1605" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -39,7 +39,7 @@
   </class>  
   <class id="5" language="java" name="com.ePark.service.CarParkPaymentService" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/CarParkPaymentService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="862" y="801"/>    
+    <position height="155" width="393" x="1172" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -48,7 +48,7 @@
   </class>  
   <class id="6" language="java" name="com.ePark.service.EmailService" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/EmailService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="144" y="1257"/>    
+    <position height="137" width="237" x="384" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -57,7 +57,7 @@
   </class>  
   <class id="7" language="java" name="com.ePark.service.VehicleService" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/VehicleService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="209" width="239" x="42" y="37"/>    
+    <position height="227" width="249" x="2327" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -66,7 +66,7 @@
   </class>  
   <class id="8" language="java" name="com.ePark.service.BookingService" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/BookingService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="242" y="936"/>    
+    <position height="389" width="630" x="4131" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -75,7 +75,7 @@
   </class>  
   <class id="9" language="java" name="com.ePark.service.CarParkCommentService" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/CarParkCommentService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1273" y="783"/>    
+    <position height="119" width="309" x="2616" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -84,7 +84,7 @@
   </class>  
   <enumeration id="10" language="java" name="com.ePark.service.BookingFlow.Step" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/BookingFlow.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1740" y="1275"/>    
+    <position height="173" width="135" x="3491" y="574"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -93,7 +93,7 @@
   </enumeration>  
   <class id="11" language="java" name="com.ePark.service.CarParkSpotService" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/CarParkSpotService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1755" y="159"/>    
+    <position height="245" width="485" x="2965" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -102,7 +102,7 @@
   </class>  
   <class id="12" language="java" name="com.ePark.service.StripeService" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/StripeService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="454" y="1437"/>    
+    <position height="497" width="303" x="41" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -111,7 +111,7 @@
   </class>  
   <class id="13" language="java" name="com.ePark.service.RoleService" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/RoleService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1550" y="801"/>    
+    <position height="137" width="164" x="3926" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -120,7 +120,7 @@
   </class>  
   <class id="14" language="java" name="com.ePark.service.CarParkService" project="ePark" 
     file="/ePark/src/main/java/com/ePark/service/CarParkService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="281" width="310" x="1152" y="37"/>    
+    <position height="263" width="310" x="1977" y="37"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -129,7 +129,7 @@
   </class>  
   <interface id="15" language="java" name="com.ePark.repository.VehicleRepository" project="ePark" 
     file="/ePark/src/main/java/com/ePark/repository/VehicleRepository.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="137" width="285" x="42" y="502"/>    
+    <position height="119" width="285" x="2327" y="574"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -138,7 +138,7 @@
   </interface>  
   <interface id="16" language="java" name="com.ePark.repository.CarParkPaymentRepository" project="ePark" 
     file="/ePark/src/main/java/com/ePark/repository/CarParkPaymentRepository.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="862" y="1239"/>    
+    <position height="101" width="393" x="1172" y="574"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -147,7 +147,7 @@
   </interface>  
   <interface id="17" language="java" name="com.ePark.repository.CarParkSpotRepository" project="ePark" 
     file="/ePark/src/main/java/com/ePark/repository/CarParkSpotRepository.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1784" y="606"/>    
+    <position height="209" width="543" x="2908" y="574"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -156,7 +156,7 @@
   </interface>  
   <interface id="18" language="java" name="com.ePark.repository.BookingRepository" project="ePark" 
     file="/ePark/src/main/java/com/ePark/repository/BookingRepository.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="-230" y="1275"/>    
+    <position height="191" width="630" x="4131" y="574"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -165,7 +165,7 @@
   </interface>  
   <interface id="19" language="java" name="com.ePark.repository.UserRepository" project="ePark" 
     file="/ePark/src/main/java/com/ePark/repository/UserRepository.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="155" width="250" x="687" y="502"/>    
+    <position height="155" width="250" x="661" y="574"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -174,7 +174,7 @@
   </interface>  
   <interface id="20" language="java" name="com.ePark.repository.CarParkRepository" project="ePark" 
     file="/ePark/src/main/java/com/ePark/repository/CarParkRepository.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="155" width="310" x="977" y="502"/>    
+    <position height="155" width="310" x="1977" y="574"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -183,7 +183,7 @@
   </interface>  
   <interface id="21" language="java" name="com.ePark.repository.RoleRepository" project="ePark" 
     file="/ePark/src/main/java/com/ePark/repository/RoleRepository.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1550" y="1230"/>    
+    <position height="101" width="165" x="3926" y="574"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -192,7 +192,7 @@
   </interface>  
   <interface id="22" language="java" name="com.ePark.repository.CarParkCommentRepository" project="ePark" 
     file="/ePark/src/main/java/com/ePark/repository/CarParkCommentRepository.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1227" y="1221"/>    
+    <position height="65" width="216" x="2652" y="574"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -201,7 +201,7 @@
   </interface>  
   <interface id="23" language="java" name="com.ePark.repository.CarParkTimeRepository" project="ePark" 
     file="/ePark/src/main/java/com/ePark/repository/CarParkTimeRepository.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="119" width="280" x="367" y="502"/>    
+    <position height="119" width="280" x="1605" y="574"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -209,183 +209,99 @@
     </display>  
   </interface>  
   <association id="24">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="25" name="carParkTimeRepo">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="26" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="23" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <association id="27">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="28" name="userRepo">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="29" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="19" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <association id="30">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="31" name="emailService">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </attribute>      
-      <multiplicity id="32" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <association id="33">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="34" name="bookingRepo">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </attribute>      
-      <multiplicity id="35" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="18" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <association id="36">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="37" name="activeStep">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </attribute>      
-      <multiplicity id="38" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <association id="39">    
-    <end type="SOURCE" refId="14" navigable="false">      
-      <attribute id="40" name="carParkRepo">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="41" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="20" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <association id="42">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="43" name="vehicleRepo">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="44" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="15" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <association id="45">    
     <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="46" name="carParkCommentRepo">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </attribute>      
-      <multiplicity id="47" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </multiplicity>    
+      <attribute id="25" name="carParkCommentRepo"/>      
+      <multiplicity id="26" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="22" navigable="true"/>    
     <display labels="false" multiplicity="true"/>  
   </association>  
-  <association id="48">    
+  <association id="27">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="28" name="vehicleRepo"/>      
+      <multiplicity id="29" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="15" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="30">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="31" name="bookingRepo"/>      
+      <multiplicity id="32" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="18" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="33">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="34" name="carParkTimeRepo"/>      
+      <multiplicity id="35" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="23" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="36">    
     <end type="SOURCE" refId="14" navigable="false">      
-      <attribute id="49" name="userRepo">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="50" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
+      <attribute id="37" name="carParkRepo"/>      
+      <multiplicity id="38" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="20" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="39">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="40" name="userRepo"/>      
+      <multiplicity id="41" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="19" navigable="true"/>    
     <display labels="false" multiplicity="true"/>  
   </association>  
-  <association id="51">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="52" name="completedSteps">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </attribute>      
-      <multiplicity id="53" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <association id="54">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="55" name="stepDescriptions">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </attribute>      
-      <multiplicity id="56" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <association id="57">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="58" name="roleRepo">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </attribute>      
-      <multiplicity id="59" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="21" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <association id="60">    
+  <association id="42">    
     <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="61" name="carParkPaymentRepo">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </attribute>      
-      <multiplicity id="62" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </multiplicity>    
+      <attribute id="43" name="carParkPaymentRepo"/>      
+      <multiplicity id="44" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="16" navigable="true"/>    
     <display labels="false" multiplicity="true"/>  
   </association>  
-  <association id="63">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="64" name="paymentsService">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </attribute>      
-      <multiplicity id="65" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-1773" y="687"/>      
-      </multiplicity>    
+  <association id="45">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="46" name="stepDescriptions"/>      
+      <multiplicity id="47" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="12" navigable="true"/>    
+    <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="false" multiplicity="true"/>  
   </association>  
-  <association id="66">    
+  <association id="48">    
     <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="67" name="carParkSpotRepo">        
-        <position height="0" width="0" x="-2368" y="0"/>      
-      </attribute>      
-      <multiplicity id="68" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-2368" y="0"/>      
-      </multiplicity>    
+      <attribute id="49" name="carParkSpotRepo"/>      
+      <multiplicity id="50" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="17" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="51">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="52" name="roleRepo"/>      
+      <multiplicity id="53" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="21" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="54">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="55" name="completedSteps"/>      
+      <multiplicity id="56" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="10" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <association id="57">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="58" name="activeStep"/>      
+      <multiplicity id="59" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="10" navigable="true"/>    
     <display labels="false" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

@@ -6,12 +6,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.ePark.entity.CarParkSpots;
-import com.ePark.entity.CarParks;
+import com.ePark.model.CarParkSpots;
+import com.ePark.model.CarParks;
 
 @Repository
 public interface CarParkSpotRepository extends JpaRepository<CarParkSpots, Long> {
@@ -54,6 +55,8 @@ public interface CarParkSpotRepository extends JpaRepository<CarParkSpots, Long>
 	
 	CarParkSpots findByCarParksAndSpaceNumber(CarParks carPark, int highestSpaceNumber);
 	
+	@Modifying
+	@Query(value = "DELETE FROM carParkSpots where carParkSpotId = :carParkSpotId", nativeQuery = true)
 	void deleteByCarParkSpotId(long carParkSpotId);
 	
 	List<CarParkSpots> findByCarParksAndIsDisabledOrderBySpaceNumberAsc(CarParks carPark, boolean isDisabled);

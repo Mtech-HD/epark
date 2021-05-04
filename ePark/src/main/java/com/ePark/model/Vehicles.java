@@ -1,4 +1,4 @@
-package com.ePark.entity;
+package com.ePark.model;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,7 +39,7 @@ public class Vehicles {
 	private String colour;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "userId", nullable = false)
+	@JoinColumn(name = "userId", nullable = true)
 	private Users users;
 
 	private boolean isDefault;
@@ -49,6 +49,10 @@ public class Vehicles {
 
 	public Vehicles() {
 		super();
+	}
+	
+	public Vehicles(long vehicleId) {
+		this.vehicleId = vehicleId;
 	}
 
 	public Vehicles(String registration, String make, String colour, Users users, boolean isDefault) {

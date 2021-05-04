@@ -5,57 +5,58 @@
 	layout:decorate="~{main-layout}">
 
 <body>
-
-	<!--  Navigation Bar -->
-
-
 	<div layout:fragment="content" th:remove="tag">
 		<div class="pusher">
 			<div class="ui container">
 
 				<div class="ui tabular menu topMenu margin-bottom-30">
 					<a class="item" data-tab="details"> Account </a> <a class="item"
+						sec:authorize="hasAnyAuthority('USER', 'ADMIN')"
 						data-tab="bookings"> Bookings </a> <a class="item"
-						data-tab="cards"> Cards </a> <a class="item" data-tab="vehicles">Vehicles
-					</a>
+						sec:authorize="hasAnyAuthority('USER', 'ADMIN')" data-tab="cards">
+						Cards </a> <a class="item"
+						sec:authorize="hasAnyAuthority('USER', 'ADMIN')"
+						data-tab="vehicles">Vehicles </a>
 				</div>
 
 
 				<div data-tab="details" class="ui active tab">
 					<div class="group">
-						<label class="leftlabel"><span class="custom-label">Username:</span> <input
-							disabled class="field borderless"
+						<label class="leftlabel"><span class="custom-label">Username:</span>
+							<input disabled class="field borderless"
 							th:value="${user.getUsername()}"></label>
 					</div>
 					<div class="group">
-						<label class="leftlabel"><span class="custom-label">Email:</span> <input
-							disabled class="field borderless" th:value="${user.getEmail()}"></label>
+						<label class="leftlabel"><span class="custom-label">Email:</span>
+							<input disabled class="field borderless"
+							th:value="${user.getEmail()}"></label>
 					</div>
 					<div class="group">
-						<label class="leftlabel"><span class="custom-label">First Name:</span> <input
-							disabled class="field borderless"
+						<label class="leftlabel"><span class="custom-label">First
+								Name:</span> <input disabled class="field borderless"
 							th:value="${user.getFirstName()}"></label>
 					</div>
 					<div class="group">
-						<label class="leftlabel"><span class="custom-label">Last Name:</span> <input
-							disabled class="field borderless"
+						<label class="leftlabel"><span class="custom-label">Last
+								Name:</span> <input disabled class="field borderless"
 							th:value="${user.getLastName()}"></label>
 					</div>
 					<div class="group">
-						<label class="leftlabel"><span class="custom-label">Stripe ID:</span> <input
-							disabled class="field borderless"
+						<label class="leftlabel"><span class="custom-label">Stripe
+								ID:</span> <input disabled class="field borderless"
 							th:value="${user.getStripeId()}"></label>
 					</div>
-
 				</div>
 
 
 				<div data-tab="bookings" class="ui tab">
 					<div class="ui stackable grid">
+
+						<a id="back" class="pointer underline"><i
+							class="chevron left icon fitted"></i>&nbsp;Back</a>
 						<div class="row">
 
-
-							<div class="four wide column">
+							<div class="four wide column sideView">
 
 								<table id="bookingTable"
 									class="ui unstackable celled selectable table">
@@ -67,7 +68,6 @@
 										</tr>
 									</thead>
 									<tbody>
-
 										<tr th:each="booking: ${user.bookings}"
 											th:if="${booking.bookingStatus.toString() == 'ACTIVE' || booking.bookingStatus.toString() == 'CANCELLED'}"
 											class='clickable-row pointer'
@@ -85,12 +85,9 @@
 
 							</div>
 
-							<div class="twelve wide column">
+							<div class="twelve wide column mainView">
 								<div th:insert="~{fragments :: bookingsInfo}" id="bookingsInfo"></div>
-
-
 							</div>
-
 						</div>
 					</div>
 				</div>
@@ -132,6 +129,20 @@
 					</form>
 				</div>
 
+
+				<div class="ui tiny modal" id="cancelBookingForm">
+					<i class="close icon"></i>
+					<div class="header">Cancel Booking</div>
+					<div class="cotent margin-20">Are you sure you want to cancel
+						this booking?</div>
+					<div class="actions">
+
+						<button class="ui red approve button" type="button"
+							id="confirmCancelBooking">Cancel</button>
+					</div>
+				</div>
+
+
 			</div>
 		</div>
 	</div>
@@ -147,7 +158,27 @@
 			src="https://cdnjs.cloudflare.com/ajax/libs/jquery.address/1.6/jquery.address.js"></script>
 
 		<script th:inline="javascript">
+		$( window ).resize(function() {
+			showViews();
+		});
+		
+		function showViews() {
+			if ($(window).width() < 767) {
+
+		        $(".mainView").hide();
+		        $("#back").hide();
+		        
+		    } else {
+		    	$("#back").hide();
+				$(".mainView").show();
+				$(".sideView").show();
+		    }
+		}
+		
 			$(document).ready(function() {
+				showViews();
+
+				
 				$('#bookingTable').DataTable({
 					pageLength : 10,
 					lengthChange : false,
@@ -158,7 +189,17 @@
 				}
 
 				);
-				$('.ui.pagination.menu').removeClass('stackable').addClass('unstackable');
+				
+				removeStacked();
+				
+				function removeStacked() {
+					$('.ui.pagination.menu').removeClass('stackable').addClass('unstackable');
+				}
+
+				
+				$('#bookingTable_paginate').click(function() {
+					removeStacked();
+				}) 
 
 				$('#bookingTable').removeClass('dataTable');
 				$('#bookingTable tr:first-child').addClass("active");
@@ -170,6 +211,7 @@
 
 					$('#bookingsInfoSegment').addClass('loading');
 					$("#bookingsInfo").load(url, function() {
+						checkCancelBooking()
 						$('#bookingsInfoSegment').removeClass('loading');
 					});
 				}
@@ -179,10 +221,21 @@
 					$(this).addClass('active');
 
 					getBooking();
-
+					
+					if ($(window).width() < 800) {
+						$(".sideView").hide();
+				        $(".mainView").show();
+				        $("#back").show();
+				    }
 				});
 
 			});
+			
+			$('#back').click(function() {
+				$(".sideView").show();
+		        $(".mainView").hide();
+		        $("#back").hide();
+			})
 
 			$('.topMenu.ui.tabular.menu .item').tab({
 				history : true,
@@ -322,7 +375,40 @@
 					$('#paymentForm').removeClass('loading');
 				});
 			}
+
+			$(document).on('click', '#cancelBookingButton', function() {
+				$('#cancelBookingForm').modal('show');
+			});
+
+			$('#confirmCancelBooking').click(function() {
+				var url = "/cancelbooking?bookingId=" + $('#bookingTable .clickable-row.active').attr("bookingid");
+
+				$('#bookingsInfoSegment').addClass('loading');
+				$("#bookingsInfo").load(url, function() {
+					checkCancelBooking();
+					$('#bookingsInfoSegment').removeClass('loading');
+				});
+			});
+
+			function checkCancelBooking() {
+
+				var startDate = $('#startDate').text();
+				var startTime = $('#startTime').text();
+
+				var bookingDate = moment.utc(startDate + ' ' + startTime, 'DD/MM/YYYY HH:mm');
+
+				var oneHourBeforeNow = moment.utc().subtract(1, "hours");
+
+				if (bookingDate.isAfter(oneHourBeforeNow)) {
+					$('#cancelBookingButton').prop('disabled', false);
+				}
+			}
 		</script>
+
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+			integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+			crossorigin="anonymous"></script>
 	</div>
 
 </body>

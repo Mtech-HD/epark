@@ -1,7 +1,6 @@
 package com.ePark.service;
 
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Date;
@@ -10,45 +9,43 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.ePark.AppSecurityConfig;
 import com.ePark.dto.CarParkDto;
-import com.ePark.entity.CarParkSpots;
-import com.ePark.entity.CarParkTimes;
-import com.ePark.entity.CarParks;
-import com.ePark.entity.CarParks.CarParkStatus;
-import com.ePark.entity.Users;
-import com.ePark.entity.Week;
+import com.ePark.model.CarParkSpots;
+import com.ePark.model.CarParkTimes;
+import com.ePark.model.CarParks;
+import com.ePark.model.Users;
+import com.ePark.model.Week;
+import com.ePark.model.CarParks.CarParkStatus;
 import com.ePark.repository.CarParkRepository;
-import com.ePark.repository.UserRepository;
 
 @Service
 public class CarParkService {
 
 	@Autowired
-	private UserRepository userRepo;
+	private CarParkRepository carParkRepo;
 
 	@Autowired
-	private CarParkRepository carParkRepo;
+	private AppSecurityConfig appSecurity;
 
 	public List<CarParks> findAll() {
 		return carParkRepo.findAll();
 	}
 
-	public void save(CarParkDto carParkDto) {
-
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	public CarParks save(CarParkDto carParkDto) {
 
 		Set<Users> users = new HashSet<Users>();
-		Users user = userRepo.findByUsername(auth.getName());
+		Users user = appSecurity.getCurrentUser();
 		users.add(user);
 
-		CarParks carPark = new CarParks(carParkDto.getName(), carParkDto.getSerialNumber(), carParkDto.getEmail(), carParkDto.getCarParkAddress1(),
-				carParkDto.getCarParkAddress2(), carParkDto.getCarParkCity(), carParkDto.getCarParkPostcode(),
-				carParkDto.getPrice(), CarParkStatus.SUBMITTED, carParkDto.getEnableFutureWeeks(), carParkDto.getDescription(), carParkDto.getHeightRestriction(),
-				carParkDto.getAccessControl(), new Date(), carParkDto.getRate(), carParkDto.getDynamicPricing(), carParkDto.getTargetRevenue(), users, carParkDto.getStripeId());
+		CarParks carPark = new CarParks(carParkDto.getName(), carParkDto.getSerialNumber(), carParkDto.getEmail(),
+				carParkDto.getCarParkAddress1(), carParkDto.getCarParkAddress2(), carParkDto.getCarParkCity(),
+				carParkDto.getCarParkPostcode(), carParkDto.getPrice(), CarParkStatus.SUBMITTED,
+				carParkDto.getEnableFutureWeeks(), carParkDto.getDescription(), carParkDto.getHeightRestriction(),
+				carParkDto.getAccessControl(), new Date(), carParkDto.getRate(), carParkDto.getDynamicPricing(),
+				carParkDto.getTargetRevenue(), users, carParkDto.getStripeId());
 
 		List<Week> weekValues = Arrays.asList(Week.values());
 		Set<CarParkTimes> carParkTimes = new HashSet<CarParkTimes>();
@@ -90,13 +87,13 @@ public class CarParkService {
 			}
 		}
 
-		carParkRepo.save(carPark);
+		return carParkRepo.save(carPark);
 	}
-	
-	public void update(CarParkDto carParkDto) {
+
+	public CarParks update(CarParkDto carParkDto) {
 
 		CarParks carPark = carParkRepo.findByCarParkId(carParkDto.getCarParkId());
-		
+
 		carPark.setName(carParkDto.getName());
 		carPark.setEmail(carParkDto.getEmail());
 		carPark.setSerialNumber(carParkDto.getSerialNumber());
@@ -110,13 +107,13 @@ public class CarParkService {
 		carPark.setDescription(carParkDto.getDescription());
 		carPark.setEnableFutureWeeks(carParkDto.getEnableFutureWeeks());
 		carPark.setDynamicPricing(carParkDto.getDynamicPricing());
-		carPark.setTargetRevenue(carParkDto.getTargetRevenue());		
+		carPark.setTargetRevenue(carParkDto.getTargetRevenue());
 		carPark.setHeightRestriction(carParkDto.getHeightRestriction());
 		carPark.setAccessControl(carParkDto.getAccessControl());
 		carPark.setDateModified(new Date());
-		
-		carParkRepo.save(carPark);
-		
+
+		return carParkRepo.save(carPark);
+
 	}
 
 	public CarParks save(CarParks carPark) {
@@ -138,22 +135,16 @@ public class CarParkService {
 
 		return carParkRepo.findByUsers(user);
 	}
-	
 
-	public List<CarParks> findByDynamicPricing(boolean dynamicPricing) {
+	public CarParks addUserToCarPark(long carParkId, Users user) {
 
-		return carParkRepo.findByDynamicPricing(dynamicPricing);
-	}
-	
-	public void addUserToCarPark(long carParkId, Users user) {
 		CarParks carPark = carParkRepo.findByCarParkId(carParkId);
-		
+
 		Set<Users> carParkUsers = carPark.getUsers();
 		carParkUsers.add(user);
 		carPark.setUsers(carParkUsers);
-		
-		carParkRepo.save(carPark);
-		
+
+		return carParkRepo.save(carPark);
 	}
 
 }

@@ -18,12 +18,21 @@
 
 
 				<div class="ui stackable grid">
+
+
+
+
 					<div class="row middle aligned">
 						<div class="four wide column">
-					
-								<h1 class="padding-left-10">View Spaces</h1>
+
+							<div>
+								<span class="padding-left-10 heading1">View Spaces</span> <a
+									id="back" class="pointer underline float-right"><i
+									class="chevron left icon fitted"></i>&nbsp;Back</a>
+							</div>
 						</div>
 						<div class="eight wide column">
+
 							<div id="chargeSuccess"
 								class="ui positive message small margin-0">
 								<p>Charge was successful</p>
@@ -35,7 +44,7 @@
 						</div>
 						<div class="four wide column right aligned">
 
-							<div class="ui labeled input">
+							<div class="ui labeled fluid input">
 								<label class="ui label" style="padding-right: 1px;"><i
 									class="calendar outline icon"></i></label> <input type="text"
 									class="field" id="dateSelector" placeholder="Date"
@@ -49,8 +58,9 @@
 
 					<div class="row">
 
-						<div class="four wide column display" id="selectionSegment">
-							<table id="carparkspots" class="ui unstackable celled selectable table">
+						<div class="four wide column sideView">
+							<table id="carparkspots"
+								class="ui unstackable celled selectable table">
 								<thead>
 									<tr style="text-align: center; vertical-align: top">
 										<th>Space ID</th>
@@ -71,9 +81,8 @@
 								</tbody>
 							</table>
 						</div>
-						<div class="twelve wide column display" id="infoSegment">
-							<div th:insert="~{fragments :: spotBookings}"
-								id="spotBookings"></div>
+						<div class="twelve wide column mainView">
+							<div th:insert="~{fragments :: spotBookings}" id="spotBookings"></div>
 
 
 						</div>
@@ -82,28 +91,38 @@
 					</div>
 				</div>
 
-				<div class="ui modal tiny" id="chargeModal">
+				<form class="ui form modal" style="max-width: 500px;"
+					id="chargeModal">
+
+					<input type="hidden" id="bookingId" />
 					<div class="header">Charge Customer</div>
 					<div class="content">
+						<div class="fields">
+							<div class="sixteen wide field">
+								<label>Customer ID:</label> <input name="stripeId" id="customer"
+									readonly />
+							</div>
+						</div>
 
-						<div>Late Departure Fee: &nbsp;£10</div>
-
-
-						<div class="margin-top-20" id="customer"></div>
-
-
-						<input type="hidden" id="stripeId" /> <input type="hidden"
-							id="bookingId">
-
+						<div class="fields">
+							<div class="sixteen wide field">
+								<label>Late Departure Fee:</label>
+								<div class="ui labeled input">
+									<label class="ui label">£</label><input type="number"
+										min="0.00" max="100.00" step="0.01" id="amount" name="amount"
+										placeholder="0.00" required autofocus="autofocus">
+								</div>
+							</div>
+						</div>
 
 					</div>
 
 					<div class="actions">
-						<button class="ui negative approve button" type="submit"
+						<button class="ui negative approve button" type="button"
 							id="charge">Charge</button>
 						<button class="ui cancel button" type="button">Cancel</button>
 					</div>
-				</div>
+				</form>
 
 
 
@@ -113,8 +132,7 @@
 					<div class="content">
 
 						<div>
-							Booking ID: &nbsp;
-							<span id='reassignBookingId'></span>
+							Booking ID: &nbsp; <span id='reassignBookingId'></span>
 						</div>
 
 
@@ -124,8 +142,8 @@
 								id="reassignFreeSpots"></div>
 						</div>
 						<div class="ui horizontal divider">Or</div>
-						<button
-						id="refundButton" class="ui primary fluid button" type="button">Refund and Cancel Booking</button>
+						<button id="cancelButton" class="ui primary fluid button"
+							type="button">Refund and Cancel Booking</button>
 					</div>
 
 					<div class="actions">
@@ -147,212 +165,179 @@
 			$('#chargeSuccess').hide();
 			$('#chargeError').hide();
 
-			$(document).ready(
-					function() {
+			$(window).resize(function() {
+				showViews();
+			});
 
-						$('#carparkspots').DataTable(
-								{
-									lengthMenu : [ 5, 10 ],
-									lengthChange : false,
-									searching : false,
-									info : false,
-									columnDefs : [ {
-										orderable : false,
-										targets : [ 1 ]
-									} ],
-									dom : "<'ui grid margin-top-0'"
-											+ "<'row dt-table'"
-											+ "<'column'tr>" + ">"
-											+ "<'row'"
-											+ "<'column'p>" + ">"
-											+ ">"
-								}
+			function showViews() {
+				if ($(window).width() < 767) {
 
-						);
-						
-		
-						$('.ui.pagination.menu').removeClass('stackable').addClass('unstackable');
-						
-						$('#carparkspots').removeClass('dataTable');
-						$('#carparkspots tr:first-child').addClass("active");
-						
-						
-						var dateSelector = $("#dateSelector").datepicker({
-							dateFormat : "dd/mm/yy",
-							startDate : '01/01/1997',
-							//minDate : 0
-							onSelect : function() {
+					$(".mainView").hide();
+					$("#back").hide();
 
-								getSpotBookings();
+				} else {
+					$("#back").hide();
+					$(".mainView").show();
+					$(".sideView").show();
+				}
+			}
 
-							}
-						});
+			$(document).ready(function() {
 
-						$("#dateSelector").datepicker().datepicker("setDate",
-								new Date());
+				showViews();
+
+				$('#carparkspots').DataTable({
+					lengthMenu : [ 5, 10 ],
+					lengthChange : false,
+					searching : false,
+					info : false,
+					columnDefs : [ {
+						orderable : false,
+						targets : [ 1 ]
+					} ],
+					dom : "<'ui grid margin-top-0'" + "<'row dt-table'" + "<'column'tr>" + ">" + "<'row'" + "<'column'p>" + ">" + ">"
+				}
+
+				);
+
+				removeStacked();
+
+				function removeStacked() {
+					$('.ui.pagination.menu').removeClass('stackable').addClass('unstackable');
+				}
+
+				$('#carparkspots_paginate').click(function() {
+					removeStacked();
+				})
+
+				$('#carparkspots').removeClass('dataTable');
+				$('#carparkspots tr:first-child').addClass("active");
+
+				var dateSelector = $("#dateSelector").datepicker({
+					dateFormat : "dd/mm/yy",
+					startDate : '01/01/1997',
+					//minDate : 0
+					onSelect : function() {
 
 						getSpotBookings();
 
-						dateSelector.blur(); //to avoid bug
+					}
+				});
 
-						$('#spotBookings').on('click', '.charge', function() {
-							var stripeId = $(this).attr("stripeId");
-							//var bookingId = $(this).attr("bookingId");
-							$('#customer').html('Customer ID: ' + stripeId);
-							$('#stripeId').html(stripeId);
-							$('#chargeModal').modal('show');
-						});
-						
+				$("#dateSelector").datepicker().datepicker("setDate", new Date());
 
-						$('#spotBookings').on('click', '.reassign', function() {
-							var bookingId = $(this).attr("bookingId");
+				getSpotBookings();
 
-							$('#reassignBookingId').html(bookingId);
+				dateSelector.blur(); //to avoid bug
 
-							var url = "/getFreeSpaces/?bookingId=" + bookingId;
+				$('#spotBookings').on('click', '.charge', function() {
+					var stripeId = $(this).attr("stripeId");
+					//var bookingId = $(this).attr("bookingId");
+					$('#customer').val(stripeId);
+					//$('#stripeId').html(stripeId);
+					$('#chargeModal').modal('show');
+				});
 
-							$('#freeSpacesSegment').addClass('loading');
-							$("#reassignFreeSpots").load(url, function() {
-								$('#freeSpacesSegment').removeClass('loading');
-							});
-							
-							$('#reassignModal').modal('show');
-						});
+				$('#spotBookings').on('click', '.reassign', function() {
+					var bookingId = $(this).attr("bookingId");
 
+					$('#reassignBookingId').html(bookingId);
 
+					var url = "/siteadmin/getFreeSpaces/?bookingId=" + bookingId;
 
-						$("#carparkspots").on(
-								'click',
-								'.clickable-row',
-								function() {
-									$('.clickable-row').not(this).removeClass(
-											'active');
-									$(this).addClass('active');
-
-									//switchView();
-									
-									getSpotBookings();
-								});
-/* 						
-						function switchView() {
-							
-							if ($('#selectionSegment').hasClass('display-none')) {										
-								$('#selectionSegment').removeClass('display-none').addClass('display');
-							} else {
-								$('#selectionSegment').removeClass('display').addClass('display-none');
-							}
-							
-							if ($('#infoSegment').hasClass('display-none')) {										
-								$('#infoSegment').removeClass('display-none').addClass('display');
-							} else {
-								$('#infoSegment').removeClass('display').addClass('display-none');
-							}
-						}
-						
-						$(window).resize(resize());
-							
-						
-						function resize() {
-						    
-							if ($(window).width() > 800) {
-								$('#selectionSegment').removeClass('display-none').addClass('display');
-								$('#infoSegment').removeClass('display-none').addClass('display');
-							} else {
-								if ($('#selectionSegment').hasClass('display')) {
-									$('#infoSegment').removeClass('display').addClass('display-none');
-								} else {
-									$('#infoSegment').removeClass('display-none').addClass('display');
-								}
-							}	
-						} */
-
-						function getSpotBookings() {
-							var date = $("#dateSelector").val();
-							var spotParam = "carParkSpotId="
-									+ $('#carparkspots .clickable-row.active')
-											.attr("spotId");
-							var url = "/findByCarParkSpotsAndStartDate/?"
-									+ spotParam + "&date=" + date;
-
-							$('#spotBookingsSegment').addClass('loading');
-							$("#spotBookings").load(
-									url,
-									function() {
-										$('#spotBookingsSegment').removeClass(
-												'loading');
-									});
-						}
-
-						$('#charge').click(
-								function() {
-									var stripeId = "stripeId="
-											+ $('#stripeId').text();
-									// 									var bookingId = "bookingId="
-									// 											+ $('#bookingId').val();
-
-									$('#spotBookingsSegment').addClass(
-											'loading');
-									$.ajax({
-										type : "GET",
-										url : "/chargeCustomer/?" + stripeId,
-										//+ "&" + bookingId,
-										success : function(result) {
-											$('#spotBookingsSegment')
-													.removeClass('loading');
-											if (result == "success") {
-												$('#chargeSuccess').show();
-											} else {
-												$('#chargeError').show();
-											}
-										}
-									})
-								});
-						
-
-
+					$('#freeSpacesSegment').addClass('loading');
+					$("#reassignFreeSpots").load(url, function() {
+						$('#freeSpacesSegment').removeClass('loading');
 					});
-			
+
+					$('#reassignModal').modal('show');
+				});
+
+				$("#carparkspots").on('click', '.clickable-row', function() {
+					$('.clickable-row').not(this).removeClass('active');
+					$(this).addClass('active');
+
+					//switchView();
+
+					getSpotBookings();
+
+					if ($(window).width() < 800) {
+						$(".sideView").hide();
+						$(".mainView").show();
+						$("#back").show();
+
+					}
+				});
+
+				function getSpotBookings() {
+					var date = $("#dateSelector").val();
+					var spotParam = "carParkSpotId=" + $('#carparkspots .clickable-row.active').attr("spotId");
+					var url = "/siteadmin/findByCarParkSpotsAndStartDate/?" + spotParam + "&date=" + date;
+
+					$('#spotBookingsSegment').addClass('loading');
+					$("#spotBookings").load(url, function() {
+						$('#spotBookingsSegment').removeClass('loading');
+					});
+				}
+
+				$('#back').click(function() {
+					$(".sideView").show();
+					$(".mainView").hide();
+					$("#back").hide();
+				})
+
+				$('#charge').click(function() {
+					//var stripeId = "stripeId=" + $('#stripeId').text();
+					//var amount = "&amount=" + $('#amount').val();
+
+					$('#spotBookingsSegment').addClass('loading');
+					$.ajax({
+						type : "GET",
+						data : $('#chargeModal').serialize(),
+						url : "/siteadmin/chargeCustomer",
+						//+ "&" + bookingId,
+						success : function(result) {
+							$('#spotBookingsSegment').removeClass('loading');
+							if (result == "success") {
+								$('#chargeSuccess').show();
+							} else {
+								$('#chargeError').show();
+							}
+						}
+					})
+				});
+
+			});
+
 			function reassign(carParkSpotId) {
 				var date = $("#dateSelector").val();
 				var bookingId = $('#reassignBookingId').text();
 				var activeSpotId = $('#carparkspots .clickable-row.active').attr("spotId");
-				
-				var url = "/reassign/?bookingId=" + 
-				bookingId + "&carParkSpotId=" + carParkSpotId + "&activeSpotId=" 
-				+ activeSpotId + "&date=" + date; 
-				
+
+				var url = "/siteadmin/reassign/?bookingId=" + bookingId + "&carParkSpotId=" + carParkSpotId + "&activeSpotId=" + activeSpotId + "&date=" + date;
+
 				$('#reassignModal').modal('hide');
-				
+
 				$('#spotBookingsSegment').addClass('loading');
-				$("#spotBookings").load(
-						url,
-						function() {
-							$('#spotBookingsSegment').removeClass(
-									'loading');
-						});
+				$("#spotBookings").load(url, function() {
+					$('#spotBookingsSegment').removeClass('loading');
+				});
 			}
-			
-			$("#refundButton").click(function(){
+
+			$("#cancelButton").click(function() {
 				var date = $("#dateSelector").val();
 				var bookingId = $('#reassignBookingId').text();
 				var activeSpotId = $('#carparkspots .clickable-row.active').attr("spotId");
-				
-				var url = "/refund/?bookingId=" + 
-				bookingId + "&activeSpotId=" 
-				+ activeSpotId + "&date=" + date; 
-				
-				$('#reassignModal').modal('hide');
-				
-				$('#spotBookingsSegment').addClass('loading');
-				$("#spotBookings").load(
-						url,
-						function() {
-							$('#spotBookingsSegment').removeClass(
-									'loading');
-						});
-			})
-			
 
+				var url = "/siteadmin/cancel/?bookingId=" + bookingId + "&activeSpotId=" + activeSpotId + "&date=" + date;
+
+				$('#reassignModal').modal('hide');
+
+				$('#spotBookingsSegment').addClass('loading');
+				$("#spotBookings").load(url, function() {
+					$('#spotBookingsSegment').removeClass('loading');
+				});
+			})
 		</script>
 
 

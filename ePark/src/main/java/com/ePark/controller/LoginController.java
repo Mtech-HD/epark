@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ePark.AppSecurityConfig;
-import com.ePark.entity.Mail;
-import com.ePark.entity.Users;
+import com.ePark.model.Mail;
+import com.ePark.model.Users;
 import com.ePark.service.BookingFlow;
 import com.ePark.service.EmailService;
 import com.ePark.service.UserService;

@@ -35,7 +35,7 @@
 			</div>
 
 
-			<table id="carparks" class="ui celled selectable table">
+			<table id="carparks" class="ui unstackable celled selectable table">
 				<thead>
 					<tr style="text-align: center; vertical-align: top">
 						<th>ID</th>
@@ -47,7 +47,7 @@
 				<tbody>
 					<tr th:each="carpark : ${carparklist}"
 						class='clickable-row pointer'
-						th:attr="data-href='/siteadminbookings/'+${carpark.carParkId}"
+						th:attr="data-href='/siteadmin/'+${carpark.carParkId}"
 						style="text-align: center; vertical-align: top">
 						<td th:text="${carpark.carParkId}"></td>
 						<td th:text="${carpark.name}"></td>
@@ -84,6 +84,17 @@
 			}
 
 			);
+			
+			removeStacked();
+			
+			function removeStacked() {
+				$('.ui.pagination.menu').removeClass('stackable').addClass('unstackable');
+			}
+
+			
+			$('#carparks_paginate').click(function() {
+				removeStacked();
+			}) 
 
 			function openComments(id) {
 				$('#viewcomments' + id).modal('show');

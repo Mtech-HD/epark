@@ -15,7 +15,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ePark.AppSecurityConfig;
 import com.ePark.dto.VehicleDto;
-import com.ePark.entity.Vehicles;
+import com.ePark.model.Users;
+import com.ePark.model.Vehicles;
 import com.ePark.service.BookingFlow;
 import com.ePark.service.VehicleService;
 
@@ -49,7 +50,7 @@ public class VehicleController {
 		
 		boolean isDefault = false;
 		
-		if (vehicles != null) {
+		if (vehicles == null) {
 			isDefault = true;
 		}
 
@@ -58,38 +59,34 @@ public class VehicleController {
 		vehicleService.save(vehicle);
 
 		model.addAttribute("user", appSecurity.getCurrentUser());
-		return "bookingfragment :: vehicles";
+		return "fragments :: vehicles";
 	}
 
 	@Transactional
 	@GetMapping(value = "/removeVehicle", params = "vehicleId")
 	public String removeVehicle(@RequestParam("vehicleId") long vehicleId, Model model, @ModelAttribute("bookingFlow") Optional<BookingFlow> bookingFlow) {
 
-		vehicleService.deleteByVehicleId(vehicleId);
-
+		vehicleService.removeVehicleFromUser(vehicleId, appSecurity.getCurrentUser());
+		
 		model.addAttribute("user", appSecurity.getCurrentUser());
 
-		return "bookingfragment :: vehicles";
+		return "fragments :: vehicles";
 	}
 	
 	@GetMapping("/setdefaultvehicle")
 	public String setDefaultCard(@RequestParam("vehicleId") long vehicleId, Model model,
 			@ModelAttribute("bookingFlow") Optional<BookingFlow> bookingFlow) {
+		
+		Users user = appSecurity.getCurrentUser();
+		
+		Vehicles defaultVehicle = vehicleService.findByUsersAndIsDefault(user.getUserId());
 
-		Vehicles defaultVehicle = vehicleService.findByUsersAndIsDefault(appSecurity.getCurrentUser().getUserId());
+		vehicleService.setDefault(defaultVehicle.getVehicleId(), false);
 		
-		Vehicles newDefaultVehicle = vehicleService.findByVehicleId(vehicleId);
-		
-		defaultVehicle.setIsDefault(false);
-		
-		newDefaultVehicle.setIsDefault(true);
+		vehicleService.setDefault(vehicleId, true);
 
-		vehicleService.save(defaultVehicle);
+		model.addAttribute("user", user);
 		
-		vehicleService.save(newDefaultVehicle);
-
-		model.addAttribute("user", appSecurity.getCurrentUser());
-		
-		return "bookingfragment :: vehicles";
+		return "fragments :: vehicles";
 	}
 }

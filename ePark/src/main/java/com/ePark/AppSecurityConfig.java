@@ -15,10 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
-import com.ePark.entity.Users;
+import com.ePark.model.Users;
 import com.ePark.service.UserService;
 
 import nz.net.ultraq.thymeleaf.LayoutDialect;
@@ -71,7 +70,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		}
 		return authentication.isAuthenticated();
 	}
-	
+
 	public String getSiteUrl(HttpServletRequest request) {
 		String siteUrl = request.getRequestURL().toString();
 		return siteUrl.replace(request.getServletPath(), "");
@@ -82,11 +81,16 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.requiresChannel().anyRequest().requiresSecure();
 
 		http.csrf().disable().authorizeRequests()
-				.antMatchers("/login", "/forgotpassword", "/resetpassword", "/home", "/","/getapproved", "/registration/**", "/css/**", "/js/**", "/pin.png", "/mainmarker.png")
+				.antMatchers("/booking/**").hasAnyAuthority("USER")
+				.antMatchers("/viewcarparkforuser", "/addcarpark/**", "/viewcarparkdetails/**").hasAnyAuthority("ADMIN", "CARPARKOWNER")
+				.antMatchers("/siteadmin/**").hasAnyAuthority("SITEADMIN")
+				.antMatchers("/login", "/forgotpassword", "/resetpassword", "/home", "/", "/getapproved",
+						"/registration/**", "/css/**", "/js/**", "/pin.png", "/mainmarker.png")
 				.permitAll().anyRequest().authenticated().and().formLogin().loginPage("/login").permitAll()
+
 				.defaultSuccessUrl("/home").and().logout().invalidateHttpSession(true).clearAuthentication(true)
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login?logout");
-				
+
 		/*
 		 * .deleteCookies("JSESSIONID").permitAll().and().rememberMe().
 		 * userDetailsService(userService) .tokenValiditySeconds(2592000);

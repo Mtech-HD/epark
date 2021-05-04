@@ -3,18 +3,25 @@ package com.ePark.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.ePark.entity.Users;
-import com.ePark.entity.Vehicles;
+import com.ePark.model.Users;
+import com.ePark.model.Vehicles;
 
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicles, Long>{
 
 	List<Vehicles> findByUsers(Users user);
 	
-	void deleteByVehicleId(long vehicleId);
+	/*
+	 * @Modifying
+	 * 
+	 * @Query(value =
+	 * "UPDATE vehicles SET userId = null WHERE vehicleId = :vehicleId ",
+	 * nativeQuery = true) void removeVehicleFromUser(long vehicleId);
+	 */
 	
 	Vehicles findByVehicleId(long vehicleId);
 	

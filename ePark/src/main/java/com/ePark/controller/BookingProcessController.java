@@ -30,18 +30,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ePark.AppSecurityConfig;
 import com.ePark.dto.CarParkDto;
-import com.ePark.entity.Bookings;
-import com.ePark.entity.Bookings.BookingStatus;
-import com.ePark.entity.CarParkSpots;
-import com.ePark.entity.CarParkTimes;
-import com.ePark.entity.CarParks;
-import com.ePark.entity.ChargeRequest;
-import com.ePark.entity.ChargeRequest.Currency;
-import com.ePark.entity.ClosureDates;
-import com.ePark.entity.Mail;
-import com.ePark.entity.Users;
-import com.ePark.entity.Vehicles;
-import com.ePark.entity.Week;
+import com.ePark.model.Bookings;
+import com.ePark.model.CarParkSpots;
+import com.ePark.model.CarParkTimes;
+import com.ePark.model.CarParks;
+import com.ePark.model.ChargeRequest;
+import com.ePark.model.ClosureDates;
+import com.ePark.model.Mail;
+import com.ePark.model.Users;
+import com.ePark.model.Vehicles;
+import com.ePark.model.Week;
+import com.ePark.model.Bookings.BookingStatus;
+import com.ePark.model.ChargeRequest.Currency;
 import com.ePark.service.BookingFlow;
 import com.ePark.service.BookingService;
 import com.ePark.service.CarParkService;
@@ -429,8 +429,13 @@ public class BookingProcessController {
 
 	}
 
+	@Transactional
 	@GetMapping(value = "/clear")
-	public String exit(SessionStatus sessionStatus, @RequestParam(value = "page") String page) {
+	public String exit(SessionStatus sessionStatus, 
+			@ModelAttribute("bookingFlow") BookingFlow bookingFlow,
+			@RequestParam(value = "page") String page) {
+		
+		bookingService.delete(bookingFlow.getBooking().getBookingId());
 
 		sessionStatus.setComplete();
 

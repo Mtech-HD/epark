@@ -1,4 +1,4 @@
-package com.ePark.entity;
+package com.ePark.model;
 
 import java.time.LocalDate;
 
@@ -9,15 +9,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
+@Table(name = "closureDates")
 public class ClosureDates {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long ClosureDateId;
+	private long closureDateId;
 
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate date;
@@ -36,11 +38,11 @@ public class ClosureDates {
 	}
 	
 	public long getClosureDateId() {
-		return ClosureDateId;
+		return closureDateId;
 	}
 
 	public void setClosureDateId(long closureDateId) {
-		ClosureDateId = closureDateId;
+		this.closureDateId = closureDateId;
 	}
 
 	public LocalDate getDate() {

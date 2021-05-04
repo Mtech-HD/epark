@@ -1,4 +1,4 @@
-package com.ePark.entity;
+package com.ePark.model;
 
 import java.math.BigDecimal;
 
@@ -21,7 +21,7 @@ public class CarParkPayments {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long CarParkPaymentsId;
+	private long carParkPaymentId;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "carParkId", nullable = false)
@@ -41,6 +41,10 @@ public class CarParkPayments {
 
 	public CarParkPayments() {
 		super();
+	}
+	
+	public CarParkPayments(long carParkPaymentId) {
+		this.carParkPaymentId = carParkPaymentId;
 	}
 
 	public CarParkPayments(CarParks carParks, String yearMonth, BigDecimal amount, long bookings, boolean paid,

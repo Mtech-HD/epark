@@ -1,4 +1,4 @@
-package com.ePark.entity;
+package com.ePark.model;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -45,9 +45,9 @@ public class Users {
 
 	private String resetPasswordToken;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name = "userRoles", joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "roleId"))
-	private Set<Roles> roles;
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "roleId", referencedColumnName = "roleId")
+	private Roles roles;
 
 	@OneToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<CarParkComments> carParkComments = new HashSet<CarParkComments>();
@@ -61,9 +61,13 @@ public class Users {
 	public Users() {
 
 	}
+	
+	public Users(long userId) {
+		this.userId = userId;
+	}
 
 	public Users(String username, String password, String firstName, String lastName, String email, String stripeId,
-			Set<Roles> roles) {
+			Roles roles) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -122,11 +126,11 @@ public class Users {
 		this.email = email;
 	}
 
-	public Set<Roles> getRoles() {
+	public Roles getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set<Roles> roles) {
+	public void setRoles(Roles roles) {
 		this.roles = roles;
 	}
 
@@ -178,31 +182,28 @@ public class Users {
 
 	public Boolean isSiteAdmin() {
 
-		for (Roles r : roles) {
-			if (r.getName().equals("SITEADMIN")) {
-				return true;
-			}
+		if (roles.getName().equals("SITEADMIN")) {
+			return true;
 		}
+
 		return false;
 	}
 
 	public Boolean isCarParkOwner() {
 
-		for (Roles r : roles) {
-			if (r.getName().equals("CARPARKOWNER")) {
-				return true;
-			}
+		if (roles.getName().equals("CARPARKOWNER")) {
+			return true;
 		}
+
 		return false;
 	}
 
 	public Boolean isAdmin() {
 
-		for (Roles r : roles) {
-			if (r.getName().equals("ADMIN")) {
-				return true;
-			}
+		if (roles.getName().equals("ADMIN")) {
+			return true;
 		}
+
 		return false;
 	}
 
