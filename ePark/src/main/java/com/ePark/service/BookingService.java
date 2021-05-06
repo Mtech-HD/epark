@@ -25,7 +25,7 @@ public class BookingService {
 
 	@Autowired
 	private BookingRepository bookingRepo;
-	
+
 	private static final BigDecimal maxChangeRateWeek = new BigDecimal(0.1);
 
 	private static final BigDecimal maxChangeRateDay = new BigDecimal(0.2);
@@ -40,16 +40,17 @@ public class BookingService {
 		return bookingRepo.findByBookingId(bookingId);
 	}
 
-	public List<Bookings> findByCarParkSpotsAndStartDateAndBookingStatusNot(CarParkSpots carParkSpot, LocalDate startDate, BookingStatus bookingStatus) {
+	public List<Bookings> findByCarParkSpotsAndStartDateAndBookingStatusNot(CarParkSpots carParkSpot,
+			LocalDate startDate, BookingStatus bookingStatus) {
 		return bookingRepo.findByCarParkSpotsAndStartDateAndBookingStatusNot(carParkSpot, startDate, bookingStatus);
 	}
 
 	public List<Bookings> findByCarParksAndStartDate(CarParks carPark, LocalDate startDate) {
 		return bookingRepo.findByCarParksAndStartDate(carPark, startDate);
 	}
-	
+
 	public EarningsAndBookings getBookingsForMonth(long carParkId, String lastMonth) {
- 	
+
 		return bookingRepo.getBookingsForMonth(carParkId, lastMonth, BookingStatus.ACTIVE.toString());
 	}
 
@@ -142,14 +143,17 @@ public class BookingService {
 			percentageChange = percentageSpacesTaken.subtract(rangeForDecrease).divide(rangeForIncrease, 2,
 					RoundingMode.HALF_UP);
 
-			finalPrice = finalPrice.add(maxChangeAmount.multiply(percentageChange)).setScale(2, RoundingMode.HALF_UP);;
+			finalPrice = finalPrice.add(maxChangeAmount.multiply(percentageChange)).setScale(2, RoundingMode.HALF_UP);
+			;
 
 		} else {
 
 			percentageChange = rangeForDecrease.subtract(percentageSpacesTaken).divide(rangeForDecrease, 2,
 					RoundingMode.HALF_UP);
 
-			finalPrice = finalPrice.subtract(maxChangeAmount.multiply(percentageChange)).setScale(2, RoundingMode.HALF_UP);;
+			finalPrice = finalPrice.subtract(maxChangeAmount.multiply(percentageChange)).setScale(2,
+					RoundingMode.HALF_UP);
+			;
 		}
 
 		if (finalPrice.compareTo(minimumPrice) <= 0) {
@@ -158,9 +162,9 @@ public class BookingService {
 
 		return finalPrice;
 	}
-	
+
 	public Bookings cancelBooking(long bookingId) {
-		
+
 		Bookings booking = bookingRepo.findByBookingId(bookingId);
 
 		booking.setBookingStatus(BookingStatus.CANCELLED);
@@ -168,26 +172,24 @@ public class BookingService {
 		return bookingRepo.save(booking);
 	}
 
-	
 	public Bookings reassign(long bookingId, CarParkSpots newCarParkSpot) {
-		
+
 		Bookings booking = bookingRepo.findByBookingId(bookingId);
 
 		booking.setCarParkSpots(newCarParkSpot);
 
 		return bookingRepo.save(booking);
 	}
-	
+
 	public BigDecimal getRevenueForMonth(CarParks carPark) {
-		
+
 		LocalDate today = LocalDate.now();
-		LocalDate startDate =  today.withDayOfMonth(1);
-		LocalDate endDate =  today.withDayOfMonth(today.lengthOfMonth());
-		
+		LocalDate startDate = today.withDayOfMonth(1);
+		LocalDate endDate = today.withDayOfMonth(today.lengthOfMonth());
+
 		return bookingRepo.revenueBetween(carPark.getCarParkId(), BookingStatus.ACTIVE.toString(), startDate, endDate);
 	}
-	
-	
+
 	public void removeInvalidBookings() {
 		bookingRepo.removeInvalidBookings();
 	}

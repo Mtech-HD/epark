@@ -35,12 +35,12 @@ public class VehicleService {
 			List<Vehicles> vehicles = vehicleRepo.findByUsers(user);
 
 			setDefault(vehicleId, false);
-			
+
 			if (vehicles != null) {
 				setDefault(vehicles.get(0).getVehicleId(), true);
 			}
 		}
-		
+
 		vehicle.setUsers(null);
 		vehicleRepo.save(vehicle);
 	}

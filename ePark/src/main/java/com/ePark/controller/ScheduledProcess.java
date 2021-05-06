@@ -1,7 +1,5 @@
 package com.ePark.controller;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -19,10 +17,9 @@ import org.springframework.stereotype.Component;
 
 import com.ePark.model.CarParkPayments;
 import com.ePark.model.CarParks;
+import com.ePark.model.CarParks.CarParkStatus;
 import com.ePark.model.EarningsAndBookings;
 import com.ePark.model.Mail;
-import com.ePark.model.Bookings.BookingStatus;
-import com.ePark.model.CarParks.CarParkStatus;
 import com.ePark.service.BookingService;
 import com.ePark.service.CarParkPaymentService;
 import com.ePark.service.CarParkService;

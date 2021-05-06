@@ -227,43 +227,43 @@ public class StripeService {
 	}
 
 	public LoginLink getLoginLink(String accountId) throws StripeException {
-		
-		LoginLinkCreateOnAccountParams params = 
-				LoginLinkCreateOnAccountParams.builder().setRedirectUrl("https://localhost:8443/home").build();
+
+		LoginLinkCreateOnAccountParams params = LoginLinkCreateOnAccountParams.builder()
+				.setRedirectUrl("https://localhost:8443/home").build();
 
 		return LoginLink.createOnAccount(accountId, params, (RequestOptions) null);
 	}
 
 	public String getStripeAccountLink(String accountId, long carParkId) throws StripeException {
-		
+
 		if (accountId == null) {
 			return "";
 		}
-		
+
 		Account account = Account.retrieve(accountId);
-		
+
 		if (account.getDetailsSubmitted()) {
 			return getLoginLink(accountId).getUrl();
 		} else {
-			return createAccountLink(accountId, carParkId).getUrl(); 
-		}	
+			return createAccountLink(accountId, carParkId).getUrl();
+		}
 	}
-	
+
 	public Balance getAccountBalance(String accountId) throws StripeException {
-		
+
 		RequestOptions requestOptions = RequestOptions.builder().setStripeAccount(accountId).build();
 
 		return Balance.retrieve(requestOptions);
 	}
-	
+
 	public String accountChecks(String accountId) throws StripeException {
-		
-		if (accountId ==  null) {
+
+		if (accountId == null) {
 			return "No account present";
 		}
-		
+
 		Account account = Account.retrieve(accountId);
-		
+
 		if (account.getRequirements().getDisabledReason() != null) {
 			return "Account is not fully setup for payouts";
 		} else if (!account.getChargesEnabled()) {
@@ -275,7 +275,7 @@ public class StripeService {
 		} else if (account.getExternalAccounts().getData().size() == 0) {
 			return "No bank account present";
 		}
-		
+
 		return null;
 	}
 

@@ -44,7 +44,7 @@ public class CarParkSpots {
 	public CarParkSpots() {
 
 	}
-	
+
 	public CarParkSpots(long carParkSpotId) {
 		this.carParkSpotId = carParkSpotId;
 	}

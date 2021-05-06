@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicUpdate;
@@ -50,7 +49,7 @@ public class Vehicles {
 	public Vehicles() {
 		super();
 	}
-	
+
 	public Vehicles(long vehicleId) {
 		this.vehicleId = vehicleId;
 	}
@@ -112,11 +111,11 @@ public class Vehicles {
 		this.isDefault = isDefault;
 	}
 
-	public Set<Bookings>  getBookings() {
+	public Set<Bookings> getBookings() {
 		return bookings;
 	}
 
-	public void setBookings(Set<Bookings>  bookings) {
+	public void setBookings(Set<Bookings> bookings) {
 		this.bookings = bookings;
 	}
 

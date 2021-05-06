@@ -26,7 +26,7 @@ class CarParkPaymentServiceTest {
 
 	@InjectMocks
 	private CarParkPaymentService carParkPaymentService;
-	
+
 	@Test
 	void testSave() {
 		CarParkPayments carParkPayment = new CarParkPayments(1000L);
@@ -36,23 +36,19 @@ class CarParkPaymentServiceTest {
 		assertThat(carParkPaymentService.save(carParkPayment)).isEqualTo(carParkPayment);
 	}
 
-	/*
-	 * @Test void testFindByCarParksAndyearMonth() { }
-	 */
-
 	@Test
 	void testFindByCarParksAndPaid() {
-		
+
 		CarParkPayments carParkPayment = new CarParkPayments(1000L);
-		
+
 		CarParks carPark = new CarParks(1000L);
 		carParkPayment.setCarParks(carPark);
 
 		carParkPayment.setPaid(false);
-		
+
 		List<CarParkPayments> carParkPaymentsList = new ArrayList<>();
 		carParkPaymentsList.add(carParkPayment);
-		
+
 		Mockito.when(carParkPaymentRepo.findByCarParksAndPaid(carPark, false)).thenReturn(carParkPaymentsList);
 	}
 
@@ -60,17 +56,18 @@ class CarParkPaymentServiceTest {
 	void testSaveIfNotExists() {
 
 		CarParkPayments carParkPayment = new CarParkPayments(1000L);
-		
+
 		CarParks carPark = new CarParks(1000L);
 		carParkPayment.setCarParks(carPark);
 		carParkPayment.setYearMonth("202101");
-		
-		Mockito.when(carParkPaymentRepo.findByCarParksAndYearMonth(carParkPayment.getCarParks(), carParkPayment.getYearMonth())).thenReturn(null);
+
+		Mockito.when(carParkPaymentRepo.findByCarParksAndYearMonth(carParkPayment.getCarParks(),
+				carParkPayment.getYearMonth())).thenReturn(null);
 
 		Mockito.when(carParkPaymentRepo.save(carParkPayment)).thenReturn(carParkPayment);
 
 		assertThat(carParkPaymentService.save(carParkPayment)).isEqualTo(carParkPayment);
-		
+
 	}
 
 }

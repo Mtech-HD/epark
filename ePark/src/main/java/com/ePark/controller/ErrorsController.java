@@ -30,16 +30,7 @@ public class ErrorsController implements ErrorController {
 	@RequestMapping(value = PATH)
 	@Transactional
 	public String handleError(HttpServletRequest httpRequest, Model model) {
-		/*
-		 * Object status =
-		 * httpRequest.getAttribute(RequestDispatcher.ERROR_STATUS_CODE); Integer
-		 * statusCode = Integer.valueOf(status.toString());
-		 * 
-		 * if(statusCode == HttpStatus.NOT_FOUND.value()) { Logger logger = (Logger)
-		 * LoggerFactory.getLogger(ErrorsController.class);
-		 * logger.error("An exception occurred!"); }
-		 */
-
+		
 		HttpSession session = httpRequest.getSession();
 		BookingFlow bookingFlow = (BookingFlow) session.getAttribute("bookingFlow");
 
@@ -50,8 +41,6 @@ public class ErrorsController implements ErrorController {
 
 		}
 
-		
-		
 	    Object status = httpRequest.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
 	    String message = null;
 	    
@@ -59,20 +48,19 @@ public class ErrorsController implements ErrorController {
 	        Integer statusCode = Integer.valueOf(status.toString());
 	    
 	        if(statusCode == HttpStatus.NOT_FOUND.value()) {
-	        	
+		        //404 Error
 	        	message = "Page not found";
 	        	
 	        } else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
-	        	
+		        //500 Error  	
 	            message = "Internal server error";
 	            
 	        } else if(statusCode == HttpStatus.FORBIDDEN.value()) {
-	        	
+		        //403 Error
 	            message = "You do not have permission to access this page";
 	        }
 	    }
 		
-
 		model.addAttribute("message", message);
 
 		return "error";

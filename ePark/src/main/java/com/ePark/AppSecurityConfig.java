@@ -78,12 +78,11 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.requiresChannel().anyRequest().requiresSecure();
+		http.requiresChannel().requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure();
 
-		http.csrf().disable().authorizeRequests()
-				.antMatchers("/booking/**").hasAnyAuthority("USER")
-				.antMatchers("/viewcarparkforuser", "/addcarpark/**", "/viewcarparkdetails/**").hasAnyAuthority("ADMIN", "CARPARKOWNER")
-				.antMatchers("/siteadmin/**").hasAnyAuthority("SITEADMIN")
+		http.csrf().disable().authorizeRequests().antMatchers("/booking/**").hasAnyAuthority("USER", "ADMIN")
+				.antMatchers("/viewcarparkforuser", "/addcarpark/**", "/viewcarparkdetails/**")
+				.hasAnyAuthority("ADMIN", "CARPARKOWNER").antMatchers("/siteadmin/**").hasAnyAuthority("SITEADMIN")
 				.antMatchers("/login", "/forgotpassword", "/resetpassword", "/home", "/", "/getapproved",
 						"/registration/**", "/css/**", "/js/**", "/pin.png", "/mainmarker.png")
 				.permitAll().anyRequest().authenticated().and().formLogin().loginPage("/login").permitAll()

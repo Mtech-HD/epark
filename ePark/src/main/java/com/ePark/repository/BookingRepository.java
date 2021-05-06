@@ -26,7 +26,7 @@ public interface BookingRepository extends JpaRepository<Bookings, Long> {
 	List<Bookings> findByCarParksAndStartDate(CarParks carPark, LocalDate startDate);
 
 	@Modifying
-	@Query(value = "delete from bookings b where b.bookingId = :bookingId", nativeQuery = true)
+	@Query(value = "delete from bookings where bookingId = :bookingId", nativeQuery = true)
 	void deleteBooking(@Param("bookingId") long bookingId);
 	
 	@Query(value = "SELECT IFNULL(sum(amount), 0) as revenueThisWeek FROM bookings WHERE carParkId = :carParkId AND bookingStatus = :bookingStatus AND bookingCreated BETWEEN :start and :end", nativeQuery = true)

@@ -6,10 +6,10 @@ import org.springframework.stereotype.Repository;
 import com.ePark.model.Roles;
 
 @Repository
-public interface RoleRepository extends JpaRepository<Roles, Long>{
+public interface RoleRepository extends JpaRepository<Roles, Long> {
 
 	public Roles findByName(String name);
-	
+
 	Roles findByRoleId(long roleId);
-	
+
 }

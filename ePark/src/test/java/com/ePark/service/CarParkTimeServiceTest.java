@@ -29,10 +29,10 @@ class CarParkTimeServiceTest {
 
 	@InjectMocks
 	private CarParkTimeService carParkTimeService;
-	
+
 	@Test
 	void testFindByCarParks() {
-		
+
 		CarParkTimes carParkTime = new CarParkTimes();
 		CarParks carPark = new CarParks(1000L);
 		carParkTime.setCarParks(carPark);
@@ -47,11 +47,11 @@ class CarParkTimeServiceTest {
 
 	@Test
 	void testGetCarParkTimes() {
-		
+
 		CarParkTimes carParkTime1 = new CarParkTimes();
 		CarParks carPark = new CarParks(1000L);
 		carParkTime1.setCarParks(carPark);
-		
+
 		CarParkTimes carParkTime2 = new CarParkTimes();
 		carParkTime2.setCarParks(carPark);
 
@@ -64,35 +64,24 @@ class CarParkTimeServiceTest {
 		assertThat(carParkTimeService.getCarParkTimes(carPark.getCarParkId())).isEqualTo(carParkTimeList);
 	}
 
-	/*
-	 * @Test void testFindByCarParkTimeId() { CarParkTimes carParkTime = new
-	 * CarParkTimes(1000L);
-	 * 
-	 * Mockito.when(carParkTimeRepo.findByCarParks(carPark)).thenReturn(
-	 * carParkTimeList);
-	 * 
-	 * assertThat(carParkTimeService.findByCarParks(carPark)).isEqualTo(
-	 * carParkTimeList); }
-	 */
-
 	@Test
 	void testUpdateTimes() {
-		
+
 		CarParkDto carParkDto = new CarParkDto();
 		CarParks carPark = new CarParks(1000L);
-		
+
 		carParkDto.setCarParkId(carPark.getCarParkId());
-		
+
 		LocalTime time = LocalTime.of(10, 0, 0, 0);
-		
+
 		carParkDto.setMondayFrom(time);
-		
+
 		CarParkTimes carParkTime = new CarParkTimes();
 		carParkTime.setDayOfWeek(Week.MONDAY);
-		
+
 		List<CarParkTimes> carParkTimeList = new ArrayList<>();
 		carParkTimeList.add(carParkTime);
-		
+
 		Mockito.when(carParkTimeService.updateTimes(carPark, carParkDto)).thenReturn(carParkTimeList);
 
 		assertThat(carParkTimeService.updateTimes(carPark, carParkDto).get(0).getOpenTime()).isEqualTo(time);

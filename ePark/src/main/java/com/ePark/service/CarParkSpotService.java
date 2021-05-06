@@ -87,19 +87,20 @@ public class CarParkSpotService {
 	}
 
 	public void increaseDisabledSpots(CarParks carPark, int disabledRange) {
-		
-		List<CarParkSpots> carParkSpots = carParkSpotRepo.findByCarParksAndIsDisabledOrderBySpaceNumberAsc(carPark, false);
+
+		List<CarParkSpots> carParkSpots = carParkSpotRepo.findByCarParksAndIsDisabledOrderBySpaceNumberAsc(carPark,
+				false);
 
 		int index = 0;
-		
-		for (int i = 0 ; i < disabledRange; i++) {
-			
+
+		for (int i = 0; i < disabledRange; i++) {
+
 			CarParkSpots carParkSpot = carParkSpots.get(index);
 			carParkSpot.setIsDisabled(true);
 			carParkSpotRepo.save(carParkSpot);
 
 			index++;
-		}	
+		}
 	}
 
 	public void decreaseDisabledSpots(CarParks carPark, int disabledRange) {

@@ -13,21 +13,21 @@ import com.ePark.service.BookingService;
 
 @Component
 public class SessionListener implements HttpSessionListener {
-	
+
 	@Autowired
 	private BookingService bookingService;
 
-    @Override
-    @Transactional
-    public void sessionDestroyed(HttpSessionEvent event) {
+	@Override
+	@Transactional
+	public void sessionDestroyed(HttpSessionEvent event) {
 
-    	HttpSession session = event.getSession();
-    	BookingFlow bookingFlow = (BookingFlow) session.getAttribute("bookingFlow");
-    
-    	if (bookingFlow != null) {
-    		bookingService.delete(bookingFlow.getBooking().getBookingId());
-    	}
+		HttpSession session = event.getSession();
+		BookingFlow bookingFlow = (BookingFlow) session.getAttribute("bookingFlow");
 
-    }
-    
+		if (bookingFlow != null) {
+			bookingService.delete(bookingFlow.getBooking().getBookingId());
+		}
+
+	}
+
 }

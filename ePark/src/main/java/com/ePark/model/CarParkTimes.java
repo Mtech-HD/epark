@@ -1,7 +1,6 @@
 package com.ePark.model;
 
 import java.time.LocalTime;
-import java.time.OffsetTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -33,10 +32,10 @@ public class CarParkTimes {
 
 	@Enumerated(EnumType.STRING)
 	private Week dayOfWeek;
-	
+
 	@DateTimeFormat(pattern = "HH:mm")
 	private LocalTime openTime;
-	
+
 	@DateTimeFormat(pattern = "HH:mm")
 	private LocalTime closeTime;
 
@@ -59,7 +58,7 @@ public class CarParkTimes {
 	public long getCarParkTimeId() {
 		return carParkTimeId;
 	}
-	
+
 	public void setCarParkTimeId(long carParkTimeId) {
 		this.carParkTimeId = carParkTimeId;
 	}
@@ -96,5 +95,4 @@ public class CarParkTimes {
 		this.carParks = carParks;
 	}
 
-	
 }

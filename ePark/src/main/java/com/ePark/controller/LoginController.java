@@ -106,7 +106,7 @@ public class LoginController {
 	@GetMapping("/resetpassword")
 	public String resetPassword(@RequestParam("token") String token, Model model) {
 		
-		Users user = userService.findByResetPasswordToken(token);
+		userService.findByResetPasswordToken(token);
 		model.addAttribute("token", token);
 		
 		return "/resetpassword";

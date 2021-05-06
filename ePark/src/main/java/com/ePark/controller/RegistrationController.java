@@ -58,12 +58,6 @@ public class RegistrationController {
 	@Autowired
 	private AppSecurityConfig appSecurity;
 
-	/*
-	 * @ModelAttribute("user") public UserRegistrationDto userRegistrationDto() {
-	 * UserRegistrationDto registrationDto = new UserRegistrationDto(); return
-	 * registrationDto; }
-	 */
-
 	@GetMapping("/registration")
 	public String showRegistration(Model model, @RequestParam(value = "carParkId", required = false, defaultValue = "0") long carParkId, 
 			@RequestParam(value = "returnPage") Optional<String> returnPage, @RequestParam(value = "adminCreated", required = false, defaultValue = "false") Boolean adminCreated) {
@@ -120,8 +114,8 @@ public class RegistrationController {
 		}
 		
 		Mail mail = new Mail();
-        mail.setFrom("ePark Admin <official-epark@outlook.com>");//replace with your desired email
-        mail.setMailTo(registrationDto.getEmail());//replace with your desired email
+        mail.setFrom("ePark Admin <official-epark@outlook.com>");
+        mail.setMailTo(registrationDto.getEmail());
         mail.setSubject("Registration Confirmation");
         mail.setTemplate("emails/registrationconfirmation");
         

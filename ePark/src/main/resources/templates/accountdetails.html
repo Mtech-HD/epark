@@ -77,12 +77,9 @@
 											<td th:text="${booking.bookingId}"></td>
 											<td><a class="ui blue label"
 												th:text="'£'+${booking.amount}"></a></td>
-
 										</tr>
-
 									</tbody>
 								</table>
-
 							</div>
 
 							<div class="twelve wide column mainView">
@@ -101,11 +98,8 @@
 									<div th:insert="~{fragments :: vehicles}" id="vehiclesTable"></div>
 								</div>
 								<div class="column">
-
-
 									<div th:insert="~{fragments :: vehiclesAdd}"
 										id="vehicleAddForm"></div>
-
 								</div>
 							</div>
 						</div>
@@ -120,15 +114,12 @@
 									<div th:insert="~{fragments :: cardsTable}" id="cardsTable"></div>
 								</div>
 								<div class="column">
-
 									<div th:insert="~{fragments :: cardsAdd}" id="cardAddForm"></div>
-
 								</div>
 							</div>
 						</div>
 					</form>
 				</div>
-
 
 				<div class="ui tiny modal" id="cancelBookingForm">
 					<i class="close icon"></i>
@@ -142,15 +133,9 @@
 					</div>
 				</div>
 
-
 			</div>
 		</div>
 	</div>
-
-
-
-
-
 
 
 	<div layout:fragment="script">
@@ -158,27 +143,26 @@
 			src="https://cdnjs.cloudflare.com/ajax/libs/jquery.address/1.6/jquery.address.js"></script>
 
 		<script th:inline="javascript">
-		$( window ).resize(function() {
-			showViews();
-		});
-		
-		function showViews() {
-			if ($(window).width() < 767) {
+			$(window).resize(function() {
+				showViews();
+			});
 
-		        $(".mainView").hide();
-		        $("#back").hide();
-		        
-		    } else {
-		    	$("#back").hide();
-				$(".mainView").show();
-				$(".sideView").show();
-		    }
-		}
-		
+			function showViews() {
+				if ($(window).width() < 767) {
+
+					$(".mainView").hide();
+					$("#back").hide();
+
+				} else {
+					$("#back").hide();
+					$(".mainView").show();
+					$(".sideView").show();
+				}
+			}
+
 			$(document).ready(function() {
 				showViews();
 
-				
 				$('#bookingTable').DataTable({
 					pageLength : 10,
 					lengthChange : false,
@@ -189,17 +173,16 @@
 				}
 
 				);
-				
+
 				removeStacked();
-				
+
 				function removeStacked() {
 					$('.ui.pagination.menu').removeClass('stackable').addClass('unstackable');
 				}
 
-				
 				$('#bookingTable_paginate').click(function() {
 					removeStacked();
-				}) 
+				})
 
 				$('#bookingTable').removeClass('dataTable');
 				$('#bookingTable tr:first-child').addClass("active");
@@ -221,20 +204,20 @@
 					$(this).addClass('active');
 
 					getBooking();
-					
+
 					if ($(window).width() < 800) {
 						$(".sideView").hide();
-				        $(".mainView").show();
-				        $("#back").show();
-				    }
+						$(".mainView").show();
+						$("#back").show();
+					}
 				});
 
 			});
-			
+
 			$('#back').click(function() {
 				$(".sideView").show();
-		        $(".mainView").hide();
-		        $("#back").hide();
+				$(".mainView").hide();
+				$("#back").hide();
 			})
 
 			$('.topMenu.ui.tabular.menu .item').tab({

@@ -3,28 +3,14 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{main-layout}">
-<head>
-
-</head>
-
 <body>
 
-
 	<div layout:fragment="content" th:remove="tag">
-
 		<div class="pusher">
-
 			<div class="ui container">
-
-
 				<div class="ui stackable grid">
-
-
-
-
 					<div class="row middle aligned">
 						<div class="four wide column">
-
 							<div>
 								<span class="padding-left-10 heading1">View Spaces</span> <a
 									id="back" class="pointer underline float-right"><i
@@ -49,15 +35,11 @@
 									class="calendar outline icon"></i></label> <input type="text"
 									class="field" id="dateSelector" placeholder="Date"
 									autofocus="autofocus" style="text-align: center;">
-
 							</div>
-
 						</div>
 					</div>
 
-
 					<div class="row">
-
 						<div class="four wide column sideView">
 							<table id="carparkspots"
 								class="ui unstackable celled selectable table">
@@ -68,32 +50,24 @@
 									</tr>
 								</thead>
 								<tbody id="spaces">
-
 									<tr th:each="spot : ${carpark.carParkSpots}"
 										class='clickable-row pointer'
 										th:spotId="${spot.carParkSpotId}"
 										style="text-align: center; vertical-align: top">
 										<td><span th:text="${spot.spaceNumber}"></span></td>
 										<td><i class="wheelchair grey icon"></i></td>
-
 									</tr>
-
 								</tbody>
 							</table>
 						</div>
 						<div class="twelve wide column mainView">
 							<div th:insert="~{fragments :: spotBookings}" id="spotBookings"></div>
-
-
 						</div>
-
-
 					</div>
 				</div>
 
 				<form class="ui form modal" style="max-width: 500px;"
 					id="chargeModal">
-
 					<input type="hidden" id="bookingId" />
 					<div class="header">Charge Customer</div>
 					<div class="content">
@@ -114,7 +88,6 @@
 								</div>
 							</div>
 						</div>
-
 					</div>
 
 					<div class="actions">
@@ -125,12 +98,9 @@
 				</form>
 
 
-
-
 				<div class="ui modal tiny" id="reassignModal">
 					<div class="header">Booking Actions</div>
 					<div class="content">
-
 						<div>
 							Booking ID: &nbsp; <span id='reassignBookingId'></span>
 						</div>
@@ -145,7 +115,6 @@
 						<button id="cancelButton" class="ui primary fluid button"
 							type="button">Refund and Cancel Booking</button>
 					</div>
-
 					<div class="actions">
 						<button class="ui cancel button" type="button">Cancel</button>
 					</div>
@@ -153,9 +122,7 @@
 
 
 			</div>
-
 		</div>
-
 	</div>
 
 

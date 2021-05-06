@@ -1,17 +1,9 @@
 package com.ePark.service;
 
-import static java.time.DayOfWeek.MONDAY;
-import static java.time.DayOfWeek.SUNDAY;
-import static java.time.temporal.TemporalAdjusters.nextOrSame;
-import static java.time.temporal.TemporalAdjusters.previousOrSame;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.hamcrest.CoreMatchers.any;
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -28,10 +20,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.ePark.model.Bookings;
+import com.ePark.model.Bookings.BookingStatus;
 import com.ePark.model.CarParkSpots;
 import com.ePark.model.CarParks;
 import com.ePark.model.EarningsAndBookings;
-import com.ePark.model.Bookings.BookingStatus;
 import com.ePark.repository.BookingRepository;
 
 @ExtendWith(SpringExtension.class)
@@ -117,9 +109,6 @@ class BookingServiceTest {
 
 		booking.setAmount(new BigDecimal(10.00));
 
-		List<Bookings> bookingList = new ArrayList<>();
-		bookingList.add(booking);
-
 		EarningsAndBookings earningsAndBookings = new EarningsAndBookings() {
 			public BigDecimal getEarnings() {
 				return booking.getAmount();
@@ -134,7 +123,7 @@ class BookingServiceTest {
 				bookingRepo.getBookingsForMonth(carParks.getCarParkId(), "202103", BookingStatus.ACTIVE.toString()))
 				.thenReturn(earningsAndBookings);
 
-		assertThat(bookingService.findByCarParksAndStartDate(carParks, date)).isEqualTo(bookingList);
+		assertThat(bookingService.getBookingsForMonth(carParks.getCarParkId(), "202103")).isEqualTo(earningsAndBookings);
 	}
 
 	@Test

@@ -3,98 +3,78 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{main-layout}">
-<head>
-</head>
-
 <body>
 
-	<!--  Navigation Bar -->
-
-
-
-	<div layout:fragment="content">
-
-
-		<div class="ui container">
-
-
-			<div class="margin-top-40 margin-bottom-20">
-				<h1>View car parks</h1>
-			</div>
-
-			<div th:if="${param.comment}">
-				<div class="ui info message margin-bottom-10">
-					<i class="close icon"></i> Comment added
+	<div layout:fragment="content" th:remove="tag">
+		<div class="pusher">
+			<div class="ui container">
+				<div class="margin-top-40 margin-bottom-20">
+					<h1>View car parks</h1>
 				</div>
-			</div>
 
-			<div th:if="${param.success}">
-				<div class="ui positive message margin-bottom-10">
-					<i class="close icon"></i> Action submitted successfully
+				<div th:if="${param.comment}">
+					<div class="ui info message margin-bottom-10">
+						<i class="close icon"></i> Comment added
+					</div>
 				</div>
+
+				<div th:if="${param.success}">
+					<div class="ui positive message margin-bottom-10">
+						<i class="close icon"></i> Action submitted successfully
+					</div>
+				</div>
+
+				<table id="carparks" class="ui unstackable celled selectable table">
+					<thead>
+						<tr style="text-align: center; vertical-align: top">
+							<th>ID</th>
+							<th>Name</th>
+							<th>Date Modified</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="carpark : ${carparklist}"
+							class='clickable-row pointer'
+							th:attr="data-href='/siteadmin/'+${carpark.carParkId}"
+							style="text-align: center; vertical-align: top">
+							<td th:text="${carpark.carParkId}"></td>
+							<td th:text="${carpark.name}"></td>
+							<td
+								th:text="${#dates.format(carpark.dateModified, 'dd/MM/yy HH:mm')}"></td>
+							<td><a
+								th:class="(${carpark.carParkStatus.toString() == 'APPROVED'} ? 'ui green label' : (${carpark.carParkStatus.toString() == 'SUBMITTED'} ? 'ui blue label' : 'ui red label'))"><i
+									th:class="(${carpark.carParkStatus.toString() == 'APPROVED'} ? 'check icon' : (${carpark.carParkStatus.toString() == 'SUBMITTED'} ? 'sync alternate icon' : 'x icon'))"></i><span
+									th:text="${carpark.carParkStatus}"></span></a></td>
+						</tr>
+					</tbody>
+				</table>
+
+
 			</div>
-
-
-			<table id="carparks" class="ui unstackable celled selectable table">
-				<thead>
-					<tr style="text-align: center; vertical-align: top">
-						<th>ID</th>
-						<th>Name</th>
-						<th>Date Modified</th>
-						<th>Status</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="carpark : ${carparklist}"
-						class='clickable-row pointer'
-						th:attr="data-href='/siteadmin/'+${carpark.carParkId}"
-						style="text-align: center; vertical-align: top">
-						<td th:text="${carpark.carParkId}"></td>
-						<td th:text="${carpark.name}"></td>
-						<td
-							th:text="${#dates.format(carpark.dateModified, 'dd/MM/yy HH:mm')}"></td>
-						<td><a
-							th:class="(${carpark.carParkStatus.toString() == 'APPROVED'} ? 'ui green label' : (${carpark.carParkStatus.toString() == 'SUBMITTED'} ? 'ui blue label' : 'ui red label'))"><i
-								th:class="(${carpark.carParkStatus.toString() == 'APPROVED'} ? 'check icon' : (${carpark.carParkStatus.toString() == 'SUBMITTED'} ? 'sync alternate icon' : 'x icon'))"></i><span
-								th:text="${carpark.carParkStatus}"></span></a></td>
-
-
-					</tr>
-
-				</tbody>
-			</table>
-
-
 		</div>
-
 	</div>
-
-
-
-
 	<br>
 	<br>
 	<br>
+
 	<th:block layout:fragment="script">
 		<script th:inline="javascript">
 			$('#carparks').DataTable({
 				lengthMenu : [ 5, 10 ],
 				info : false,
 
-			}
+			});
 
-			);
-			
 			removeStacked();
-			
+
 			function removeStacked() {
 				$('.ui.pagination.menu').removeClass('stackable').addClass('unstackable');
 			}
 
-			
 			$('#carparks_paginate').click(function() {
 				removeStacked();
-			}) 
+			})
 
 			function openComments(id) {
 				$('#viewcomments' + id).modal('show');

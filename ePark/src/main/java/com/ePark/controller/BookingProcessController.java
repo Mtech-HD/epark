@@ -29,19 +29,18 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ePark.AppSecurityConfig;
-import com.ePark.dto.CarParkDto;
 import com.ePark.model.Bookings;
+import com.ePark.model.Bookings.BookingStatus;
 import com.ePark.model.CarParkSpots;
 import com.ePark.model.CarParkTimes;
 import com.ePark.model.CarParks;
 import com.ePark.model.ChargeRequest;
+import com.ePark.model.ChargeRequest.Currency;
 import com.ePark.model.ClosureDates;
 import com.ePark.model.Mail;
 import com.ePark.model.Users;
 import com.ePark.model.Vehicles;
 import com.ePark.model.Week;
-import com.ePark.model.Bookings.BookingStatus;
-import com.ePark.model.ChargeRequest.Currency;
 import com.ePark.service.BookingFlow;
 import com.ePark.service.BookingService;
 import com.ePark.service.CarParkService;
@@ -112,7 +111,7 @@ public class BookingProcessController {
 
 		bookingFlow.enterStep(BookingFlow.Step.Dates);
 
-		return "/booking/dates";
+		return "booking/dates";
 	}
 
 	@PostMapping("/booking/dates")
@@ -120,7 +119,7 @@ public class BookingProcessController {
 			RedirectAttributes redirectAttributes, SessionStatus sessionStatus) {
 
 		if (bindingResult.hasErrors()) {
-			return "/booking/dates";
+			return "booking/dates";
 		}
 		
 		Bookings booking = bookingFlow.getBooking();
@@ -242,7 +241,7 @@ public class BookingProcessController {
 
 		model.addAttribute("user", appSecurity.getCurrentUser());
 
-		return "/booking/vehicles";
+		return "booking/vehicles";
 	}
 
 	@PostMapping(value = "/booking/vehicles", params = "back")
@@ -283,9 +282,8 @@ public class BookingProcessController {
 	public String getReviewPage(@ModelAttribute("bookingFlow") BookingFlow bookingFlow, Model model) {
 		bookingFlow.enterStep(BookingFlow.Step.Review);
 
-		//model.addAttribute("amount", 50 * 100); // in pennies
 		model.addAttribute("stripePublicKey", stripePublicKey);
-		return "/booking/review";
+		return "booking/review";
 	}
 
 	@PostMapping(value = "/booking/review", params = "back")
@@ -325,14 +323,13 @@ public class BookingProcessController {
 
 		Users user = appSecurity.getCurrentUser();
 
-		//model.addAttribute("amount", 50 * 100); // in cents
 		model.addAttribute("stripePublicKey", stripePublicKey);
 		
 		model.addAttribute("defaultCard", paymentsService.getCustomer(user.getStripeId()).getDefaultSource());
 		
 		model.addAttribute("cards", paymentsService.getCards(user.getStripeId()));
 
-		return "/booking/payment";
+		return "booking/payment";
 	}
 
 	@PostMapping(value = "/booking/complete", params = "back")
@@ -355,7 +352,6 @@ public class BookingProcessController {
 
 	@PostMapping("/booking/payment")
 	public ResponseEntity<Object> postPayment(@ModelAttribute("bookingFlow") BookingFlow bookingFlow,
-			// @Valid @ModelAttribute("pendingPayment") PendingPayment pendingPayment,
 			@RequestParam("cardId") String cardId, BindingResult bindingResult,
 			ChargeRequest chargeRequest, Model model) throws StripeException {
 
@@ -364,8 +360,6 @@ public class BookingProcessController {
 		PaymentIntent paymentIntent = null;
 
 		Bookings booking = bookingFlow.getBooking();
-
-		//booking.setAmount(booking.calculatePrice());
 
 		chargeRequest.setDescription(Long.toString(booking.getBookingId()));
 		chargeRequest.setCurrency(Currency.GBP);
@@ -425,7 +419,7 @@ public class BookingProcessController {
 
 		sessionStatus.setComplete();
 
-		return "/booking/complete";
+		return "booking/complete";
 
 	}
 
@@ -435,7 +429,9 @@ public class BookingProcessController {
 			@ModelAttribute("bookingFlow") BookingFlow bookingFlow,
 			@RequestParam(value = "page") String page) {
 		
-		bookingService.delete(bookingFlow.getBooking().getBookingId());
+		if (bookingFlow.getBooking() != null) {
+			bookingService.delete(bookingFlow.getBooking().getBookingId());
+		}
 
 		sessionStatus.setComplete();
 

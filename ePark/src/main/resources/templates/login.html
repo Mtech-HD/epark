@@ -3,29 +3,13 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{main-layout}">
-
-
 <body>
-
-	<!--  Navigation Bar -->
-
 
 	<div layout:fragment="content" th:remove="tag">
 		<div class="pusher">
 			<div class="ui container login">
-			
-			
-<!-- 						<div style="background: #273a61; height: 300px; width: 500px
-						;line-height: 300px; font-size: 40px; text-align:center">
-							<a class="item"><span style="color: #FFFFFF">e&nbsp;</span><i class="fas fa-parking fa-2x"
-								style="color: #FFFFFF;"></i>&nbsp;<span style="color: #FFFFFF">ark</span>
-							</a>
-						</div> -->
-
 				<div class="ui segments">
-
 					<div class="ui segment secondary">Login Page</div>
-
 
 					<div class="ui segment">
 						<form th:action="@{/login}" method="post" class="ui form">
@@ -90,13 +74,6 @@
 									Password?</a>
 
 							</div>
-
-							<!-- 							<div class="ui checkbox margin-10">
-
-								<input type="checkbox" class="form-check-input" id="remember-me"
-									name="remember-me"> <label class="form-check-label"
-									for="remember-me">Remember me?</label>
-							</div> -->
 
 							<div class="margin-10">
 								<button type="submit" class="ui fluid positive button">

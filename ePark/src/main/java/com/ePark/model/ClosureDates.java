@@ -36,7 +36,7 @@ public class ClosureDates {
 		this.date = date;
 		this.carParks = carParks;
 	}
-	
+
 	public long getClosureDateId() {
 		return closureDateId;
 	}

@@ -95,8 +95,6 @@ public class SiteAdminController {
 
 		String paymentMethodId = paymentsService.getCustomer(user.getStripeId()).getInvoiceSettings()
 				.getDefaultPaymentMethod();
-		System.out.println(amount);
-		System.out.println(amount.multiply(new BigDecimal(100)).intValue());
 
 		chargeRequest.setDescription("Late Departure Fee");
 		chargeRequest.setCurrency(Currency.GBP);

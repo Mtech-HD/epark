@@ -108,7 +108,7 @@ public class CarParks {
 	public CarParks() {
 
 	}
-	
+
 	public CarParks(long carParkId) {
 		this.carParkId = carParkId;
 	}

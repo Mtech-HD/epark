@@ -2,11 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate=~{/booking/booking-layout}>
-
-<head>
-
-</head>
+	layout:decorate=~{booking/booking-layout}>
 <body>
 
 	<div layout:fragment="booking" th:remove="tag">
@@ -20,7 +16,6 @@
 
 							<div class="ui segment">
 								<div th:insert="~{fragments :: bookingReview}"></div>
-
 							</div>
 						</div>
 
@@ -28,13 +23,9 @@
 					</div>
 
 					<div class="five wide column">
-
 						<div th:insert="~{fragments :: bookingQuickSummary}"></div>
-
 					</div>
-
 				</div>
-
 
 				<div class="margin-top-10">
 					<button class="ui button" type="submit" name="back" formnovalidate>Back</button>

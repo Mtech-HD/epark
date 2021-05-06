@@ -19,7 +19,7 @@ public class Roles {
 	public Roles() {
 
 	}
-	
+
 	public Roles(long roleId) {
 		this.roleId = roleId;
 	}
