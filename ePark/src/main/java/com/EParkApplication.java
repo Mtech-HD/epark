@@ -28,10 +28,10 @@ public class EParkApplication {
 
 	}
 
-	@PostConstruct
-	void started() {
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-	}
+	/*
+	 * @PostConstruct void started() {
+	 * TimeZone.setDefault(TimeZone.getTimeZone("UTC")); }
+	 */
 
 	@Bean
 	public ServletWebServerFactory servletContainer() {

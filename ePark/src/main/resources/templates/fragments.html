@@ -2,8 +2,6 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
-</head>
 <body>
 
 	<div th:fragment="bookingFlowSteps(bookingFlow)"
@@ -33,20 +31,20 @@
 			<div id="vehicleAddBody" class="ui segment"
 				style="display: none; padding: 15px">
 				<div class="group">
-					<label class="leftlabel"> <span class="custom-label">Registration</span> <input
-						class="field borderless" type="text" name="registration"
+					<label class="leftlabel"> <span class="custom-label">Registration</span>
+						<input class="field borderless" type="text" name="registration"
 						placeholder="Registration" />
 					</label>
 				</div>
 				<div class="group">
-					<label class="leftlabel"> <span class="custom-label">Make</span> <input
-						class="field borderless" type="text" name="make"
+					<label class="leftlabel"> <span class="custom-label">Make</span>
+						<input class="field borderless" type="text" name="make"
 						placeholder="Make" />
 					</label>
 				</div>
 				<div class="group">
-					<label class="leftlabel"> <span class="custom-label">Colour</span> <input
-						class="field borderless" type="text" name="colour"
+					<label class="leftlabel"> <span class="custom-label">Colour</span>
+						<input class="field borderless" type="text" name="colour"
 						placeholder="Colour" />
 					</label>
 				</div>
@@ -171,7 +169,8 @@
 				</div>
 				<div class="ui divider"></div>
 				<div class="dimmable">
-					<div class="ui active inverted dimmer" id="loader" style="display:none;">
+					<div class="ui active inverted dimmer" id="loader"
+						style="display: none;">
 						<div class="ui loader"></div>
 					</div>
 					<table class="summary">
@@ -276,8 +275,8 @@
 				style="display: none; padding: 15px">
 
 				<div class="group">
-					<label class="leftlabel"> <span  class="thin-label">Name</span> <input
-						class="field borderless" type="text" id="cardHolderName"
+					<label class="leftlabel"> <span class="thin-label">Name</span>
+						<input class="field borderless" type="text" id="cardHolderName"
 						placeholder="Card Holder Name" />
 					</label>
 				</div>
@@ -397,7 +396,8 @@
 							th:class="${booking.bookingStatus.toString() == 'ACTIVE'} ? 'green' : 'red'"
 							th:text="${booking.bookingStatus}"></span>
 						<div class="float-right">
-							Created:&nbsp;<span th:text="${#dates.format(booking.bookingCreated, 'dd/MM/yy HH:mm')}"></span>
+							Created:&nbsp;<span
+								th:text="${#dates.format(booking.bookingCreated, 'dd/MM/yy HH:mm')}"></span>
 						</div>
 
 					</div>
@@ -415,11 +415,12 @@
 								</tr>
 								<tr>
 									<td>Date:</td>
-									<td th:text="${#temporals.format(booking.startDate, 'dd/MM/yy')}"></td>
+									<td id="startDate"
+										th:text="${#temporals.format(booking.startDate, 'dd/MM/yyyy')}"></td>
 								</tr>
 								<tr>
 									<td>From:</td>
-									<td th:text="${booking.startTime}"></td>
+									<td id="startTime" th:text="${booking.startTime}"></td>
 								</tr>
 								<tr>
 									<td>To:</td>
@@ -429,12 +430,21 @@
 									<td>Space Number:</td>
 									<td th:text="${booking.carParkSpots.spaceNumber}"></td>
 								</tr>
-								<td>Disabled Space:</td>
-								<td
-									th:text="${booking.carParkSpots.isDisabled == true} ? 'Yes' : 'No'"></td>
+								<tr>
+									<td>Disabled Space:</td>
+									<td
+										th:text="${booking.carParkSpots.isDisabled == true} ? 'Yes' : 'No'"></td>
 								</tr>
+								<tr
+									sec:authorize="isAuthenticated()&&hasAnyAuthority('USER', 'ADMIN')"
+									th:if="${booking.bookingStatus.toString() == 'ACTIVE'}">
+									<td colspan="2"><button class="ui tiny negative button"
+											id="cancelBookingButton" disabled>Cancel booking</button></td>
+								</tr>
+
 							</tbody>
 						</table>
+
 
 					</div>
 				</div>
@@ -470,6 +480,11 @@
 									<td
 										th:text="${payment.charges.data[0].refunded} ? 'refunded' : ${payment.status}"></td>
 								</tr>
+								<tr>
+									<td>Receipt URL:</td>
+									<td><a th:href="${payment.charges.data[0].receiptUrl}">Click
+											here for URL</a></td>
+								</tr>
 
 							</tbody>
 
@@ -483,7 +498,6 @@
 
 
 	<div th:fragment="reassignFreeSpots">
-
 		<table id="freeSpacesTable" class="ui basic selectable table">
 			<thead>
 				<tr>
@@ -504,9 +518,8 @@
 					</tr>
 				</th:block>
 			</tbody>
-
 		</table>
-
 	</div>
+
 </body>
 </html>

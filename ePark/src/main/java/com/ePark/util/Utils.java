@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 import org.springframework.stereotype.Component;
 
-import com.ePark.entity.Week;
+import com.ePark.model.Week;
 
 @Component
 public class Utils {

@@ -3,10 +3,6 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{main-layout}">
-
-<head>
-
-</head>
 <body>
 
 	<div layout:fragment="content" th:remove="tag">
@@ -27,7 +23,7 @@
 						<a class="ui button" href="/home">Back Home</a> <a
 							class="ui primary button" href="/accountdetails">View Booking</a>
 						<a class="ui primary button" th:attr="href=${directionsurl}">Get
-								Directions</a>
+							Directions</a>
 					</div>
 				</div>
 				<div th:insert="~{fragments :: bookingsInfo}" id="bookingsInfo"></div>
@@ -35,7 +31,6 @@
 
 		</div>
 	</div>
-	<div layout:fragment="script"></div>
 
 </body>
 </html>

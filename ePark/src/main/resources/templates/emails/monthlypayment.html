@@ -19,7 +19,7 @@ body {
 
 	<p>Your monthly payment from ePark was successful.</p>
 
-	<p th:text="'Amount: ' +${payment.amount}"></p>
+	<p th:text="'Amount: ' + ${#numbers.formatCurrency(payment.amount)}"></p>
 	
 	<p th:text="'Bookings: ' +${payment.bookings}"></p>
 

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.mail.MessagingException;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,16 +28,15 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ePark.AppSecurityConfig;
 import com.ePark.dto.CarParkDto;
-import com.ePark.entity.Bookings;
-import com.ePark.entity.CarParkComments;
-import com.ePark.entity.CarParkSpots;
-import com.ePark.entity.CarParks;
-import com.ePark.entity.CarParks.AccessControlTypes;
-import com.ePark.entity.CarParks.CarParkStatus;
-import com.ePark.entity.ClosureDates;
-import com.ePark.entity.Mail;
-import com.ePark.entity.Users;
-import com.ePark.entity.Week;
+import com.ePark.model.Bookings;
+import com.ePark.model.CarParkComments;
+import com.ePark.model.CarParks;
+import com.ePark.model.ClosureDates;
+import com.ePark.model.Mail;
+import com.ePark.model.Users;
+import com.ePark.model.Week;
+import com.ePark.model.CarParks.AccessControlTypes;
+import com.ePark.model.CarParks.CarParkStatus;
 import com.ePark.service.BookingService;
 import com.ePark.service.CarParkCommentService;
 import com.ePark.service.CarParkService;
@@ -46,11 +46,8 @@ import com.ePark.service.EmailService;
 import com.ePark.service.StripeService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
-import com.stripe.model.AccountLink;
 import com.stripe.model.Balance;
-import com.stripe.model.LoginLink;
-import com.stripe.net.RequestOptions;
-import com.sun.mail.handlers.image_gif;
+import com.stripe.model.PaymentIntent;
 
 @Controller
 public class CarParkController {
@@ -105,6 +102,7 @@ public class CarParkController {
 		return mv;
 	}
 
+	@Transactional
 	@PostMapping("/addcarpark")
 	public ModelAndView submitCarPark(@ModelAttribute("carpark") CarParkDto carParkDto)
 			throws MessagingException, IOException, StripeException {
@@ -138,7 +136,7 @@ public class CarParkController {
 		mail.setProps(prop);
 		emailService.sendEmail(mail);
 
-		mv.setViewName("redirect:/addcarpark?success");
+		mv.setViewName("redirect:/viewcarparkforuser");
 		return mv;
 	}
 
@@ -157,13 +155,8 @@ public class CarParkController {
 
 		CarParks carPark = carParkService.findByCarParkId(carParkId);
 
-		// AccountLink accountLink = paymentsService.createAccountLink(account.getId(),
-		// carPark.getCarParkId());
 
 		ModelAndView mv = new ModelAndView("viewcarparkdetails");
-		// mv.addObject("cards", paymentsService.getCards(carPark.getStripeId()));
-		// mv.addObject("defaultCard",
-		// paymentsService.getCustomer(carPark.getStripeId()).getInvoiceSettings().getDefaultPaymentMethod());
 		mv.addObject("carpark", carPark);
 
 		mv.addObject("stripeUrl", paymentsService.getStripeAccountLink(carPark.getStripeId(), carPark.getCarParkId()));
@@ -250,7 +243,7 @@ public class CarParkController {
 		Mail mail = new Mail();
 		mail.setFrom("ePark Admin <official-epark@outlook.com>");
 		mail.setMailTo(user.getEmail());
-		mail.setSubject("Car Park Submitted");
+		mail.setSubject("Car Park Approved");
 		mail.setTemplate("emails/carparkapproved");
 
 		Map<String, Object> prop = new HashMap<String, Object>();
@@ -278,7 +271,7 @@ public class CarParkController {
 		Mail mail = new Mail();
 		mail.setFrom("ePark Admin <official-epark@outlook.com>");
 		mail.setMailTo(user.getEmail());
-		mail.setSubject("Car Park Submitted");
+		mail.setSubject("Car Park Rejected");
 		mail.setTemplate("emails/carparkrejected");
 
 		Map<String, Object> prop = new HashMap<String, Object>();
@@ -325,63 +318,6 @@ public class CarParkController {
 		return new ResponseEntity<Integer>(0, HttpStatus.OK);
 	}
 
-	@GetMapping(value = "/findByCarParkSpotsAndStartDate")
-	public String findByCarParkSpotsAndStartDate(@RequestParam("carParkSpotId") long carParkSpotId,
-			@RequestParam("date") LocalDate date, Model model) {
-
-		CarParkSpots carParkSpot = carParkSpotService.findByCarParkSpotId(carParkSpotId);
-
-		model.addAttribute("spotBookings", bookingService.findByCarParkSpotsAndStartDate(carParkSpot, date));
-
-		return "fragments :: spotBookings";
-	}
-
-	@GetMapping(value = "/getFreeSpaces")
-	public String getFreeSpaces(@RequestParam("bookingId") long bookingId, Model model) {
-
-		Bookings booking = bookingService.findByBookingId(bookingId);
-
-		List<CarParkSpots> freeSpaces = carParkSpotService.getFreeSpaces(booking.getCarParks().getCarParkId(),
-				booking.getStartDate(), booking.getStartTime(), booking.getEndTime(), booking.getIsDisabled(), 4);
-
-		if (!freeSpaces.isEmpty()) {
-			model.addAttribute("freeSpaces", freeSpaces);
-		} else {
-			model.addAttribute("freeSpaces", null);
-		}
-
-		return "fragments :: reassignFreeSpots";
-	}
-
-	@GetMapping(value = "/reassign")
-	public String reassign(@RequestParam("bookingId") long bookingId, @RequestParam("carParkSpotId") long carParkSpotId,
-			@RequestParam("activeSpotId") long activeSpotId, @RequestParam("date") LocalDate date, Model model)
-			throws MessagingException, IOException {
-
-		CarParkSpots newCarParkSpot = carParkSpotService.findByCarParkSpotId(carParkSpotId);
-
-		CarParkSpots activeCarParkSpot = carParkSpotService.findByCarParkSpotId(activeSpotId);
-
-		bookingService.reassign(bookingId, newCarParkSpot);
-
-		model.addAttribute("spotBookings", bookingService.findByCarParkSpotsAndStartDate(activeCarParkSpot, date));
-
-		return "fragments :: spotBookings";
-	}
-
-	@GetMapping(value = "/refund")
-	public String refund(@RequestParam("bookingId") long bookingId, @RequestParam("activeSpotId") long activeSpotId,
-			@RequestParam("date") LocalDate date, Model model) throws StripeException, MessagingException, IOException {
-
-		CarParkSpots activeCarParkSpot = carParkSpotService.findByCarParkSpotId(activeSpotId);
-
-		bookingService.cancelBooking(bookingId);
-
-		model.addAttribute("spotBookings", bookingService.findByCarParkSpotsAndStartDate(activeCarParkSpot, date));
-
-		return "fragments :: spotBookings";
-
-	}
 
 	@PostMapping("/addClosureDate")
 	public String addClosureDate(@RequestParam("carParkId") long carParkId, LocalDate date)
@@ -389,41 +325,40 @@ public class CarParkController {
 
 		CarParks carPark = carParkService.findByCarParkId(carParkId);
 
-		bookingService.cancelBookingsAtDate(carPark, date);
+		List<Bookings> bookings = bookingService.findByCarParksAndStartDate(carPark, date);
 
+		if (bookings != null) {
+			for (Bookings b : bookings) {
+				paymentsService.refundPaymentIntent(b.getPaymentId());
+				PaymentIntent paymentIntent = paymentsService.getPaymentIntent(b.getPaymentId());
+				
+				bookingService.cancelBooking(b.getBookingId());
+				
+				Mail mail = new Mail();
+				mail.setFrom("ePark Admin <official-epark@outlook.com>");
+				mail.setMailTo(b.getUsers().getEmail());
+				mail.setSubject("Refund Confirmation");
+				mail.setTemplate("emails/closuredatecancelbooking");
+
+				Map<String, Object> prop = new HashMap<String, Object>();
+				prop.put("name", b.getUsers().getFirstName());
+				prop.put("bookingId", b.getBookingId());
+				prop.put("refundAmount", b.getAmount());
+				prop.put("receipturl", paymentIntent.getCharges().getData().stream().findFirst().get().getReceiptUrl());
+				mail.setProps(prop);
+				emailService.sendEmail(mail);
+			}
+		}
+		
 		Set<ClosureDates> closureDates = carPark.getClosureDates();
 
 		ClosureDates newClosureDate = new ClosureDates(date, carPark);
 		closureDates.add(newClosureDate);
 		carPark.setClosureDates(closureDates);
+		carPark.setDateModified(new Date());
 
 		carParkService.save(carPark);
 		return "redirect:/viewcarparkdetails/" + carParkId;
-	}
-
-	/*
-	 * @PostMapping("/addBankAccount") public String
-	 * addBankAccount(@RequestParam("accountName") String accountName,
-	 * 
-	 * @RequestParam("accountNumber") String accountNumber,
-	 * 
-	 * @RequestParam("routingNumber") String routingNumber) throws StripeException {
-	 * 
-	 * 
-	 * Users user = appSecurity.getCurrentUser();
-	 * 
-	 * Token token = paymentsService.createBankAccount(accountName, routingNumber,
-	 * accountNumber);
-	 * 
-	 * paymentsService.attachBankAccount(token.getId(), user.getStripeId());
-	 * 
-	 * return "fragments :: bankAccount"; }
-	 */
-
-	@GetMapping("/createsepasetupintent")
-	public ResponseEntity<String> createSepaSetupIntent(Model model) throws StripeException {
-
-		return new ResponseEntity<String>(paymentsService.createSepaSetupIntent(), HttpStatus.OK);
 	}
 
 }

@@ -2,19 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate=~{/booking/booking-layout}>
-
-<head>
-
-</head>
+	layout:decorate=~{booking/booking-layout}>
 <body>
-
 	<div layout:fragment="booking" th:remove="tag">
 		<form class="ui form" id="paymentForm" method="Post"
 			th:action="@{/booking/complete}">
 			<div class="ui stackable grid margin-top-20">
-
-
 				<div class="row">
 					<div class="eleven wide column">
 						<div class="ui tiny red message" id="error"></div>

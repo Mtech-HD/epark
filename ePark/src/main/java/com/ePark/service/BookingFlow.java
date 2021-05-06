@@ -5,10 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.validation.Valid;
-
-import com.ePark.entity.Bookings;
-import com.stripe.model.PaymentMethodCollection;
+import com.ePark.model.Bookings;
 
 public class BookingFlow {
 	
@@ -40,7 +37,6 @@ public class BookingFlow {
         }
     }
     
-    @Valid
     private Bookings booking = new Bookings();
 
     private List<StepDescription> stepDescriptions = new ArrayList<>();
@@ -52,8 +48,8 @@ public class BookingFlow {
     public BookingFlow() {
         stepDescriptions.add(new StepDescription(0, "Dates", "Choose your booking dates"));
         stepDescriptions.add(new StepDescription(1, "Vehicle", "Choose your vehicle"));
-        stepDescriptions.add(new StepDescription(2, "Review", "Verify your booking"));
-        stepDescriptions.add(new StepDescription(3, "Payment", "Provide payment details"));
+        stepDescriptions.add(new StepDescription(2, "Review", "Review your booking"));
+        stepDescriptions.add(new StepDescription(3, "Payment", "Choose a payment method"));
     }
 
     public Bookings getBooking() {

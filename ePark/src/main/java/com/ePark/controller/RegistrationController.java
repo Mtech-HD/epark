@@ -1,12 +1,11 @@
 package com.ePark.controller;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
@@ -14,6 +13,7 @@ import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,10 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ePark.AppSecurityConfig;
 import com.ePark.dto.UserRegistrationDto;
-import com.ePark.entity.CarParks;
-import com.ePark.entity.Mail;
-import com.ePark.entity.Roles;
-import com.ePark.entity.Users;
+import com.ePark.model.Mail;
+import com.ePark.model.Roles;
+import com.ePark.model.Users;
 import com.ePark.service.CarParkService;
 import com.ePark.service.EmailService;
 import com.ePark.service.RoleService;
@@ -59,21 +58,15 @@ public class RegistrationController {
 	@Autowired
 	private AppSecurityConfig appSecurity;
 
-	/*
-	 * @ModelAttribute("user") public UserRegistrationDto userRegistrationDto() {
-	 * UserRegistrationDto registrationDto = new UserRegistrationDto(); return
-	 * registrationDto; }
-	 */
-
 	@GetMapping("/registration")
 	public String showRegistration(Model model, @RequestParam(value = "carParkId", required = false, defaultValue = "0") long carParkId, 
 			@RequestParam(value = "returnPage") Optional<String> returnPage, @RequestParam(value = "adminCreated", required = false, defaultValue = "false") Boolean adminCreated) {
 		
-		Collection<Roles> roleList = Arrays.asList();
-		Collection<Roles> userAndCarParkOwner = Arrays.asList();
-		Collection<Roles> SiteAdminAndCarParkOwner = Arrays.asList();
+		List<Roles> roleList = new ArrayList<>();
+		List<Roles> userAndCarParkOwner = new ArrayList<>();
+		List<Roles> SiteAdminAndCarParkOwner = new ArrayList<>();
 		
-		roleList = (Collection<Roles>) roleService.findAll();
+		roleList = roleService.findAll();
 		userAndCarParkOwner = roleList.stream().filter(r -> !r.getName().equalsIgnoreCase("ADMIN") && !r.getName().equalsIgnoreCase("SITEADMIN")).collect(Collectors.toList());
 		SiteAdminAndCarParkOwner = roleList.stream().filter(r -> r.getName().equalsIgnoreCase("CARPARKOWNER") || r.getName().equalsIgnoreCase("SITEADMIN")).collect(Collectors.toList());
 		
@@ -98,7 +91,7 @@ public class RegistrationController {
 		}	
 		
 		model.addAttribute("user", registrationDto);
-		model.addAttribute("roles", roleList);
+		model.addAttribute("roleList", roleList);
 		
 		return "registration";
 	}
@@ -106,13 +99,13 @@ public class RegistrationController {
 	@PostMapping("/registration")
 	public String registerUser(@ModelAttribute("user") UserRegistrationDto registrationDto) throws StripeException, MessagingException, IOException {
 		
-		if (registrationDto.getRoleName().equals("USER")) {
+		Roles role = roleService.findByRoleId(registrationDto.getRoleId());
+		registrationDto.setRoles(role);		
+		
+		if (role.getName().equals("USER")) {
 			Customer customer = paymentsService.createCustomer(registrationDto.getFirstName() + " " + registrationDto.getLastName(), registrationDto.getEmail());
 			registrationDto.setCustomerId(customer.getId());
 		}
-		
-		Roles role = roleService.findByName(registrationDto.getRoleName());
-		registrationDto.setRoles(role);		
 		
 		Users user = userService.save(registrationDto);
 		
@@ -121,8 +114,8 @@ public class RegistrationController {
 		}
 		
 		Mail mail = new Mail();
-        mail.setFrom("ePark Admin <official-epark@outlook.com>");//replace with your desired email
-        mail.setMailTo(registrationDto.getEmail());//replace with your desired email
+        mail.setFrom("ePark Admin <official-epark@outlook.com>");
+        mail.setMailTo(registrationDto.getEmail());
         mail.setSubject("Registration Confirmation");
         mail.setTemplate("emails/registrationconfirmation");
         

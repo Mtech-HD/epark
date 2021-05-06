@@ -3,10 +3,7 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{main-layout}">
-
-
 <body>
-
 	<div layout:fragment="content" th:remove="tag">
 
 		<div class="pusher" style="min-height: 1400px;">
@@ -19,6 +16,9 @@
 					</div>
 				</div>
 
+				<div id="error" class="ui negative message margin-bottom-10">
+				</div>
+
 				<form th:action="@{/addcarpark}" method="post"
 					th:object="${carpark}" class="ui form" id="addCarParkForm">
 
@@ -29,25 +29,19 @@
 						<div class="equal width fields">
 
 							<div class="field">
-
 								<label> Name: </label><input type="text" id="name"
 									th:field="*{name}" placeholder="Enter a name" required
 									autofocus="autofocus" />
 							</div>
-
-
 						</div>
 
 						<div class="two fields">
-
 							<div class="field">
 								<label>Email: </label><input type="text" id="email"
 									th:field="*{email}" placeholder="email@example.com" required
 									autofocus="autofocus" />
 							</div>
-
 							<div class="field">
-
 								<label> Serial Number: </label><input type="text" id="name"
 									th:field="*{serialNumber}" placeholder="Enter a name" required
 									autofocus="autofocus" />
@@ -57,74 +51,61 @@
 
 						<div class="two fields">
 							<div class="field">
-
-								<label for="address1"> Address 1:</label> <input type="text"
-									id="address1" th:field="*{carParkAddress1}" required
+								<label> Address 1:</label> <input type="text" id="address1"
+									th:field="*{carParkAddress1}" required
 									placeholder="Address line 1" autofocus="autofocus" />
 							</div>
-
-
 							<div class="field">
-								<label for="firstname"> Address 2:</label> <input type="text"
-									id="address2" th:field="*{carParkAddress2}"
-									placeholder="Address line 2" required autofocus="autofocus" />
+								<label> Address 2:</label> <input type="text" id="address2"
+									th:field="*{carParkAddress2}" placeholder="Address line 2"
+									required autofocus="autofocus" />
 							</div>
 						</div>
 
 						<div class="two fields">
 							<div class="field">
-								<label for="address3">City: </label><input type="text"
-									id="address3" th:field="*{carParkCity}"
-									placeholder="Address line 3" required autofocus="autofocus" />
+								<label>City: </label><input type="text" id="address3"
+									th:field="*{carParkCity}" placeholder="Address line 3" required
+									autofocus="autofocus" />
 							</div>
 							<div class="field">
-								<label for="postcode">Postcode: </label> <input type="text"
-									id="postcode" th:field="*{carParkPostcode}"
-									placeholder="Address postcode" required autofocus="autofocus" />
+								<label>Postcode: </label> <input type="text" id="postcode"
+									th:field="*{carParkPostcode}" placeholder="Address postcode"
+									required autofocus="autofocus" />
 							</div>
 						</div>
 					</div>
 
-
 					<div class="ui segment">
 						<div class="ui top attached label secondary">Spaces &
 							Pricing</div>
-
-
 						<div class="two fields">
 							<div class="field">
-								<label for="noofspaces">Total spaces:</label><input
-									type="number" id="noofspaces" max="200" th:field="*{spaces}"
+								<label>Total spaces:</label><input type="number" id="noofspaces"
+									max="200" min="0" th:field="*{spaces}"
 									placeholder="Number of spaces available" required
 									autofocus="autofocus">
 							</div>
 							<div class="field">
-								<label for="noofdisabled">Disabled spaces:</label><input
-									type="number" id="noofdisabled" max="200"
-									th:field="*{isDisabled}"
+								<label>Disabled spaces:</label><input type="number"
+									id="noofdisabled" max="200" min="0" th:field="*{isDisabled}"
 									placeholder="Number of disabled spaces" required
 									autofocus="autofocus">
 							</div>
-
 						</div>
-
-
 
 						<div class="two fields">
 							<div class="field">
-								<label for="Amount"> Parking cost:</label>
+								<label> Parking cost:</label>
 								<div class="ui labeled input">
 									<label class="ui label">£</label><input type="number"
 										min="0.00" max="10000.00" step="0.01" id="Amount"
 										th:field="*{price}" placeholder="0.00" required
 										autofocus="autofocus">
 								</div>
-
 							</div>
-
-
 							<div class="field">
-								<label for="Rate">Parking Rate:</label>
+								<label>Parking Rate:</label>
 								<div class="ui radio">
 									<input type="radio" th:field="*{rate}" th:value="HOUR"
 										name="options" id="option1" autocomplete="off" checked>&nbsp;
@@ -137,21 +118,20 @@
 
 						<div class="three fields">
 							<div class="eight wide field">
-								<label for="Amount"> Enable bookings for future weeks:</label>
+								<label> Enable bookings for future weeks:</label>
 								<div class="ui labeled input">
 									<label class="ui label"><i
 										class="fitted calendar outline icon"></i></label><input type="number"
 										min="1" max="52" step="1" id="Amount" placeholder="1" required
 										th:field="*{enableFutureWeeks}" autofocus="autofocus">
 								</div>
-
 							</div>
 							<div class="two wide field">
 								<div class="ui checkbox">
 									<input id="dynamicPricingCheckbox" type="checkbox" value=""
 										th:field="*{dynamicPricing}"
-										th:checked="*{dynamicPricing != null}"> <label
-										for="height">Dynamic Pricing: </label>
+										th:checked="*{dynamicPricing != null}"> <label>Dynamic
+										Pricing: </label>
 								</div>
 							</div>
 							<div class="six wide field">
@@ -169,24 +149,17 @@
 					<div class="ui segment">
 						<div class="ui top attached label secondary">Additional
 							Information</div>
-
-
 						<div class="two fields">
-
-
-
 							<div class="field">
-
 								<label>Access Control:</label> <select class="ui fluid dropdown"
 									th:field="*{accessControl}" required="required">
 									<option th:each="accessType : ${accessTypes}"
 										th:value="${accessType}" th:text="${accessType}"></option>
 								</select>
-
 								<div class="ui checkbox margin-top-10">
 									<input id="heightCheckbox" type="checkbox" value=""
-										th:checked="*{heightRestriction != null}"> <label
-										for="height">Max Height Restriction: </label>
+										th:checked="*{heightRestriction != null}"> <label>Max
+										Height Restriction: </label>
 								</div>
 								<div class="ui right labeled input margin-top-10">
 									<input type="number" id="heightRestriction"
@@ -195,22 +168,16 @@
 										th:disabled="*{heightRestriction == null}" /> <label
 										class="ui label">Metres</label>
 								</div>
-
 							</div>
-
 							<div class="field">
 								<label>Description</label>
 								<textarea th:field="*{description}" rows="5"></textarea>
-
 							</div>
-
 						</div>
 					</div>
 
 					<div class="ui segment">
 						<div class="ui top attached label secondary">Opening hours</div>
-
-
 						<div class="fields">
 							<div class="field">
 								<div class="ui checkbox">
@@ -218,7 +185,6 @@
 										24/7 </label>
 								</div>
 							</div>
-
 							<div class="three wide field">
 								<div class="ui checkbox">
 									<input type="checkbox" value="" id="7to6"> <label>
@@ -227,7 +193,6 @@
 							</div>
 						</div>
 						<div class="fields timerow">
-
 							<div class="field">
 								<div class="ui checkbox">
 									<input class="days-checkbox" type="checkbox" value=""
@@ -236,12 +201,12 @@
 									<label> Monday </label>
 								</div>
 								<div>
-									<label class="toplabel margin-top-10" for="Rate"> From:
-									</label> <input th:disabled="*{MondayFrom == null}" type="text"
+									<label class="toplabel margin-top-10"> From: </label> <input
+										th:disabled="*{MondayFrom == null}" type="text"
 										class="time-field-sm time open" id="MondayFrom"
 										th:field="*{MondayFrom}" placeholder="Closed" required
 										autofocus="autofocus" /> <label
-										class="toplabel margin-top-10" for="Rate"> To: </label> <input
+										class="toplabel margin-top-10"> To: </label> <input
 										type="text" th:field="*{MondayTo}"
 										class="time-field-sm time closed" id="MondayTo"
 										placeholder="Closed" th:disabled="*{MondayTo == null}"
@@ -253,15 +218,14 @@
 									<input class="days-checkbox" type="checkbox" value=""
 										id="checkTuesday"
 										th:checked="*{TuesdayFrom != null} OR *{TuesdayTo != null}">
-									<label class="control-label" for="Rate"> Tuesday: </label>
+									<label class="control-label"> Tuesday: </label>
 								</div>
 								<div>
-									<label class="toplabel margin-top-10" for="Rate"> From:
-									</label> <input th:disabled="*{TuesdayTo == null}"
-										th:field="*{TuesdayFrom}" type="text"
-										class="time-field-sm time open" id="TuesdayFrom"
+									<label class="toplabel margin-top-10"> From: </label> <input
+										th:disabled="*{TuesdayTo == null}" th:field="*{TuesdayFrom}"
+										type="text" class="time-field-sm time open" id="TuesdayFrom"
 										placeholder="Closed" required autofocus="autofocus"> <label
-										class="toplabel margin-top-10" for="Rate"> To: </label> <input
+										class="toplabel margin-top-10"> To: </label> <input
 										type="text" th:field="*{TuesdayTo}"
 										class="time-field-sm time closed" id="TuesdayTo"
 										placeholder="Closed" required
@@ -277,12 +241,12 @@
 									<label> Wednesday: </label>
 								</div>
 								<div>
-									<label class="toplabel margin-top-10" for="Rate"> From:
-									</label> <input th:disabled="*{WednesdayFrom == null}"
+									<label class="toplabel margin-top-10"> From: </label> <input
+										th:disabled="*{WednesdayFrom == null}"
 										th:field="*{WednesdayFrom}" type="text"
 										class="time-field-sm time open" id="WednesdayFrom"
 										placeholder="Closed" required autofocus="autofocus" /> <label
-										class="toplabel margin-top-10" for="Rate"> To: </label> <input
+										class="toplabel margin-top-10"> To: </label> <input
 										type="text" th:field="*{WednesdayTo}"
 										class="time-field-sm time closed" id="WednesdayTo"
 										placeholder="Closed" required
@@ -294,15 +258,15 @@
 									<input class="days-checkbox" type="checkbox" value=""
 										id="checkThursday"
 										th:checked="*{ThursdayFrom != null} OR *{ThursdayTo != null}">
-									<label class="control-label" for="Rate"> Thursday: </label>
+									<label class="control-label"> Thursday: </label>
 								</div>
 								<div>
-									<label class="toplabel margin-top-10" for="Rate"> From:
-									</label> <input th:disabled="*{ThursdayFrom == null}"
+									<label class="toplabel margin-top-10"> From: </label> <input
+										th:disabled="*{ThursdayFrom == null}"
 										th:field="*{ThursdayFrom}" type="text"
 										class="time-field-sm time open" id="ThursdayFrom"
 										placeholder="Closed" required autofocus="autofocus" /> <label
-										class="toplabel margin-top-10" for="Rate"> To: </label> <input
+										class="toplabel margin-top-10"> To: </label> <input
 										type="text" th:field="*{ThursdayTo}"
 										class="time-field-sm time closed" id="ThursdayTo"
 										placeholder="Closed" required
@@ -314,15 +278,14 @@
 									<input class="days-checkbox" type="checkbox" value=""
 										id="checkFriday"
 										th:checked="*{MondayTo != null} OR *{MondayFrom != null}">
-									<label class="control-label" for="Rate"> Friday: </label>
+									<label class="control-label"> Friday: </label>
 								</div>
 								<div>
-									<label class="toplabel margin-top-10" for="Rate"> From:
-									</label> <input th:disabled="*{FridayFrom == null}"
-										th:field="*{FridayFrom}" type="text"
-										class="time-field-sm time open" id="FridayFrom"
+									<label class="toplabel margin-top-10"> From: </label> <input
+										th:disabled="*{FridayFrom == null}" th:field="*{FridayFrom}"
+										type="text" class="time-field-sm time open" id="FridayFrom"
 										placeholder="Closed" required autofocus="autofocus" /> <label
-										class="toplabel margin-top-10" for="Rate"> To: </label> <input
+										class="toplabel margin-top-10"> To: </label> <input
 										type="text" th:field="*{FridayTo}"
 										class="time-field-sm time closed" id="FridayTo"
 										placeholder="Closed" required
@@ -334,7 +297,7 @@
 									<input class="days-checkbox" type="checkbox" value=""
 										id="checkSaturday"
 										th:checked="*{SaturdayFrom != null} OR *{SaturdayTo != null}">
-									<label for="Rate"> Saturday: </label>
+									<label> Saturday: </label>
 								</div>
 								<div>
 									<label class="toplabel margin-top-10"> From: </label> <input
@@ -360,27 +323,24 @@
 										th:disabled="*{SundayFrom == null}" th:field="*{SundayFrom}"
 										type="text" class="time-field-sm time open" id="SundayFrom"
 										placeholder="Closed" required autofocus="autofocus" /> <label
-										class="toplabel margin-top-10" for="Rate"> To: </label> <input
+										class="toplabel margin-top-10"> To: </label> <input
 										type="text" th:field="*{SundayTo}"
 										th:disabled="*{SundayTo == null}"
 										class="time-field-sm time closed" id="SundayTo"
 										placeholder="Closed" required autofocus="autofocus" />
 								</div>
 							</div>
-
-
 						</div>
-
-
 					</div>
 					<div class="field">
 						<th:block th:if="${carpark.carParkId == 0}">
-							<button class="ui button primary" type="button"
+							<button class="ui button primary" type="button" id="submitNew"
 								onclick="submitModal()">Submit for approval</button>
 						</th:block>
 						<th:block th:unless="${carpark.carParkId == 0}">
 							<button class="ui button primary" type="button"
-								onclick="submitModal()">Submit changes for approval</button>
+								id="submitChanges" onclick="submitModal()">Submit
+								changes for approval</button>
 						</th:block>
 					</div>
 
@@ -398,11 +358,7 @@
 								class="ui ok primary button">Submit</button>
 						</div>
 					</div>
-
-
-
 				</form>
-
 			</div>
 		</div>
 	</div>
@@ -412,6 +368,7 @@
 
 		<script type="text/javascript">
 			$(document).ready(function() {
+				$('#error').hide();
 				$('#success').hide();
 				var urlParams = new URLSearchParams(window.location.search);
 				if (urlParams.has('success')) {
@@ -542,6 +499,28 @@
 					}
 				});
 			});
+
+			$('#noofdisabled').on('blur', function() {
+				checkSpaces();
+			})
+
+			$('#noofspaces').on('blur', function() {
+				checkSpaces();
+			})
+
+			function checkSpaces() {
+				if ($('#noofdisabled').val() > $('#noofspaces').val()) {
+					$('#error').show();
+					$('#error').html('Disabled spaces greater than total space');
+					$('#submitNew').prop('disabled', true);
+					$('#submitChanges').prop('disabled', true);
+				} else {
+					$('#error').hide();
+					$('#error').html('');
+					$('#submitNew').prop('disabled', false);
+					$('#submitChanges').prop('disabled', false);
+				}
+			}
 
 			$('.message .close').on('click', function() {
 				$(this).parent().hide();

@@ -3,10 +3,6 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{main-layout}">
-
-<head>
-</head>
-
 <body>
 
 	<div layout:fragment="content" th:remove="tag">
@@ -22,15 +18,6 @@
 					</h5>
 					<hr class="solid">
 
-<!-- 					<label class="margin-bottom-10">Show Closest To:</label> <select
-						class="ui fluid dropdown" id="closestDropdown">
-
-						<option class="item" value="location">Current Location</option>
-						<option class="item" value="marker" selected>Current
-							Marker</option>
-
-					</select> -->
-
 				</div>
 
 				<div id="backbar" class="ui fixed menu borderless">
@@ -38,7 +25,6 @@
 				</div>
 
 				<div id="details">
-
 					<div class="ui segment">
 						<h2 id="carparkname"></h2>
 					</div>
@@ -46,16 +32,12 @@
 					<div class="form-group">
 						<a id="reservebutton" class="ui primary button fluid" href=""><i
 							class="far fa-calendar-check fa-lg "></i>&nbsp; Reserve</a>
-
-
 					</div>
-
 
 					<table
 						class="ui unstackable very basic table margin-top-10 detailsTable compact ">
 						<tbody>
 							<tr>
-
 								<td class="one wide align-top"><i
 									class="far fa-address-book fa-lg"></i></td>
 								<td class="five wide align-top">Address:</td>
@@ -159,31 +141,18 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
-
-
 		</div>
 
 
 		<div class="pusher">
 			<i id="arrow" class="caret big left icon"
 				onclick="openCloseNav(false)"></i>
-
 			<div id="map-container">
 				<div id="map"></div>
 			</div>
 		</div>
 	</div>
-
-
-
-
-
-
-
-
-
 
 	<th:block layout:fragment="script">
 		<script th:inline="javascript">
@@ -231,39 +200,25 @@
 					mapTypeControlOptions : {
 						mapTypeIds : []
 					},
-					mapId: 'b58ae7bb78881906'
-/* 					styles : [ {
-						"featureType" : "all",
-						"elementType" : "all",
-						"stylers" : [ {
-							"hue" : "#008eff"
-						} ]
-					}, {
-						"featureType" : "road",
-						"elementType" : "all",
-						"stylers" : [ {
-							"saturation" : "0"
-						}, {
-							"lightness" : "0"
-						} ]
-					}, {
-						"featureType" : "transit",
-						"elementType" : "all",
-						"stylers" : [ {
-							"visibility" : "off"
-						} ]
-					}, {
-						"featureType" : "water",
-						"elementType" : "all",
-						"stylers" : [ {
-							"visibility" : "simplified"
-						}, {
-							"saturation" : "-60"
-						}, {
-							"lightness" : "-20"
-						} ]
-					} ] */
-
+					mapId: 'fa22bcb7daac078f'
+				});
+				
+				var markerButton = document.createElement("div");
+				markerButton.setAttribute("style", "margin-top:60px; margin-right:15px; border-radius:3px; box-shadow: 0 2px 6px rgba(0,0,0,.3); border: 1px solid #fff; padding: 3px 6px; font: bold 12px Roboto, Arial, sans-serif; color: #686868; background-color: #FFFFFF; cursor: pointer;");
+				markerButton.innerHTML = "Go to marker";
+				map.controls[google.maps.ControlPosition.TOP_RIGHT].push(markerButton);
+				google.maps.event.addDomListener(markerButton, "click", function () {
+					map.setCenter(mainMarker.getPosition());
+					map.setZoom(15);
+				});
+				
+				var markerCenterButton = document.createElement("div");
+				markerCenterButton.setAttribute("style", "margin-top:60px; margin-right:10px; border-radius:3px; box-shadow: 0 2px 6px rgba(0,0,0,.3); border: 1px solid #fff; padding: 3px 6px; font: bold 12px Roboto, Arial, sans-serif; color: #686868; background-color: #FFFFFF; cursor: pointer;");
+				markerCenterButton.innerHTML = "Move marker to centre";
+				map.controls[google.maps.ControlPosition.TOP_RIGHT].push(markerCenterButton);
+				google.maps.event.addDomListener(markerCenterButton, "click", function () {
+					mainMarker.setPosition(map.getCenter());
+					find_closest_markers();
 				});
 
 				mainMarker = new google.maps.Marker({
@@ -294,9 +249,9 @@
 									+ carParks[i].carParkPostcode;
 							geocoder.geocode({
 								'address' : address
-							}, geocodeEncapsulation(carParks[i]))
+							}, geocodeEncapsulation(carParks[i]))	
 						}
-						
+					
 					}
 				});
 
@@ -315,38 +270,34 @@
 						.addListener(
 								'place_changed',
 								function() {
-									//infowindow.close();
-									//marker.setVisible(false);
+
 									var place = autocomplete.getPlace();
 									if (!place.geometry) {
 										window
 												.alert("Autocomplete's returned place contains no geometry");
 										return;
 									}
-
 									// If the place has a geometry, then present it on a map.
-									if (place.geometry.viewport) {
+/* 									if (place.geometry.viewport) {
 										map.fitBounds(place.geometry.viewport);
 									} else {
 										map.setCenter(place.geometry.location);
 										map.setZoom(17);
-									}
+									} */
 
 									mainMarker.setPosition(place.geometry.location);
+									map.setCenter(place.geometry.location);
 									map.setZoom(16);
-									//marker.setVisible(true);
-
+									
+									find_closest_markers();
 								});
 				geoloccontrol = new klokantech.GeolocationControl(map, 17);
 				
-
-				
-
 				google.maps.event.addListener(mainMarker, 'dragend',
 						find_closest_markers);
 				
- 				google.maps.event.addListenerOnce(map, 'tilesloaded',
-						find_closest_markers);  
+  				google.maps.event.addListenerOnce(map, 'tilesloaded',
+						find_closest_markers);   
 				
 			}
 			
@@ -366,7 +317,6 @@
 								//origin : new google.maps.Point(0, 0),
 							},
 							clickable: true,
-
 							labelContent : '£' + i.price.toFixed(2),
 							labelAnchor : new google.maps.Point(30, 35),
 							labelClass : "markerdesign",
@@ -394,7 +344,7 @@
  						markers.push(marker);
 
 					} else {
-						//console.log(status);
+						console.log(status);
 					}
 
 				});
@@ -468,12 +418,7 @@
 			}
 					
 
- 			
-
 			function find_closest_markers() {
-				
-				
-
 				if ($('#nearest').css("display") == "block") {
 					for (i = 0; i < markers.length; i++) {
 						var d = google.maps.geometry.spherical
@@ -481,9 +426,6 @@
 										mainMarker.getPosition());
 
 						markers[i].set("distance", d);
-						
-
-
 					}
 					markers.sort(compare);
 					display_closest_markers();
@@ -509,12 +451,7 @@
 
 							var div = $('<div>').addClass("ui segment tiles")
 									.attr('id', nearestid + i);
-							/*	   			var table = $('<table>').addClass("table-bordered table-sm pointer");
-								   
-								    		table.append('<thead style="background: #0275d8;color: #FFFFFF;"><tr style="text-align: center; vertical-align: top"><th id="'+nameid+i+'" colspan="2"></th></tr></thead>');
-								    		table.append('<tbody><tr style="text-align: center;"><td id="'+priceid+i+'" scope="col"></td><td id="'+spaceid+i+'" scope="col"></td></tr></tbody>'); */
-							//div.append(table);
-							//$('#nearest').append("<br>");
+
 							div
 									.append('<div class="container" style="height: 72px;"><h5 style="padding-bottom: 15px; border-bottom: 1px solid #B8B8B8;" id="'+nameid+i+'"></h5><h8  id="'+priceid+i+'"></h8><h8 style="float:right;" id="'+spaceid+i+'"></h8></div>');
 							$('#nearest').append(div);
@@ -533,7 +470,6 @@
 												+ markers[i].get("carpark").carParkSpots.length
 												+ " spaces");
 					}
-
 				}
 
 				$("#nearestcarpark0").click(function() {
@@ -549,11 +485,8 @@
 					car_park_details(markers[3]);
 				});
 				$("#nearestcarpark4").click(function() {
-					//var m = markers.find(x => x.title == $("#nameid4").text());
 					car_park_details(markers[4]);
 				});
-
-
 			}
 			
 			$("#backbutton").click(function() {
@@ -563,7 +496,6 @@
 			});
 
 			function openCloseNav(stayOpen) {
-
 				if (!stayOpen) {
 					$("#homeSidebar").sidebar('toggle');
 				} else if (stayOpen && !$("#homeSidebar").sidebar("is visible")) {
@@ -574,18 +506,14 @@
 					$('#arrow').removeClass('left').addClass('right');
 				} else {
 					$('#arrow').removeClass('right').addClass('left');
-
 				}
-
 			}
 			
 		</script>
 
 		<script
-			src="https://maps.googleapis.com/maps/api/js?libraries=geometry,places&key=AIzaSyAqmLfX-y8ALh9UU0d48ddAKL3WNpK7ti4&map_ids=b58ae7bb78881906&callback=initMap"
+			src="https://maps.googleapis.com/maps/api/js?libraries=geometry,places&key=AIzaSyAqmLfX-y8ALh9UU0d48ddAKL3WNpK7ti4&map_ids=fa22bcb7daac078f&callback=initMap"
 			defer></script>
-
-
 
 		<script defer src="/js/markerwithlabel.js"></script>
 		<script src="https://cdn.klokantech.com/maptilerlayer/v1/index.js"></script>

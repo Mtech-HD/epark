@@ -3,11 +3,6 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{main-layout}">
-
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
 <body>
 
 	<div layout:fragment="content" th:remove="tag">
@@ -16,7 +11,8 @@
 			<div class="ui container text-align-center">
 
 				<h1>Error occurred</h1>
-				<h2>Something went wrong</h2>
+		
+				<h2 th:text="${message == null} ? 'Something went wrong' : ${message}"></h2>
 			</div>
 		</div>
 	</div>

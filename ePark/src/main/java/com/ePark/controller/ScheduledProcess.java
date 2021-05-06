@@ -9,16 +9,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.mail.MessagingException;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.ePark.entity.CarParkPayments;
-import com.ePark.entity.CarParks;
-import com.ePark.entity.CarParks.CarParkStatus;
-import com.ePark.entity.EarningsAndBookings;
-import com.ePark.entity.Mail;
+import com.ePark.model.CarParkPayments;
+import com.ePark.model.CarParks;
+import com.ePark.model.CarParks.CarParkStatus;
+import com.ePark.model.EarningsAndBookings;
+import com.ePark.model.Mail;
 import com.ePark.service.BookingService;
 import com.ePark.service.CarParkPaymentService;
 import com.ePark.service.CarParkService;
@@ -35,7 +36,7 @@ public class ScheduledProcess {
 
 	@Autowired
 	private BookingService bookingService;
-	
+
 	@Autowired
 	private EmailService emailService;
 
@@ -44,11 +45,11 @@ public class ScheduledProcess {
 
 	@Autowired
 	private StripeService paymentService;
-	
-	//Runs first day of every month
-	@Scheduled(cron="0 0 0 1 1/1 *")
+
+	// Runs first day of every month
+	@Scheduled(cron = "0 0 0 1 1/1 *")
 	public void carParkPaymentForPreviousMonth() {
-		
+
 		List<CarParks> carParks = carParkService.findByCarParkStatus(CarParkStatus.APPROVED);
 
 		YearMonth thisMonth = YearMonth.now();
@@ -67,51 +68,58 @@ public class ScheduledProcess {
 			carParkPaymentService.saveIfNotExists(carParkPayment);
 		}
 	}
-	
 
-	//Runs midnight everyday
+	// Runs midnight everyday
 	@Scheduled(cron = "0 0 0 * * * ")
-	//@Scheduled(cron = "0 04 08 21 * ?")
+	// @Scheduled(cron = "0 04 08 21 * ?")
 	public void payoutOwners() throws StripeException, MessagingException, IOException {
 
 		List<CarParks> carParks = carParkService.findByCarParkStatus(CarParkStatus.APPROVED);
 
 		for (CarParks carPark : carParks) {
 
-			List<CarParkPayments> carParkPayments = carParkPaymentService.findByCarParksAndPaid(carPark.getCarParkId(), false);
+			List<CarParkPayments> carParkPayments = carParkPaymentService.findByCarParksAndPaid(carPark, false);
 
 			for (CarParkPayments payment : carParkPayments) {
 
 				if (payment.getAmount().compareTo(new BigDecimal(0)) > 0) {
-					
+
 					String accountChecks = paymentService.accountChecks(carPark.getStripeId());
-					
 
 					if (carPark.getStripeId() != null && accountChecks == null) {
-						
-						String description = "Car Park ID: " + carPark.getCarParkId() + ", yearMonth: " + payment.getYearMonth() + ", Bookings: " + payment.getBookings();
 
-						Transfer transfer = paymentService.createTransfer(
-								carPark.getStripeId(), payment.getAmount(), description);
+						String description = "Car Park ID: " + carPark.getCarParkId() + ", yearMonth: "
+								+ payment.getYearMonth() + ", Bookings: " + payment.getBookings();
+						
+						Transfer transfer = null;
+
+						try {
+							transfer = paymentService.createTransfer(carPark.getStripeId(), payment.getAmount(),
+									description);
+						} catch (StripeException e) {
+							payment.setFailedReason(e.getCode());
+							carParkPaymentService.save(payment);
+						}
 
 						if (transfer != null) {
-								payment.setPaid(true);
-								payment.setPaymentId(transfer.getId());
-								payment = carParkPaymentService.save(payment);
-								
-								Mail mail = new Mail();
-						        mail.setFrom("ePark Admin <official-epark@outlook.com>");
-						        mail.setMailTo(carPark.getEmail());
-						        mail.setSubject("Monthly Payment Notification");
-						        mail.setTemplate("emails/monthlypayment");
-						        
-						        Map<String, Object> prop = new HashMap<String, Object>();
-						        prop.put("name", carPark.getName());
-						        prop.put("payment", payment);
-						       
-						        mail.setProps(prop);
-						        emailService.sendEmail(mail);
-								
+							payment.setPaid(true);
+							payment.setPaymentId(transfer.getId());
+							payment.setFailedReason(null);
+							payment = carParkPaymentService.save(payment);
+
+							Mail mail = new Mail();
+							mail.setFrom("ePark Admin <official-epark@outlook.com>");
+							mail.setMailTo(carPark.getEmail());
+							mail.setSubject("Monthly Payment Notification");
+							mail.setTemplate("emails/monthlypayment");
+
+							Map<String, Object> prop = new HashMap<String, Object>();
+							prop.put("name", carPark.getName());
+							prop.put("payment", payment);
+
+							mail.setProps(prop);
+							emailService.sendEmail(mail);
+
 						}
 
 					} else {
@@ -125,6 +133,13 @@ public class ScheduledProcess {
 
 		}
 
+	}
+
+	// Runs every 10 minutes, cleanup job for backup
+	@Transactional
+	@Scheduled(cron = "0 0/10 * * * ?")
+	public void removeInvalidBookings() {
+		bookingService.removeInvalidBookings();
 	}
 
 }
