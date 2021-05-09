@@ -49,8 +49,8 @@ public class VehicleController {
 		List<Vehicles> vehicles = vehicleService.findByUsers(appSecurity.getCurrentUser());
 		
 		boolean isDefault = false;
-		
-		if (vehicles == null) {
+
+		if (vehicles.size() == 0) {
 			isDefault = true;
 		}
 
