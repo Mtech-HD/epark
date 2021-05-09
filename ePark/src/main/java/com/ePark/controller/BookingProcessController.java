@@ -76,7 +76,7 @@ public class BookingProcessController {
 
 	@Autowired
 	private EmailService emailService;
-	
+
 	@Autowired
 	private Utils utils;
 
@@ -91,11 +91,11 @@ public class BookingProcessController {
 	@GetMapping("/booking/{carParkId}")
 	public String setCarPark(@PathVariable(name = "carParkId") long carParkId,
 			@ModelAttribute("bookingFlow") BookingFlow bookingFlow) {
-		
+
 		Users user = appSecurity.getCurrentUser();
-		
+
 		Bookings booking = bookingFlow.getBooking();
-		
+
 		CarParks carPark = carParkService.findByCarParkId(carParkId);
 		booking.setBookingStatus(BookingStatus.INPROGRESS);
 		booking.setUsers(user);
@@ -121,68 +121,93 @@ public class BookingProcessController {
 		if (bindingResult.hasErrors()) {
 			return "booking/dates";
 		}
-		
+
 		Bookings booking = bookingFlow.getBooking();
 
-		List<CarParkSpots> spots = carParkSpotService.getFreeSpaces(
-				booking.getCarParks().getCarParkId(), booking.getStartDate(),
-				booking.getStartTime(), booking.getEndTime(),
-				booking.getIsDisabled(), 1000);
+		Bookings savedBooking = bookingService.findByBookingId(booking.getBookingId());
 
-		if (spots == null || spots.isEmpty()) {
-			bindingResult.rejectValue("booking.endTime", "", "No available spaces");
-			return "booking/dates";
-		} else if (booking.getStartTime().equals(booking.getEndTime())) {
-			bindingResult.rejectValue("booking.endTime", "", "Start and end times are the same");
-			return "booking/dates";
-		} else if (booking.getEndTime().isBefore(booking.getStartTime())) {
-			bindingResult.rejectValue("booking.endTime", "", "End time is before start time");
-			return "booking/dates";
+		if (checkForDifference(booking, savedBooking)) {
+			List<CarParkSpots> spots = carParkSpotService.getFreeSpaces(booking.getCarParks().getCarParkId(),
+					booking.getStartDate(), booking.getStartTime(), booking.getEndTime(), booking.getIsDisabled(),
+					1000);
+
+			if (spots == null || spots.isEmpty()) {
+				bindingResult.rejectValue("booking.endTime", "", "No available spaces");
+				return "booking/dates";
+			} else if (booking.getStartTime().equals(booking.getEndTime())) {
+				bindingResult.rejectValue("booking.endTime", "", "Start and end times are the same");
+				return "booking/dates";
+			} else if (booking.getEndTime().isBefore(booking.getStartTime())) {
+				bindingResult.rejectValue("booking.endTime", "", "End time is before start time");
+				return "booking/dates";
+			}
+
+			booking.setCarParkSpots(spots.get(0));
+			booking.setAmount(booking.calculatePrice());
+
+			bookingFlow.setBooking(bookingService.save(booking));
 		}
 
-		booking.setCarParkSpots(spots.get(0));
-		booking.setAmount(booking.calculatePrice());
-
 		bookingFlow.completeStep(BookingFlow.Step.Dates);
-		
-		bookingFlow.setBooking(bookingService.save(booking));
 
 		redirectAttributes.addFlashAttribute("bookingFlow", bookingFlow);
 
 		return "redirect:/booking/vehicles";
 	}
 
+	public Boolean checkForDifference(Bookings currentBooking, Bookings savedBooking) {
+
+		Boolean difference = false;
+		
+		if (savedBooking == null) {
+			return true;
+		}
+		
+		if (currentBooking.getIsDisabled() != savedBooking.getIsDisabled()) {
+			return true;
+		}
+		if (!currentBooking.getStartDate().isEqual(savedBooking.getStartDate())) {
+			return true;
+		}
+		if (currentBooking.getStartTime() != savedBooking.getStartTime()) {
+			return true;
+		}
+		if (currentBooking.getEndTime() != savedBooking.getEndTime()) {
+			return true;
+		}
+
+		return difference;
+	}
+
 	@Transactional
 	@PostMapping(value = "/booking/dates", params = "cancel")
 	public String cancelDates(SessionStatus sessionStatus, @ModelAttribute("bookingFlow") BookingFlow bookingFlow) {
-		
+
 		bookingService.delete(bookingFlow.getBooking().getBookingId());
-		
+
 		sessionStatus.setComplete();
 		return "redirect:/home";
 	}
 
-	
 	@PostMapping(value = "/booking/dates", params = "prices")
 	public String bookingTotal(@ModelAttribute("bookingFlow") BookingFlow bookingFlow) {
-		
+
 		Bookings booking = bookingFlow.getBooking();
 
 		BigDecimal price = new BigDecimal(0);
 
 		if (booking.getCarParks().getDynamicPricing()) {
 
-			BigDecimal weekPrice = bookingService.revenueBasedPrice(booking.getCarParks(),
-					BookingStatus.ACTIVE, booking.getStartDate());
+			BigDecimal weekPrice = bookingService.revenueBasedPrice(booking.getCarParks(), BookingStatus.ACTIVE,
+					booking.getStartDate());
 
 			price = weekPrice;
 
 			if (booking.getStartTime() != null && booking.getEndTime() != null) {
 
-				List<CarParkSpots> spots = carParkSpotService.getFreeSpaces(
-						booking.getCarParks().getCarParkId(), booking.getStartDate(),
-						booking.getStartTime(), booking.getEndTime(),
-						booking.getIsDisabled(), 1000);
+				List<CarParkSpots> spots = carParkSpotService.getFreeSpaces(booking.getCarParks().getCarParkId(),
+						booking.getStartDate(), booking.getStartTime(), booking.getEndTime(), booking.getIsDisabled(),
+						1000);
 
 				int maximumSpaces = booking.getCarParks().getNormalSpots().size();
 
@@ -190,8 +215,8 @@ public class BookingProcessController {
 					maximumSpaces = booking.getCarParks().getDisabledSpots().size();
 				}
 
-				price = bookingService.getPriceForDay(booking.getCarParks(),
-						booking.getStartDate(), weekPrice, spots.size(), maximumSpaces);
+				price = bookingService.getPriceForDay(booking.getCarParks(), booking.getStartDate(), weekPrice,
+						spots.size(), maximumSpaces);
 			}
 
 			booking.setUnitPrice(price.setScale(2, RoundingMode.HALF_UP));
@@ -203,32 +228,33 @@ public class BookingProcessController {
 	@PostMapping(value = "/booking/dates", params = "openingTimes")
 	public ResponseEntity<Object> getBookingEndDate(@RequestParam(value = "date") LocalDate date,
 			@ModelAttribute("bookingFlow") BookingFlow bookingFlow) {
-		
+
 		CarParkTimes carParkTime;
-		
+
 		String dayOfWeekString = utils.getDayOfWeek(date);
 
 		Week weekDay = utils.getWeekEnum(dayOfWeekString);
-		
-		CarParks carPark =  bookingFlow.getBooking().getCarParks();
 
-		ClosureDates closureDate = carPark.getClosureDates().stream().filter(c -> c.getDate().equals(date)).findFirst().orElse(null);
-		
+		CarParks carPark = bookingFlow.getBooking().getCarParks();
+
+		ClosureDates closureDate = carPark.getClosureDates().stream().filter(c -> c.getDate().equals(date)).findFirst()
+				.orElse(null);
+
 		if (closureDate != null) {
 			carParkTime = new CarParkTimes(weekDay, null, null, carPark);
 			return new ResponseEntity<>(carParkTime, HttpStatus.OK);
-		}	
-		
+		}
+
 		List<CarParkTimes> openingTimes = carPark.orderTimes();
-		carParkTime = openingTimes.stream().filter(t -> t.getDayOfWeek().toString().equalsIgnoreCase(weekDay.toString()))
-				.findFirst().orElse(null);
+		carParkTime = openingTimes.stream()
+				.filter(t -> t.getDayOfWeek().toString().equalsIgnoreCase(weekDay.toString())).findFirst().orElse(null);
 
 		return new ResponseEntity<>(carParkTime, HttpStatus.OK);
 	}
 
 	@GetMapping("/booking/vehicles")
 	public String showBookingVehicles(@ModelAttribute("bookingFlow") BookingFlow bookingFlow, Model model) {
-		
+
 		bookingFlow.enterStep(BookingFlow.Step.Vehicle);
 
 		if (bookingFlow.getBooking().getVehicles() == null) {
@@ -255,10 +281,9 @@ public class BookingProcessController {
 	@Transactional
 	@PostMapping(value = "/booking/vehicles", params = "cancel")
 	public String cancelVehicles(SessionStatus sessionStatus, @ModelAttribute("bookingFlow") BookingFlow bookingFlow) {
-		
-		System.out.println(bookingFlow.getBooking().getBookingId());
+
 		bookingService.delete(bookingFlow.getBooking().getBookingId());
-		
+
 		sessionStatus.setComplete();
 		return "redirect:/home";
 	}
@@ -268,9 +293,9 @@ public class BookingProcessController {
 			BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
 		bookingFlow.completeStep(BookingFlow.Step.Vehicle);
-		
+
 		Bookings booking = bookingFlow.getBooking();
-		
+
 		bookingFlow.setBooking(bookingService.save(booking));
 
 		redirectAttributes.addFlashAttribute("bookingFlow", bookingFlow);
@@ -297,10 +322,9 @@ public class BookingProcessController {
 	@Transactional
 	@PostMapping(value = "/booking/review", params = "cancel")
 	public String cancelReview(SessionStatus sessionStatus, @ModelAttribute("bookingFlow") BookingFlow bookingFlow) {
-		
-		
+
 		bookingService.delete(bookingFlow.getBooking().getBookingId());
-		
+
 		sessionStatus.setComplete();
 		return "redirect:/home";
 	}
@@ -324,9 +348,9 @@ public class BookingProcessController {
 		Users user = appSecurity.getCurrentUser();
 
 		model.addAttribute("stripePublicKey", stripePublicKey);
-		
+
 		model.addAttribute("defaultCard", paymentsService.getCustomer(user.getStripeId()).getDefaultSource());
-		
+
 		model.addAttribute("cards", paymentsService.getCards(user.getStripeId()));
 
 		return "booking/payment";
@@ -343,17 +367,17 @@ public class BookingProcessController {
 	@Transactional
 	@PostMapping(value = "/booking/complete", params = "cancel")
 	public String cancelPayment(SessionStatus sessionStatus, @ModelAttribute("bookingFlow") BookingFlow bookingFlow) {
-		
+
 		bookingService.delete(bookingFlow.getBooking().getBookingId());
-		
+
 		sessionStatus.setComplete();
 		return "redirect:/home";
 	}
 
 	@PostMapping("/booking/payment")
 	public ResponseEntity<Object> postPayment(@ModelAttribute("bookingFlow") BookingFlow bookingFlow,
-			@RequestParam("cardId") String cardId, BindingResult bindingResult,
-			ChargeRequest chargeRequest, Model model) throws StripeException {
+			@RequestParam("cardId") String cardId, BindingResult bindingResult, ChargeRequest chargeRequest,
+			Model model) throws StripeException {
 
 		Users user = appSecurity.getCurrentUser();
 
@@ -412,7 +436,7 @@ public class BookingProcessController {
 		prop.put("booking", booking);
 		mail.setProps(prop);
 		emailService.sendEmail(mail);
-		
+
 		model.addAttribute("directionsurl", "https://www.google.com/maps/dir/Current+Location/" + address);
 		model.addAttribute("payment", paymentIntent);
 		model.addAttribute("booking", bookingService.findByBookingId(bookingFlow.getBooking().getBookingId()));
@@ -425,10 +449,9 @@ public class BookingProcessController {
 
 	@Transactional
 	@GetMapping(value = "/clear")
-	public String exit(SessionStatus sessionStatus, 
-			@ModelAttribute("bookingFlow") BookingFlow bookingFlow,
+	public String exit(SessionStatus sessionStatus, @ModelAttribute("bookingFlow") BookingFlow bookingFlow,
 			@RequestParam(value = "page") String page) {
-		
+
 		if (bookingFlow.getBooking() != null) {
 			bookingService.delete(bookingFlow.getBooking().getBookingId());
 		}

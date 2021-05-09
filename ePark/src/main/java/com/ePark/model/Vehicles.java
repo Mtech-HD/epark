@@ -30,7 +30,6 @@ public class Vehicles {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long vehicleId;
 
-	@Column(unique = true)
 	private String registration;
 
 	private String make;
