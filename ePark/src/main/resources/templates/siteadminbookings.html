@@ -55,7 +55,7 @@
 										th:spotId="${spot.carParkSpotId}"
 										style="text-align: center; vertical-align: top">
 										<td><span th:text="${spot.spaceNumber}"></span></td>
-										<td><i class="wheelchair grey icon"></i></td>
+										<td th:text="${spot.isDisabled} ? 'Yes' : 'No'"></td>
 									</tr>
 								</tbody>
 							</table>

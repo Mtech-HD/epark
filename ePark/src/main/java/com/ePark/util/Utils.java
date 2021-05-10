@@ -16,20 +16,20 @@ public class Utils {
 	}
 	
 	public Week getWeekEnum(String weekDay) {
-		switch (weekDay) {
-		case "Monday": 
+		switch (weekDay.toUpperCase()) {
+		case "MONDAY": 
 			return Week.MONDAY;
-		case "Tuesday": 
+		case "TUESDAY": 
 			return Week.TUESDAY;
-		case "Wednesday": 
+		case "WEDNESDAY": 
 			return Week.WEDNESDAY;
-		case "Thursday": 
+		case "THURSDAY": 
 			return Week.THURSDAY;
-		case "Friday": 
+		case "FRIDAY": 
 			return Week.FRIDAY;
-		case "Saturday": 
+		case "SATURDAY": 
 			return Week.SATURDAY;
-		case "Sunday": 
+		case "SUNDAY": 
 			return Week.SUNDAY;
 		}
 		return Week.MONDAY;
